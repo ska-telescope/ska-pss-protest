@@ -1,2 +1,18 @@
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - lint
+  - build
+  - test
+  - publish
+  - pages
+  - scan
+
+include:
+  # We don't need python build and publish
+  # as we are not releasing a python artefact
+  - project: 'skatelescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  - project: 'skatelescope/templates-repository'
+    file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
