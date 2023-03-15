@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheetah_emulator>
+   <stream>ska_low</stream>
+   <emulator>
+      <channels>7776</channels>
+      <generator>gaussian_noise</generator>
+      <client>
+         <port>9029</port>
+         <ip_address>0.0.0.0</ip_address>
+      </client>
+      <generators>
+         <gaussian_noise>
+            <mean>0.0</mean>
+            <dev>128</dev>
+         </gaussian_noise>
+      </generators>
+      <server>
+         <threads>2</threads>
+         <port>3434</port>
+      </server>
+      <ska_low>
+         <interval>100</interval>
+      </ska_low>
+   </emulator>
+</cheetah_emulator>

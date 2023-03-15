@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheetah_candidate_pipeline>
+  <sinks>
+    <threads>3</threads>
+    <channels>
+      <raw_candidates>
+        <active>true</active>
+        <sink>
+           <id>candidate_files</id>
+        </sink>
+      </raw_candidates>
+    </channels>
+    <sink_configs>
+      <sp_candidate_data>
+        <extension>.spccl</extension>
+        <dir>/tmp</dir>
+        <id>candidate_files</id>
+      </sp_candidate_data>
+    </sink_configs>
+  </sinks>
+  <sources>
+    <SpeadReader>
+      <cpu>
+        <devices>3</devices>
+      </cpu>
+      <listen>
+        <port>9021</port>
+        <ip_address>localhost</ip_address>
+      </listen>
+    </SpeadReader>
+  </sources>
+</cheetah_candidate_pipeline>

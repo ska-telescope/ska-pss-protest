@@ -1,0 +1,2 @@
+[log][tid=140383350372224][/raid/bshaw/cheetah_panda/panda/dev/install/include/panda/detail/SocketConnectionImpl.cpp:203][1643720826][this=0x26dbb98] setting remote endpoint:0.0.0.0:9029
+[log][tid=140383350372224][/raid/bshaw/cheetah_panda/cheetah/dev/checkout/cheetah/emulator/src/emulator_main.cpp:63][1643720826]emulator using generator: 'gaussian_noise'

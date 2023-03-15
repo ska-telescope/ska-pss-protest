@@ -1,0 +1,9 @@
+[
+    {
+        "type": "error",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:148",
+        "time": "1645102165",
+        "msg": "Creating Beams...."
+    }
+]
