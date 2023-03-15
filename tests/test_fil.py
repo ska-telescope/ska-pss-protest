@@ -76,8 +76,8 @@ def get_vector():
     yield vector
 
 
-#@mark.unit
-#@mark.filtests
+@mark.unit
+@mark.filtests
 class FilterbankTests:
     """
     Tests filterbank reader correctly parses

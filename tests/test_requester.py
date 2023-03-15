@@ -55,8 +55,8 @@ from protest.requester import VectorPull
 VECTOR = "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_1639476129.fil"
 
 
-#@mark.unit
-#@mark.reqtests
+@mark.unit
+@mark.reqtests
 class RequesterTests:
     """
     Tests to test the test framework itself.

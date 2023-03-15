@@ -57,8 +57,8 @@ from pytest import mark
 
 DATA_DIR = os.path.join(Path(os.path.abspath(__file__)).parents[1],  "tests/data/sigproc")
 
-#@mark.candtests
-#@mark.unit
+@mark.candtests
+@mark.unit
 class CandidateTests:
     """
     Tests of the Filterbank() class in

@@ -91,8 +91,8 @@ def resource():
     return _setup
 
 
-#@mark.unit
-#@mark.pipeline
+@mark.unit
+@mark.pipeline
 class RunnerTests:
     """
     Tests to test the test framework itself.

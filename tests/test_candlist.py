@@ -87,8 +87,8 @@ def get_high_dm_vector():
     yield vector
 
 
-#@mark.candlisttests
-#@mark.unit
+@mark.candlisttests
+@mark.unit
 class SpCclTests:
     """
     Tests to verify the functionality of the

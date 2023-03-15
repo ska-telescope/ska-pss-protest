@@ -17,10 +17,10 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import scenarios, given, when, then
 
-from pipeline import Cheetah
-from requester import VectorPull
-from fil import VHeader
-import candlist as cand
+from protest.pipeline import Cheetah
+from protest.requester import VectorPull
+from protest.fil import VHeader
+import protest.candlist as cand
 
 # pylint: disable=W0621,W0212
 
