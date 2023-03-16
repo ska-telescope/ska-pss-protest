@@ -1,0 +1,15 @@
+default:
+    - image: python:3.6
+
+stages:
+    - test
+
+before_script:
+    - pip install poetry
+    - poetry install
+    - source `poetry env info --path`/bin/activate
+
+test:
+    - stage: test 
+    - script:
+        - which python
