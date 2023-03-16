@@ -48,7 +48,7 @@ import os
 import tempfile
 from pytest import mark
 import pytest
-from protest.requester import VectorPull
+from protest.src.requester import VectorPull
 
 # pylint: disable=R0201,E1123,C0114,W1514
 

@@ -17,10 +17,10 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
 
-from protest.pipeline import Cheetah
-from protest.requester import VectorPull
-from protest.candidate import Filterbank
-from protest.fil import VHeader
+from protest.src.pipeline import Cheetah
+from protest.src.requester import VectorPull
+from protest.src.candidate import Filterbank
+from protest.src.fil import VHeader
 
 # pylint: disable=W0621,W0212
 
@@ -40,7 +40,7 @@ def config():
     Select a config file template, the values of which
     can be edited for this specific test
     """
-    template_path = "fixtures/examples/ingest_export.xml"
+    template_path = "tests/data/examples/ingest_export.xml"
     assert os.path.isfile(template_path)
     tree = et.parse(template_path)
 

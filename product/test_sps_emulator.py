@@ -17,10 +17,10 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import scenarios, given, when, then
 
-from protest.pipeline import Cheetah
-from protest.requester import VectorPull
-from protest.fil import VHeader
-import protest.candlist as cand
+from protest.src.pipeline import Cheetah
+from protest.src.requester import VectorPull
+from protest.src.fil import VHeader
+import protest.src.candlist as cand
 
 # pylint: disable=W0621,W0212
 
@@ -63,7 +63,7 @@ def config():
     Select a config file template, the values of which
     can be edited for this specific test
     """
-    template_path = "fixtures/examples/sps_pipeline_config_no_export.xml"
+    template_path = "tests/data/examples/sps_pipeline_config_no_export.xml"
     assert os.path.isfile(template_path)
     tree = et.parse(template_path)
 
