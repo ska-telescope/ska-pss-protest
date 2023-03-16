@@ -1,5 +1,5 @@
 default:
-    - image: python:3.6
+    image: python:3.6
 
 stages:
     - test
@@ -10,6 +10,6 @@ before_script:
     - source `poetry env info --path`/bin/activate
 
 test:
-    - stage: test 
-    - script:
-        - which python
+    stage: test 
+    script:
+      - which python
