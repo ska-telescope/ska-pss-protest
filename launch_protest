@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+usage () {
+    # Print usage information
+    echo ""
+    echo "Usage is ./launch_protest <test_type> <path to cheetah>"
+    echo "<test_type> options are:'"
+    echo "    'product' (requires <path>)"
+    echo "    'unit'"
+    echo "    'reqtests'"
+    echo "    'parsertests'"
+    echo "    'filtests'"
+    echo "    'pipeline'"
+    echo "    'candtests'"
+    echo "    'candlisttests'"
+    echo "    'all' (requires <path>)"
+    echo ""
+}
+
+arg_check () {
+    if [ -z "$*" ] ; then
+        echo "No test type supplied"
+        usage && exit 1
+    elif [ "$TEST_TYPE" == "-h" ] ; then
+        usage && exit 0
+    fi
+
+    case "$TEST_TYPE" in 
+        product|unit|reqtests|parsertests|filtests|pipeline|candtests|all) 
+            echo "TEST TYPE: $TEST_TYPE is valid" ;;
+        *)
+            usage && exit 1 ;;
+    esac
+}
+
+fail () {
+    echo ""
+    echo "Something went wrong during the virtual environment installation."
+    echo "Please check the error and try again."
+    echo ""
+    exit 1
+}
+
+# Receive arguments from user and check validity
+TEST_TYPE=$1
+EXE_PATH=$2
+arg_check "$TEST_TYPE"
+
+# Do we have python3?
+python3 --version > /dev/null || {
+    echo "python3 not available"
+    echo "Please install it and retry"
+    exit 1
+}
+
+# (Create and) start protest environment
+if ! [ -f  ~/.venvs/protest/bin/activate ] ; then
+    echo "Creating virtual env"
+    python3 -m venv ~/.venvs/protest || fail
+
+    echo "Starting virtual env"
+    source ~/.venvs/protest/bin/activate || fail
+
+    echo "Upgrading pip"
+    pip install --upgrade pip || fail
+
+    echo "Installing dependencies"
+    pip install -r requirements.txt || fail
+
+    echo "Installing protest"
+    pip install -e protest || fail
+
+    echo "PROTEST succesfully installed"
+else
+    echo "Starting virtual env for protest"
+    source ~/.venvs/protest/bin/activate || {
+        echo "Couldn't start PROTEST environment"
+        exit 1
+    }
+fi
+
+# Run requested tests
+if [ "$TEST_TYPE" == "product" ] ; then
+    echo "Running PSS product tests"
+    pytest -m "product" --path="$EXE_PATH" --capture=no --log-cli-level=INFO || {
+        deactivate
+        exit 1
+    }
+elif [ "$TEST_TYPE" == "all" ] ; then
+    echo "Running all tests"
+    pytest --path="$EXE_PATH" || {
+        deactivate
+        exit 1
+    }
+else
+    echo "Running tests: $TEST_TYPE"
+    pytest -m "$TEST_TYPE" || {
+        deactivate
+        exit 1
+    }
+fi
+
+# Tear down test environment
+echo "Tests completed - deactivating PROTEST"
+deactivate

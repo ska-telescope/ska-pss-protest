@@ -1,23 +1,20 @@
 [tool.poetry]
-name = "protest"
+name = "testpkg"
 version = "0.1.0"
 description = ""
 authors = ["Benjamin  Shaw <benjamin.shaw@manchester.ac.uk>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-numpy = "^1.24.2"
-requests = "^2.28.2"
-pytest = "^7.2.2"
-pytest-mock = "^3.10.0"
-logging = "^0.4.9.6"
-pytest-bdd = "^6.1.1"
+python = "^3.6"
+numpy = "1.19.5"
+requests = "2.27.1"
+pytest = "7.0.1"
+pytest-mock = "3.6.1"
+pytest-bdd = "5.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "7.0.1"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.pytest.ini_options]
-testpaths = "tests/"
-python_files = "test_*"
