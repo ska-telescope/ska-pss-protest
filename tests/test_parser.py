@@ -78,8 +78,8 @@ with open('tests/data/emulator_log.txt', encoding="utf8") as this_file:
 this_file.close()
 
 
-#@mark.unit
-#@mark.parsertests
+@mark.unit
+@mark.parsertests
 class ParserTests:
     """
     Tests to test the test framework itself.
