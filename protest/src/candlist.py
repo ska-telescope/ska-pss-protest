@@ -56,7 +56,7 @@
 import os
 import logging
 import numpy as np
-from protest.fil import VHeader
+from protest.src.fil import VHeader
 
 np.set_printoptions(precision=17)
 

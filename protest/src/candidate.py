@@ -64,7 +64,7 @@
 import os
 import logging
 import numpy as np
-from protest.fil import VHeader
+from protest.src.fil import VHeader
 
 
 logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
