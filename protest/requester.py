@@ -330,7 +330,7 @@ class VectorPull():
                 if self._compare_remote(this_path, remote_path):
                     self.local_path = this_path
                     return
-                logging.warning("{} and {} are different sizes. Pulling new version".format(this_path, remote_path))
+                logging.info("{} and {} are different sizes. Pulling new version".format(this_path, remote_path))
             else:
                 self.local_path = this_path
                 return
