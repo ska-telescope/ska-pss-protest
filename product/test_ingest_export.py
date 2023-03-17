@@ -17,10 +17,10 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
 
-from protest.src.pipeline import Cheetah
-from protest.src.requester import VectorPull
-from protest.src.candidate import Filterbank
-from protest.src.fil import VHeader
+from src.protest.pipeline import Cheetah
+from src.protest.requester import VectorPull
+from src.protest.candidate import Filterbank
+from src.protest.fil import VHeader
 
 # pylint: disable=W0621,W0212
 

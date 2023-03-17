@@ -52,9 +52,9 @@ import tempfile
 import shutil
 from pathlib import Path
 import pytest
-import protest.src.candlist as cand
-from protest.src.fil import VHeader
-from protest.src.requester import VectorPull
+import src.protest.candlist as cand
+from src.protest.fil import VHeader
+from src.protest.requester import VectorPull
 import numpy as np
 from pytest import mark
 

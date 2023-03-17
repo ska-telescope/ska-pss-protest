@@ -60,7 +60,7 @@
 
 import pytest
 from pytest import mark
-from protest.src.logparser import LogParse
+from src.protest.logparser import LogParse
 
 
 # pylint: disable=R0201,E1123,C0114

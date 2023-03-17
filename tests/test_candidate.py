@@ -49,8 +49,8 @@ import tempfile
 import shutil
 from pathlib import Path
 import pytest
-import protest.src.candidate as cand
-from protest.src.fil import VHeader
+import src.protest.candidate as cand
+from src.protest.fil import VHeader
 from pytest import mark
 
 # pylint: disable=R0201,R1732,W1514,E1120,W0621

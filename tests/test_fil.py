@@ -56,8 +56,8 @@
 
 from pytest import mark
 import pytest
-from protest.src.fil import VHeader
-from protest.src.requester import VectorPull
+from src.protest.fil import VHeader
+from src.protest.requester import VectorPull
 
 
 # pylint: disable=R0201,E1101,W0621
