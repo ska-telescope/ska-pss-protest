@@ -2,21 +2,21 @@
 
 ## A suite of applications for supporting end-to-end tests of the PSS pipeline
 
-### Testing the PSS pipeline using protest
+### Testing the PSS pipeline using ProTest
 
-The PSS Product testing framework (protest) consists of a set of "product" tests, supported by a number of python-based backend applications, for verifying that the PSS pipeline conforms to SKA requirements. protest can be installed and launched on any machine on which python3 is available. A set of unit tests are also including to test the functionality of protest itself. The underlying testing framework is pytest.
+The PSS Product testing framework (ProTest) consists of a set of "product" tests, supported by a number of python-based backend applications, for verifying that the PSS pipeline conforms to SKA requirements. ProTest can be installed and launched on any machine on which python3 is available. A set of unit tests are also including to test the functionality of ProTest itself. The underlying testing framework is pytest.
 
-In order to install protest, a ./launch\_protest script is provided which will
+In order to install ProTest, a ./launch\_protest script is provided which will
 
 * check that a compatible version of python is available
 * ensure that a suitable virtual environment exists (under /home/<user>/.venvs/protest)
 * install the required python packages using pip
 * install the testing framework into the virtual environment's site-packages/ directory
-* Activate the protest environment
+* Activate the ProTest environment
 * Run the required tests
-* Close the protest environment
+* Close the ProTest environment
 
-Tests are broadly divided into two types which can be executed separately by utilising pytest markers. Each test is marked according to its test type, e.g., "unit" (to run protest's unit tests) or product (to run the end-to-end product tests). Tests may be marked by multiple markers (e.g, unit and pipeline, to refer to the unit tests of protest's pipeline runner application). A full list of markers can be found in pytest.ini, or by passing "-h" to the launcher scripts.
+Tests are broadly divided into two types which can be executed separately by utilising pytest markers. Each test is marked according to its test type, e.g., "unit" (to run ProTest's unit tests) or product (to run the end-to-end product tests). Addtional markers are set according to the particular test set. For example, unit tests which test the functionality of the test vector requester are marked with 'reqtests' and could be called using that marker. Alternatively, to run the full suite of unit tests, one can simple use the 'unit' marker.  A full list of markers can be found in pytest.ini, or by passing "-h" to the launcher scripts.
 
 ```bash
 ./launch_protest -h
@@ -33,7 +33,7 @@ Usage is ./launch_protest <test_type> <path to cheetah>
     'all' (requires <path>)
 ```
 
-To execute all of protest's unit tests, we run
+To execute all of ProTest's unit tests, we run
 
 ```bash
 ./launch_protest unit
@@ -65,14 +65,14 @@ All of the unit tests have run and passed. A subset of them (e.g., those which t
 To run the end-to-end product tests (those which actually launch a PSS pipeline, the path to the directory containing the cheetah "pipelines" directory must be supplied in addition to the test type, e.g.,
 
 ```bash
-./launch_protest product /path/to/cheetah
+./launch_protest product /path/to/cheetah/dir
 ```
 
 which will produce output of the form...
 
 ```bash
 TEST TYPE: product is valid
-Starting virtual env for protest
+Starting virtual env for ProTest
 Running PSS product tests
 ========= test session starts ===============
 platform linux -- Python 3.6.8, pytest-7.0.1, pluggy-1.0.0
@@ -86,7 +86,7 @@ product/test_sps_emulator.py::test_detecting_fake_single_pulses PASSED          
 Tests completed - deactivating PROTEST
 ```
 
-### Manually installing protest
+### Manually installing ProTest
 
 A python3.6 or later, virtualenv is recommended.
 
@@ -96,10 +96,10 @@ Install dependencies
 pip install -r requirements.txt --no-cache-dir
 ```
 
-Install protest
+Install ProTest
 
 ```bash
-pip install -e protest --no-cache-dir
+pip install .
 ```
 
 Execute unit tests, calling pytest directly. Test markers can be specified using the "-m" flag. 
