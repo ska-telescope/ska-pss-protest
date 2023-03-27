@@ -1,0 +1,135 @@
+[
+    {
+        "type": "log",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:148",
+        "time": "1645102165",
+        "msg": "Creating Beams...."
+    },
+    {
+        "type": "log",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:171",
+        "time": "1645102165",
+        "msg": "Finished creating pipelines"
+    },
+    {
+        "type": "log",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:223",
+        "time": "1645102165",
+        "msg": "Starting Beam: 1"
+    },
+    {
+        "type": "log",
+        "tid": "139959992829696",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sps/detail/Sps.cpp:110",
+        "time": "1645102165",
+        "msg": "setting dedispersion buffer size to 131072 spectra"
+    },
+    {
+        "type": "log",
+        "tid": "139959992829696",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sps/detail/Sps.cpp:113",
+        "time": "1645102165",
+        "msg": "setting buffer overlap to 38 spectra"
+    },
+    {
+        "type": "log",
+        "tid": "139959992829696",
+        "src": "/raid/llevin/cheetah_panda/panda/dev/install/include/panda/detail/Pipeline.cpp:63",
+        "time": "1645102165",
+        "msg": "End of stream"
+    },
+    {
+        "type": "log",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:90",
+        "time": "1645102165",
+        "msg": "Stopping Beam: 1"
+    },
+    {
+        "type": "log",
+        "tid": "139960532658048",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/pipeline/detail/BeamLauncher.cpp:264",
+        "time": "1645102165",
+        "msg": "threads joined"
+    },
+    {
+        "type": "log",
+        "tid": "139960034793216",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/spsift/detail/SpSift.cpp:35",
+        "time": "1645102165",
+        "msg": "Total number of candidates: 10"
+    },
+    {
+        "type": "log",
+        "tid": "139960026400512",
+        "src": "/raid/llevin/cheetah_panda/panda/dev/checkout/panda/src/OutputFileStreamer.cpp:72",
+        "time": "1645102165",
+        "msg": "opening file /tmp/2013_03_01_15:13:40_4.spccl for writing"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    },
+    {
+        "type": "warn",
+        "tid": "139960018007808",
+        "src": "/raid/llevin/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/sigproc/detail/SigProcWriter.cpp:152",
+        "time": "1645102165",
+        "msg": "break in data stream: creating new file with updated parameters: expected:"
+    }
+]

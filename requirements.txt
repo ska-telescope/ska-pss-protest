@@ -1,0 +1,11 @@
+numpy==1.16.2 
+requests==2.26.0 
+pytest-mock 
+pytest-cov 
+pytest-html 
+pytest-repeat 
+pytest-bdd 
+pytest 
+pylint 
+pycodestyle
+

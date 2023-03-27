@@ -1,0 +1,1 @@
+[debug][tid=140464182232960][/raid/bshaw/cheetah_panda/cheetah/dev/checkout/cheetah/../cheetah/exporters/detail/DataExport.cpp:61][1643715909]Creating sink of type sp_candidate_data (id=candidate_files)

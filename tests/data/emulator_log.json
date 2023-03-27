@@ -1,0 +1,16 @@
+[
+    {
+        "type": "log",
+        "tid": "140383350372224",
+        "src": "/raid/bshaw/cheetah_panda/panda/dev/install/include/panda/detail/SocketConnectionImpl.cpp:203",
+        "time": "1643720826",
+        "msg": " setting remote endpoint:0.0.0.0:9029"
+    },
+    {
+        "type": "log",
+        "tid": "140383350372224",
+        "src": "/raid/bshaw/cheetah_panda/cheetah/dev/checkout/cheetah/emulator/src/emulator_main.cpp:63",
+        "time": "1643720826",
+        "msg": "emulator using generator: 'gaussian_noise'"
+    }
+]
