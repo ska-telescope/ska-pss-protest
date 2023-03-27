@@ -70,7 +70,7 @@ if ! [ -f  ~/.venvs/protest/bin/activate ] ; then
     pip install -r requirements.txt || fail
 
     echo "Installing protest"
-    pip install -e protest || fail
+    pip install . || fail
 
     echo "PROTEST succesfully installed"
 else
