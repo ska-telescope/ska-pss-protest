@@ -58,7 +58,7 @@ import logging
 import re
 import subprocess
 import numpy as np
-from src.protest._config import setup_pipeline
+from src.ska_pss_protest._config import setup_pipeline
 
 logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
                     datefmt='%Y-%m-%dT%I:%M:%S',

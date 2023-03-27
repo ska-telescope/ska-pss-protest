@@ -56,7 +56,7 @@
 import os
 import logging
 import numpy as np
-from src.protest.fil import VHeader
+from src.ska_pss_protest.fil import VHeader
 
 np.set_printoptions(precision=17)
 
