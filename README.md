@@ -62,7 +62,7 @@ All of the unit tests have run and passed. A subset of them (e.g., those which t
 ./launch_protest candtests
 ```
 
-To run the end-to-end product tests (those which actually launch a PSS pipeline, the path to the directory containing the cheetah "pipelines" directory must be supplied in addition to the test type, e.g.,
+To run the end-to-end product tests (those which actually launch a PSS pipeline, the path to the directory containing the cheetah "pipelines" directory must be supplied in addition to the test type. This directory is the top level of the build tree which contains sub-directories containing the executables corresponding to the systems under test. Currently these executables are pipelines/cheetah\_pipeline, emulators/cheetah\_emulator and candidate\_pipeline/cheetah\_candidate\_pipeline.
 
 ```bash
 ./launch_protest product /path/to/cheetah/dir
