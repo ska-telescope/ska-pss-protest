@@ -9,6 +9,6 @@ before_script:
     - pip install .
 
 test:
-    stage: test 
+    stage: test
     script:
-        - pytest -m unit
+        - pytest -m pipeline -c pytest.ini --ignore=src/ska_pss_protest/ --ignore=build
