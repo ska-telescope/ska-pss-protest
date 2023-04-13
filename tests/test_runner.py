@@ -66,7 +66,7 @@ import tempfile
 from pathlib import Path
 from pytest import mark
 import pytest
-from src.ska_pss_protest.pipeline import Cheetah
+from ska_pss_protest import Cheetah
 
 # pylint: disable=R0201,E1123,C0114,E1101,W0621,W0613,R0903
 

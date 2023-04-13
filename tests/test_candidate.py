@@ -49,8 +49,8 @@ import tempfile
 import shutil
 from pathlib import Path
 import pytest
-import src.ska_pss_protest.candidate as cand
-from src.ska_pss_protest.fil import VHeader
+import ska_pss_protest.candidate as cand
+from ska_pss_protest.fil import VHeader
 from pytest import mark
 
 # pylint: disable=R0201,R1732,W1514,E1120,W0621

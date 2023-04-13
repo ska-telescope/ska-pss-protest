@@ -48,7 +48,7 @@ import os
 import tempfile
 from pytest import mark
 import pytest
-from src.ska_pss_protest.requester import VectorPull
+from ska_pss_protest import VectorPull
 
 # pylint: disable=R0201,E1123,C0114,W1514
 

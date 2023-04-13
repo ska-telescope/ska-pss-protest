@@ -60,7 +60,7 @@
 
 import pytest
 from pytest import mark
-from src.ska_pss_protest.logparser import LogParse
+from ska_pss_protest import LogParse
 
 
 # pylint: disable=R0201,E1123,C0114
