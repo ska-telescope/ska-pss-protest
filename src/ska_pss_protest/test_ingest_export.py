@@ -7,7 +7,7 @@ as a "candidate" file that has the same duration. Cheetah will
 then run an an "empty" pipeline (a pipeline which does not
 conduct a search on the input data) and the properties of the
 exported candidate are compared to the properties of the input
-test vectors. 
+test vectors.
 """
 
 import os
@@ -17,10 +17,10 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import scenarios, given, when, then, parsers
 
-from src.ska_pss_protest.pipeline import Cheetah
-from src.ska_pss_protest.requester import VectorPull
-from src.ska_pss_protest.candidate import Filterbank
-from src.ska_pss_protest.fil import VHeader
+from ska_pss_protest import Cheetah
+from ska_pss_protest import VectorPull
+from ska_pss_protest import Filterbank
+from ska_pss_protest import VHeader
 
 # pylint: disable=W0621,W0212
 

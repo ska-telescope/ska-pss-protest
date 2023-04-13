@@ -1,4 +1,6 @@
 @product
+@sps
+@sps_emulator
 Feature: Sps emulator
     A simple emulator of SPS data products
 
