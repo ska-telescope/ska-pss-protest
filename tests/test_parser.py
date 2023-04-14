@@ -60,20 +60,20 @@
 
 import pytest
 from pytest import mark
-from ska_pss_protest import LogParse
 
+from ska_pss_protest import LogParse
 
 # pylint: disable=R0201,E1123,C0114
 
-with open('tests/data/parser_log.json', encoding="utf8") as this_file:
+with open("tests/data/parser_log.json", encoding="utf8") as this_file:
     parser_file = this_file.read()
 this_file.close()
 
-with open('tests/data/parser_log_error.json', encoding="utf8") as this_file:
+with open("tests/data/parser_log_error.json", encoding="utf8") as this_file:
     error_file = this_file.read()
 this_file.close()
 
-with open('tests/data/emulator_log.txt', encoding="utf8") as this_file:
+with open("tests/data/emulator_log.txt", encoding="utf8") as this_file:
     txt_file = this_file.read()
 this_file.close()
 

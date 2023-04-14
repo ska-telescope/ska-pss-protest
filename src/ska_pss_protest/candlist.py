@@ -53,21 +53,25 @@
     **************************************************************************
 """
 
-import os
 import logging
+import os
+
 import numpy as np
+
 from ska_pss_protest.fil import VHeader
 
 np.set_printoptions(precision=17)
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
 # pylint: disable=C0301,W1202,C0209,W0703,W0631,C0103
 
 
-class SpCcl():
+class SpCcl:
     """
     Parses metadata products from the single pulse search
     (SPS) pipeline.
@@ -79,6 +83,7 @@ class SpCcl():
     extention: str
         Expected file extention of SPS metadata file
     """
+
     def __init__(self, spccl_dir=None, extension=".spccl"):
 
         self.spccl_dir = spccl_dir
@@ -151,13 +156,16 @@ class SpCcl():
             cand_file = os.path.join(spccl_dir, files[0])
             logging.info("Detected candidates found at: {}".format(cand_file))
         else:
-            raise IOError("Expected 1 file in {} \
-                    with extension {}. Found {}".format(spccl_dir, ext, len(files)))
+            raise IOError(
+                "Expected 1 file in {} \
+                    with extension {}. Found {}".format(
+                    spccl_dir, ext, len(files)
+                )
+            )
         # If one file is found, load as array and return
-        cand_metadata = np.loadtxt(cand_file,
-                                   unpack=False,
-                                   skiprows=1,
-                                   dtype=np.float64).tolist()
+        cand_metadata = np.loadtxt(
+            cand_file, unpack=False, skiprows=1, dtype=np.float64
+        ).tolist()
         if len(cand_metadata) == 0:
             raise Exception("Candidate list {} empty".format(cand_file))
 
@@ -204,14 +212,17 @@ class SpCcl():
         # the peak occurs at the mid-point of the pulse period so the
         # sample of the peak of a reference pulse is half a period
         # later than PEPOCH
-        fiducial_sample = int(samples_per_period/2)
+        fiducial_sample = int(samples_per_period / 2)
 
         # Convert into a fiducial time
-        fiducial_time = ((fiducial_sample * vector.tsamp())/86400) \
-            + start_time  # MJD
+        fiducial_time = (
+            (fiducial_sample * vector.tsamp()) / 86400
+        ) + start_time  # MJD
 
         # Compute DM offset
-        dm_offset =  (4.15e6 *  ((vector.fch1())**(-2)) * disp) / 1000 / 86400 #days
+        dm_offset = (
+            (4.15e6 * ((vector.fch1()) ** (-2)) * disp) / 1000 / 86400
+        )  # days
         fiducial_time = fiducial_time + dm_offset
 
         # Compute pulse period
@@ -267,12 +278,12 @@ class SpCcl():
         logging.info("Extracting pulse data from {}".format(vector))
 
         # Split path and extension from vector filename
-        basename = os.path.splitext(os.path.basename(vector))[0].split('_')
+        basename = os.path.splitext(os.path.basename(vector))[0].split("_")
 
         # Determine signal properties from name of vector
         freq = float(basename[2])
-        period = 1/freq
-        width = float(basename[3]) * period * 1000  #microseconds
+        period = 1 / freq
+        width = float(basename[3]) * period * 1000  # microseconds
         disp = float(basename[4])
 
         # Folded S/N and S/N per pulse
@@ -314,18 +325,18 @@ class SpCcl():
         if not self._check_file(spccl_file):
             raise FileNotFoundError("No such file {}".format(spccl_file))
         try:
-            cand_metadata = np.loadtxt(spccl_file,
-                                       unpack=False,
-                                       skiprows=0,
-                                       dtype=np.float64).tolist()
+            cand_metadata = np.loadtxt(
+                spccl_file, unpack=False, skiprows=0, dtype=np.float64
+            ).tolist()
         except ValueError:
             try:
-                cand_metadata = np.loadtxt(spccl_file,
-                                           unpack=False,
-                                           skiprows=1,
-                                           dtype=np.float64).tolist()
+                cand_metadata = np.loadtxt(
+                    spccl_file, unpack=False, skiprows=1, dtype=np.float64
+                ).tolist()
             except ValueError as exc:
-                raise ValueError("File {} contains invalid types".format(spccl_file)) from exc
+                raise ValueError(
+                    "File {} contains invalid types".format(spccl_file)
+                ) from exc
 
         self.expected = cand_metadata
 
@@ -407,10 +418,12 @@ class SpCcl():
             if not detected:
                 # Does the detected value of each parameter match that of
                 # the known signal, with the tolerances set by the rules?
-                if (cand[3] >= rules.min_sn and
-                        np.abs(exp[1] - cand[1]) <= rules.dm_tol and
-                        np.abs(exp[2] - cand[2]) <= rules.width_tol / 1000 and
-                        np.abs(exp[0] - cand[0]) <= rules.timestamp_tol):
+                if (
+                    cand[3] >= rules.min_sn
+                    and np.abs(exp[1] - cand[1]) <= rules.dm_tol
+                    and np.abs(exp[2] - cand[2]) <= rules.width_tol / 1000
+                    and np.abs(exp[0] - cand[0]) <= rules.timestamp_tol
+                ):
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
                     detected = True
@@ -420,7 +433,7 @@ class SpCcl():
         return False
 
 
-class DmTol():
+class DmTol:
     """
     Class to compute the tolerances on the single pulses using
     analytically derived values assuming the only source of
@@ -504,7 +517,9 @@ class DmTol():
         period : float
             Period of the pulsar (us)
         """
-        self.weff = w_int * period / (self.sn_thresh**2.0 * (period - w_int) + w_int)
+        self.weff = (
+            w_int * period / (self.sn_thresh**2.0 * (period - w_int) + w_int)
+        )
         tol = np.abs(self.weff - w_int)
         self.width_tol = tol
 
@@ -524,7 +539,7 @@ class DmTol():
         # Compute frequency information
         fch_low = self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"]
         bandwidth = self.pars["fch1"] - fch_low
-        f_cent = (fch_low + (bandwidth/2.0)) / 1000
+        f_cent = (fch_low + (bandwidth / 2.0)) / 1000
 
         # Convert sample interval to microseconds
         tsamp = self.pars["tsamp"] / 1e-06
@@ -532,8 +547,9 @@ class DmTol():
         # Compute DM tolerance
         term1 = 4 * f_cent**3.0 / (8.3 * bandwidth)
         term2 = 8.3 * bandwidth * disp / (self.pars["nchans"] * f_cent**3.0)
-        this_dm_tol = term1 \
-            * np.sqrt(self.weff**2.0 - tsamp**2.0 - wint**2.0 - term2**2.0)
+        this_dm_tol = term1 * np.sqrt(
+            self.weff**2.0 - tsamp**2.0 - wint**2.0 - term2**2.0
+        )
 
         self.dm_tol = this_dm_tol
 
@@ -541,6 +557,6 @@ class DmTol():
         """
         Returns a timestamp tolerance in days
         """
-        tol_us = self.weff / (2.0 * np.sqrt(2.0*np.log(2.0)))
+        tol_us = self.weff / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         tol_s = tol_us * 1e-06
         self.timestamp_tol = tol_s / 86400

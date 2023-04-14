@@ -57,34 +57,32 @@ import json
 import logging
 import re
 import subprocess
+
 import numpy as np
+
 from ska_pss_protest._config import setup_pipeline
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
-class Cheetah():
+
+class Cheetah:
     """
     Sets up and deploys PSS pipeline with the
     relevant input parameters and provides logs
     """
 
-    def __init__(self,
-                 binary,
-                 config,
-                 source=None,
-                 pipeline=None,
-                 build_dir=None):
+    def __init__(
+        self, binary, config, source=None, pipeline=None, build_dir=None
+    ):
 
         # Check all inputs make sense,
         # returning the path to the
         # executable if so.
-        self.exec = setup_pipeline(binary,
-                                   config,
-                                   source,
-                                   pipeline,
-                                   build_dir)
+        self.exec = setup_pipeline(binary, config, source, pipeline, build_dir)
 
         self.pipeline = pipeline
         self.config = config
@@ -110,8 +108,7 @@ class Cheetah():
 
         # Set the --config argument to ./cheetah
         this_config = "--config=" + self.config
-        command = [self.exec,
-                   this_config]
+        command = [self.exec, this_config]
 
         # Does the command need to specify a pipeline?
         if self.pipeline:
@@ -143,14 +140,12 @@ class Cheetah():
         # Set debug policy
         if debug:
             command = np.append(command, "--log-level=debug")
-        logging.info("Command is: {}" .format(' '.join(command)))
+        logging.info("Command is: {}".format(" ".join(command)))
 
         # Spawn cheetah as a child process
         child = subprocess.Popen(
-            command.tolist(),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-            )
+            command.tolist(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         try:
             # Process should complete on its own
             out, err = child.communicate(timeout=timeout)
@@ -205,10 +200,10 @@ class Cheetah():
         data_out = []
         for line in fields:
             line_dict = {}
-            if line.startswith('['):
-                metadata = re.findall(r'\[(.+?)\]', line)
+            if line.startswith("["):
+                metadata = re.findall(r"\[(.+?)\]", line)
                 line_dict["type"] = metadata[0]
-                line_dict["tid"] = metadata[1].replace('tid=', '')
+                line_dict["tid"] = metadata[1].replace("tid=", "")
                 line_dict["src"] = metadata[2]
                 line_dict["time"] = metadata[3]
                 line_dict["msg"] = line.split("]")[-1]

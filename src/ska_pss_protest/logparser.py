@@ -70,18 +70,19 @@ from typing import Union
 
 # pylint: disable=W1202
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
 
-class LogParse():
+class LogParse:
     """
     Class docstring
     """
 
-    def __init__(self,
-                 logs=None):
+    def __init__(self, logs=None):
         self.logs = self._check_logs(logs)
 
     @staticmethod

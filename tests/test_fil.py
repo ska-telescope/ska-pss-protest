@@ -54,11 +54,10 @@
     **************************************************************************
 """
 
-from pytest import mark
 import pytest
-from ska_pss_protest import VHeader
-from ska_pss_protest import VectorPull
+from pytest import mark
 
+from ska_pss_protest import VectorPull, VHeader
 
 # pylint: disable=R0201,E1101,W0621
 
@@ -72,7 +71,9 @@ def get_vector():
     Vector is cleared from disk after tests have run.
     """
     vector = VectorPull()
-    vector.from_name("FDAS-HSUM-MID_38d46df_500.0_0.4_1.0_0.0_Gaussian_50.0_123123123.fil")
+    vector.from_name(
+        "FDAS-HSUM-MID_38d46df_500.0_0.4_1.0_0.0_Gaussian_50.0_123123123.fil"
+    )
     yield vector
 
 
