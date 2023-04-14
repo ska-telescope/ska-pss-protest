@@ -1,2 +1,3 @@
 */__pycache__/
 *.pyc
+src/ska_pss_protest/.pytest_cache
