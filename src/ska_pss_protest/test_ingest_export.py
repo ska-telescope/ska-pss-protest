@@ -26,6 +26,8 @@ from ska_pss_protest import VHeader
 
 scenarios('features/ingest_export.feature')
 
+DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+
 @pytest.fixture(scope='function')
 def context():
     """
@@ -40,7 +42,8 @@ def config():
     Select a config file template, the values of which
     can be edited for this specific test
     """
-    template_path = "tests/data/examples/ingest_export.xml"
+    template_path = os.path.join(DATA_DIR,
+                                 "config_templates/ingest_export.xml")
     assert os.path.isfile(template_path)
     tree = et.parse(template_path)
 
