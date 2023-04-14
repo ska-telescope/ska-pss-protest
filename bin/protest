@@ -40,7 +40,7 @@ class ProTest():
         pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
         print('Running pytest', ' '.join(pytest_args))
 
-        pytest.main(pytest_args)
+        sys.exit(pytest.main(pytest_args))
 
 def main():
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
