@@ -71,7 +71,8 @@ from typing import Union
 # pylint: disable=W1202
 
 logging.basicConfig(
-    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
     datefmt="%Y-%m-%dT%I:%M:%S",
     level=logging.INFO,
 )

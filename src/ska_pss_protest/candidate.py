@@ -69,7 +69,8 @@ import numpy as np
 from ska_pss_protest.fil import VHeader
 
 logging.basicConfig(
-    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
     datefmt="%Y-%m-%dT%I:%M:%S",
     level=logging.INFO,
 )
@@ -188,7 +189,8 @@ class Filterbank:
         truth = open(truth_vector, "rb")
         truth.seek(truth_header.header_size())
 
-        # Get candidate header size, open file, and seek to that position in stream
+        # Get candidate header size, open file,
+        # and seek to that position in stream
         candidate_header_size = header.header_size()
         this_candidate = open(self.files[0], "rb")
         this_candidate.seek(candidate_header_size)
@@ -196,7 +198,7 @@ class Filterbank:
         # Check number of channels match  between files
         if header.nchans() != truth_header.nchans():
             raise IndexError(
-                "Filterbanks have different numbers of channels. {} vs. {}".format(
+                "Filterbanks have different numbers of channels. {} vs. {}".format(  # noqa
                     header.nchans(), truth_header.nchans()
                 )
             )

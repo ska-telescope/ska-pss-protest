@@ -114,7 +114,8 @@ import os
 import numpy as np
 
 logging.basicConfig(
-    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
     datefmt="%Y-%m-%dT%I:%M:%S",
     level=logging.INFO,
 )
@@ -180,7 +181,7 @@ class VHeader:
         nchar = np.fromfile(infile, dtype=np.int32, count=1)[0]
         if nchar < 1 or nchar > 80:
             raise Exception(
-                "Cannot parse filterbank header (Nchar was {} when reading string).".format(
+                "Cannot parse filterbank header (Nchar was {} when reading string).".format(  # noqa
                     nchar
                 )
             )
@@ -207,7 +208,7 @@ class VHeader:
                 "sig": float(basename[7]),
             }
             return signal_pars
-        except:
+        except Exception:
             logging.info("Non-standard vector: skipping signal extraction")
             return {}
 
@@ -243,7 +244,7 @@ class VHeader:
                     bytes_read += 1
                 else:
                     raise Exception(
-                        "Cannot parse filterbank header, key '{}' not understood".format(
+                        "Cannot parse filterbank header, key '{}' not understood".format(  # noqa
                             key
                         )
                     )
@@ -350,7 +351,6 @@ class VHeader:
         """
         Returns the duration of the observation in seconds
         """
-        file_size = VHeader._get_size(self.path)
         duration = (
             (self.total_size() - self.header_size()) / self.nchans()
         ) * self.tsamp()
@@ -361,7 +361,6 @@ class VHeader:
         Returns the size of the data component of
         the filterbank.
         """
-        file_size = VHeader._get_size(self.path)
         data_size = self.total_size() - self.header_size()
         return data_size
 

@@ -11,7 +11,6 @@ correctly.
 # pylint: disable=C0209
 
 import os
-import sys
 
 # Cheetah build directory can be set here
 BUILD_DIR = None

@@ -78,7 +78,8 @@ from typing import Union
 import requests
 
 logging.basicConfig(
-    format="1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
     datefmt="%Y-%m-%dT%I:%M:%S",
     level=logging.INFO,
 )
@@ -339,7 +340,7 @@ class VectorPull:
                     self.local_path = this_path
                     return
                 logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(
+                    "{} and {} are different sizes. Pulling new version".format(  # noqa
                         this_path, remote_path
                     )
                 )
@@ -385,7 +386,7 @@ class VectorPull:
                     self.local_path = this_path
                     return
                 logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(
+                    "{} and {} are different sizes. Pulling new version".format(  # noqa
                         this_path, vector_url
                     )
                 )
