@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import ska_pss_protest
+import pytest
+import argparse
+import os
+
+class ProTest():
+    def __init__(self, path, mark="product"):
+        self.path = path
+
+        # Obtain path of protest
+        self.src = os.path.dirname(ska_pss_protest.__file__)
+
+        self.run()
+
+    def run(self):
+        retcode = pytest.main(["-h"])
+
+def main():
+    parser = argparse.ArgumentParser(description="Run PSS Product Tests")
+    parser.add_argument('-p', '--path', help='Path to cheetah build tree', required=True)
+    parser.add_argument('-m', '--mark', help='Marker of test type to execute (def=product)', required=False)
+    args = parser.parse_args()
+
+    protest = ProTest(args.path)
+    protest.run()
+
+if __name__ == "__main__":
+    main()
+
