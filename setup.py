@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
+with open('VERSION.txt') as version_file:
+        version = version_file.read()
+
 setup(
     name = 'ska_pss_protest',
-    version = '0.0.8',
+    version = version,
     description = 'SKA PSS Product Testing Framework',
     url = 'https://gitlab.com/ska-telescope/pss/ska-pss-protest',
     author = 'Benjamin Shaw, Lina Levin Preston',
