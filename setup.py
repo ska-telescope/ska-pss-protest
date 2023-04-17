@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = 'pss_protest_578390257',
-    version = '0.0.7',
-    description = 'SKA PSS Product Testing Framework test libraries',
-    url = 'https://gitlab.com/',
-    author = 'Benjamin Shaw',
-    author_email = 'ben@perfectsquares.net',
+    name = 'ska_pss_protest',
+    version = '0.0.8',
+    description = 'SKA PSS Product Testing Framework',
+    url = 'https://gitlab.com/ska-telescope/pss/ska-pss-protest',
+    author = 'Benjamin Shaw, Lina Levin Preston',
+    author_email = 'benjamin.shaw@manchester.ac.uk, lina.preston@manchester.ac.uk',
     license = 'BSD 2-clause',
     packages = find_packages(where="src"),
     package_dir = {"": "src"},
@@ -20,7 +20,14 @@ setup(
                       'pytest-bdd',
                       'pytest'
                       ],
-
+    extras_require = {
+        'dev': ['black',
+                'isort',
+                'flake8',
+                'pylint',
+                'pylint-junit'
+                ]
+        },
     classifiers=[
         'Programming Language :: Python :: 3.6',
     ],
