@@ -4,12 +4,14 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-  - lint
+  - test
 
 include:
   # Python lint and test jobs
+  #- project: 'ska-telescope/templates-repository'
+  #  file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
   - project: 'ska-telescope/templates-repository'
-    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+    file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
 
 #default:
 #    image: python:3.6
