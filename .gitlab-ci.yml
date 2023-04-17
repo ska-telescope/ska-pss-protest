@@ -12,18 +12,3 @@ include:
   #  file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
-
-#default:
-#    image: python:3.6
-#
-#stages:
-#    - test
-#
-#before_script:
-#    - pip install --upgrade pip
-#    - pip install .
-#
-#test:
-#    stage: test
-#    script:
-##        - pytest -m unit -c pytest.ini --ignore=src/ska_pss_protest/ --ignore=build
