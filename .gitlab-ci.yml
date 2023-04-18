@@ -12,8 +12,9 @@ lint:
   image: python:3.6
   before_script:
     - pip install --upgrade pip
+    - pip install .[dev]
   script:
-    - echo "Linting...."
+    - isort --check-only --profile black --line-length 79  src/ tests/
 
 include:
   # Python test jobs
