@@ -14,7 +14,10 @@ lint:
     - pip install --upgrade pip
     - pip install .[dev]
   script:
-    - isort --check-only --profile black --line-length 79  src/ tests/
+    - isort --check-only --profile black src/ tests/
+    - black --check src/ tests/
+    - flake8 --show-source --statistics src/ tests/
+    - pylint --output-format=parseable src/ tests/ | tee build/code_analysis.stdout
 
 include:
   # Python test jobs
