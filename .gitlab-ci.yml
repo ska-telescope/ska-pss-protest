@@ -8,12 +8,12 @@ stages:
   - test
 
 lint:
-  - stage: lint
-  - image: python:3.6
-  - before_script:
-      - pip install --upgrade pip
-  - script:
-      - echo "Linting...."
+  stage: lint
+  image: python:3.6
+  before_script:
+    - pip install --upgrade pip
+  script:
+    - echo "Linting...."
 
 include:
   # Python test jobs
