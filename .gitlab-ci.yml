@@ -6,6 +6,7 @@ variables:
 stages:
   - lint
   - test
+  - scan
 
 lint:
   stage: lint
@@ -17,9 +18,11 @@ lint:
     - isort --check-only --profile black src/ tests/
     - black --check --line-length 79 src/ tests/
     - flake8 --show-source --statistics src/ tests/
-    - pylint --output-format=parseable src/ tests/ | tee build/code_analysis.stdout
 
 include:
   # Python test jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
+  # Python scan jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-scan.gitlab-ci.yml'
