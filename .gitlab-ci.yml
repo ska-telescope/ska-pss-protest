@@ -4,11 +4,18 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
+  - lint
   - test
 
+lint:
+  - stage: lint
+  - image: python:3.6
+  - before_script:
+      - pip install --upgrade pip
+  - script:
+      - echo "Linting...."
+
 include:
-  # Python lint and test jobs
-  #- project: 'ska-telescope/templates-repository'
-  #  file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
+  # Python test jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
