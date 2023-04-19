@@ -1,15 +1,64 @@
 #!/usr/bin/env python
 
+"""
+    **************************************************************************
+    |                                                                        |
+    |                   PSS ProTest entrypoint script                        |
+    |                                                                        |
+    **************************************************************************
+    | Description: This file is a command line entrypoint to ProTest -       |
+    | the PSS end-to-end product testing framework.                          |
+    **************************************************************************
+    | Author: Benjamin Shaw                                                  |
+    | Email : benjamin.shaw@manchester.ac.uk                                 |
+    **************************************************************************
+    | usage: protest [-h] -p PATH [-m MARK]                                  |
+    |                                                                        |
+    | Run PSS Product Tests                                                  |
+    |                                                                        |
+    | optional arguments:                                                    |
+    |  -h, --help            show this help message and exit                 |
+    |  -p PATH, --path PATH  Path to cheetah build tree                      |
+    |  -m MARK, --mark MARK  Marker of test type to execute (def=product)    |
+    |                                                                        |
+    **************************************************************************
+    | License:                                                               |
+    |                                                                        |
+    | Copyright 2023 SKA Organisation                                        |
+    |                                                                        |
+    |Redistribution and use in source and binary forms, with or without      |
+    |modification, are permitted provided that the following conditions are  |
+    |met:                                                                    |
+    |                                                                        |
+    |1. Redistributions of source code must retain the above copyright       |
+    |notice,                                                                 |
+    |this list of conditions and the following disclaimer.                   |
+    |                                                                        |
+    |2. Redistributions in binary form must reproduce the above copyright    |
+    |notice, this list of conditions and the following disclaimer in the     |
+    |documentation and/or other materials provided with the distribution.    |
+    |                                                                        |
+    |3. Neither the name of the copyright holder nor the names of its        |
+    |contributors may be used to endorse or promote products derived from    |
+    |this                                                                    |
+    |software without specific prior written permission.                     |
+    **************************************************************************
+"""
+
 import argparse
 import os
 import sys
 
 import pytest
-
 import ska_pss_protest
 
 
-class ProTest():
+class ProTest:
+    """
+    Class to call pytest in order to launch
+    PSS product tests
+    """
+
     def __init__(self, path, mark="product"):
 
         # Verify test type
@@ -25,14 +74,25 @@ class ProTest():
 
     @staticmethod
     def verify_type(mark):
+        """
+        Private method to verify that the product
+        test type requested is valid
+
+        Parameters
+        ----------
+        mark : str
+            The test type to be executed
+        """
 
         test_types = ["product"]
 
         if mark not in test_types:
-            raise Exception("Test type {} not found".format(mark))
+            raise Exception(f"Test type {mark} not found")
 
     def run(self):
-
+        """
+        Main method
+        """
         # Get path to pytest.ini
         ini_path = os.path.join(self.src, "pytest.ini")
 
@@ -40,19 +100,30 @@ class ProTest():
         pss_path = "--path=" + self.path
 
         pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
-        print('Running pytest', ' '.join(pytest_args))
+        print("Running pytest", " ".join(pytest_args))
 
         sys.exit(pytest.main(pytest_args))
 
+
 def main():
+    """
+    Entrypoint method
+    """
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
-    parser.add_argument('-p', '--path', help='Path to cheetah build tree', required=True)
-    parser.add_argument('-m', '--mark', help='Marker of test type to execute (def=product)', required=False)
+    parser.add_argument(
+        "-p", "--path", help="Path to cheetah build tree", required=True
+    )
+    parser.add_argument(
+        "-m",
+        "--mark",
+        help="Marker of test type to execute (def=product)",
+        required=False,
+    )
     args = parser.parse_args()
 
     protest = ProTest(args.path, args.mark)
     protest.run()
 
+
 if __name__ == "__main__":
     main()
-
