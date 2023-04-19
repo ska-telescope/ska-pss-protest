@@ -7,7 +7,7 @@ stages:
   - lint
   - test
   - scan
-  - publish
+  - build
 
 lint:
   stage: lint
@@ -27,5 +27,9 @@ include:
   # Python scan jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-scan.gitlab-ci.yml'
+  # Python build jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-build.gitlab-ci.yml'
+  # Python release jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-publish.gitlab-ci.yml'
