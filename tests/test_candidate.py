@@ -45,17 +45,22 @@
 """
 
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
+
 import pytest
-import src.ska_pss_protest.candidate as cand
-from src.ska_pss_protest.fil import VHeader
 from pytest import mark
+
+import ska_pss_protest.candidate as cand
+from ska_pss_protest.fil import VHeader
 
 # pylint: disable=R0201,R1732,W1514,E1120,W0621
 
-DATA_DIR = os.path.join(Path(os.path.abspath(__file__)).parents[1],  "tests/data/sigproc")
+DATA_DIR = os.path.join(
+    Path(os.path.abspath(__file__)).parents[1], "tests/data/sigproc"
+)
+
 
 @mark.candtests
 @mark.unit
@@ -128,7 +133,7 @@ class CandidateTests:
         assert len(parser.headers) == 2
         for header in parser.headers:
             assert isinstance(header, VHeader)
-            assert header.fch1()  == 1670.0
+            assert header.fch1() == 1670.0
             assert header.nchans() == 16
             assert header.nbits() == 8
             assert header.chbw() == -20.0
@@ -144,7 +149,9 @@ class CandidateTests:
         with pytest.raises(ValueError):
             parser.compare_data(os.path.join(cand_dir, "candidate_1.fil"), 0)
         with pytest.raises(TypeError):
-            parser.compare_data(os.path.join(cand_dir, "candidate_1.fil"), "sdfsf")
+            parser.compare_data(
+                os.path.join(cand_dir, "candidate_1.fil"), "sdfsf"
+            )
 
     def test_compare_data_number_of_files(self):
         """
@@ -164,7 +171,9 @@ class CandidateTests:
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
         parser = cand.Filterbank(cand_dir)
-        parser.compare_data(os.path.join(cand_dir, "2012_03_14_00:00:00.fil"), 1024)
+        parser.compare_data(
+            os.path.join(cand_dir, "2012_03_14_00:00:00.fil"), 1024
+        )
         assert parser.result is True
 
     def test_compare_data_mismatch(self):
@@ -174,5 +183,10 @@ class CandidateTests:
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
         parser = cand.Filterbank(cand_dir)
-        parser.compare_data(os.path.join(DATA_DIR, "multiple_candidates/2012_03_14_00:00:00_1.fil"), 1024)
+        parser.compare_data(
+            os.path.join(
+                DATA_DIR, "multiple_candidates/2012_03_14_00:00:00_1.fil"
+            ),
+            1024,
+        )
         assert parser.result is False

@@ -57,21 +57,25 @@
 
 
 import json
-import os, sys
+import os
 import shutil
 import stat
 import subprocess
 import tempfile
-
 from pathlib import Path
-from pytest import mark
+
 import pytest
-from src.ska_pss_protest.pipeline import Cheetah
+from pytest import mark
+
+from ska_pss_protest import Cheetah
 
 # pylint: disable=R0201,E1123,C0114,E1101,W0621,W0613,R0903
 
-DATA_DIR = os.path.join(Path(os.path.abspath(__file__)).parents[1],  "tests/data")
+DATA_DIR = os.path.join(
+    Path(os.path.abspath(__file__)).parents[1], "tests/data"
+)
 SPS_CONFIG = "tests/data/examples/sps_pipeline_config.xml"
+
 
 @pytest.fixture(scope="function")
 def resource():
@@ -79,15 +83,17 @@ def resource():
     Fixture to set up a fake "cheetah" executable
     for mocking subprocess calls
     """
+
     def _setup(module, binary):
         build = tempfile.mkdtemp()
         module = os.path.join(build, module)
         os.mkdir(module)
         executable = os.path.join(module, binary)
-        open(executable, 'a', encoding="utf8").close()
+        open(executable, "a", encoding="utf8").close()
         attr = os.stat(executable)
         os.chmod(executable, attr.st_mode | stat.S_IEXEC)
         return build, executable
+
     return _setup
 
 
@@ -107,15 +113,12 @@ class RunnerTests:
         is not set, raise exception.
         """
         try:
-            del os.environ['CHEETAH_BUILD']
+            del os.environ["CHEETAH_BUILD"]
         except KeyError:
             pass
 
         with pytest.raises(EnvironmentError):
-            Cheetah("cheetah_pipeline",
-                    SPS_CONFIG,
-                    "sigproc",
-                    "SinglePulse")
+            Cheetah("cheetah_pipeline", SPS_CONFIG, "sigproc", "SinglePulse")
 
     def test_no_executable(self, resource):
         """
@@ -124,10 +127,13 @@ class RunnerTests:
         """
         build, _ = resource("pipeline", "cheetah_pipeline")
         with pytest.raises(EnvironmentError):
-            Cheetah("cheet_pipeline",
-                    SPS_CONFIG,
-                    "sigproc",
-                    "SinglePulse", build_dir=build)
+            Cheetah(
+                "cheet_pipeline",
+                SPS_CONFIG,
+                "sigproc",
+                "SinglePulse",
+                build_dir=build,
+            )
         shutil.rmtree(build)
 
     def test_build_dir_not_found(self):
@@ -136,11 +142,13 @@ class RunnerTests:
         raise exception.
         """
         with pytest.raises(FileNotFoundError):
-            Cheetah("cheetah_pipeline",
-                    SPS_CONFIG,
-                    "sigproc",
-                    "SinglePulse",
-                    build_dir="/tmp/some_dir/")
+            Cheetah(
+                "cheetah_pipeline",
+                SPS_CONFIG,
+                "sigproc",
+                "SinglePulse",
+                build_dir="/tmp/some_dir/",
+            )
 
     def test_invalid_pipeline(self, resource):
         """
@@ -149,11 +157,13 @@ class RunnerTests:
         """
         build, _ = resource("pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
-            Cheetah("cheetah_pipeline",
-                    SPS_CONFIG,
-                    "sigproc",
-                    "XXXXXX",
-                    build_dir=build)
+            Cheetah(
+                "cheetah_pipeline",
+                SPS_CONFIG,
+                "sigproc",
+                "XXXXXX",
+                build_dir=build,
+            )
         shutil.rmtree(build)
 
     def test_invalid_source(self, resource):
@@ -163,11 +173,13 @@ class RunnerTests:
         """
         build, _ = resource("pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
-            Cheetah("cheetah_pipeline",
-                    SPS_CONFIG,
-                    "XXXXX",
-                    "SinglePulse",
-                    build_dir=build)
+            Cheetah(
+                "cheetah_pipeline",
+                SPS_CONFIG,
+                "XXXXX",
+                "SinglePulse",
+                build_dir=build,
+            )
         shutil.rmtree(build)
 
     def test_no_exec_permission(self, resource):
@@ -185,22 +197,26 @@ class RunnerTests:
 
         # Check we raise a permission error if we can't execute cheetah
         with pytest.raises(PermissionError):
-            Cheetah("cheetah_pipeline",
-                    SPS_CONFIG,
-                    "sigproc",
-                    "SinglePulse",
-                    build_dir=build)
+            Cheetah(
+                "cheetah_pipeline",
+                SPS_CONFIG,
+                "sigproc",
+                "SinglePulse",
+                build_dir=build,
+            )
 
         shutil.rmtree(build)
 
     def test_no_config_file(self, resource):
         build, _ = resource("pipeline", "cheetah_pipeline")
         with pytest.raises(FileNotFoundError):
-            Cheetah("cheetah_pipeline",
-                    "fake_config_file.xml",
-                    "sigproc",
-                    "SinglePulse",
-                    build_dir=build)
+            Cheetah(
+                "cheetah_pipeline",
+                "fake_config_file.xml",
+                "sigproc",
+                "SinglePulse",
+                build_dir=build,
+            )
         shutil.rmtree(build)
 
     def test_subprocess_call_to_cheetah_pipeline(self, mocker, resource):
@@ -213,98 +229,143 @@ class RunnerTests:
         build, executable = resource("pipeline", "cheetah_pipeline")
 
         # Set cheetah log messages
-        cheetah_log = open(os.path.join(DATA_DIR,
-            "cheetah_pipeline_log.txt"), 'r', encoding="utf8").read().encode()
+        cheetah_log = (
+            open(
+                os.path.join(DATA_DIR, "cheetah_pipeline_log.txt"),
+                "r",
+                encoding="utf8",
+            )
+            .read()
+            .encode()
+        )
 
-        class ChildStub():
+        class ChildStub:
             """
             Mocks call to child process
             """
+
             returncode = -9
 
             def communicate(self, timeout):
                 """
                 Emulate subprocess.communicate()
                 """
-                return(cheetah_log, b'')
+                return (cheetah_log, b"")
 
         # Intercept call to subprocess with child_stub()
-        mocker.patch('subprocess.Popen')
+        mocker.patch("subprocess.Popen")
         subprocess.Popen.side_effect = [ChildStub()]
 
         # Instantiate "cheetah pipeline" and run it
-        cheetah = Cheetah("cheetah_pipeline",
-                          SPS_CONFIG,
-                          "sigproc",
-                          "SinglePulse",
-                          build_dir=build)
+        cheetah = Cheetah(
+            "cheetah_pipeline",
+            SPS_CONFIG,
+            "sigproc",
+            "SinglePulse",
+            build_dir=build,
+        )
         cheetah.run(debug=True)
 
         # Load parsed cheetah logs fixture
-        dummy_parsed = json.load(open(os.path.join(DATA_DIR,
-            "cheetah_pipeline_log.json")))
+        dummy_parsed = json.load(
+            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"))
+        )
 
         # Test log parser returns content expected
         assert json.loads(cheetah.logs) == dummy_parsed
 
         # Test the subprocess call
-        subprocess.Popen.assert_called_once_with([executable,
-            '--config=tests/data/examples/sps_pipeline_config.xml',
-            '-p', 'SinglePulse',
-            '-s', 'sigproc',
-            '--log-level=debug'], stderr=-1, stdout=-1)
+        subprocess.Popen.assert_called_once_with(
+            [
+                executable,
+                "--config=tests/data/examples/sps_pipeline_config.xml",
+                "-p",
+                "SinglePulse",
+                "-s",
+                "sigproc",
+                "--log-level=debug",
+            ],
+            stderr=-1,
+            stdout=-1,
+        )
 
         shutil.rmtree(build)
 
-    def test_subprocess_call_to_cheetah_candidate_pipeline(self, mocker, resource):
+    def test_subprocess_call_to_cheetah_candidate_pipeline(
+        self, mocker, resource
+    ):
         """
         Test that a call to ./cheetah_candidate_pipeline
         is correctly made by the subprocess.
         """
 
-        build, executable = resource("candidate_pipeline", "cheetah_candidate_pipeline")
+        build, executable = resource(
+            "candidate_pipeline", "cheetah_candidate_pipeline"
+        )
 
-        cheetah_log = open(os.path.join(DATA_DIR,
-            "candidate_pipeline_log.txt"), 'r', encoding="utf8").read().encode()
+        cheetah_log = (
+            open(
+                os.path.join(DATA_DIR, "candidate_pipeline_log.txt"),
+                "r",
+                encoding="utf8",
+            )
+            .read()
+            .encode()
+        )
 
-        class ChildStub():
+        class ChildStub:
             """
             Mocks call to child process
             """
+
             returncode = -9
 
             def communicate(self, timeout):
                 """
                 Emulate subprocess.communicate()
                 """
-                return(cheetah_log, b'')
+                return (cheetah_log, b"")
 
         # Intercept call to subprocess with child_stub()
-        mocker.patch('subprocess.Popen')
+        mocker.patch("subprocess.Popen")
         subprocess.Popen.side_effect = [ChildStub()]
 
         # Instantiate "cheetah pipeline" and run it
-        cheetah = Cheetah("cheetah_candidate_pipeline",
-                          "tests/data/examples/cand_pipeline_config.xml",
-                          "spead",
-                          "empty",
-                          build_dir=build)
+        cheetah = Cheetah(
+            "cheetah_candidate_pipeline",
+            "tests/data/examples/cand_pipeline_config.xml",
+            "spead",
+            "empty",
+            build_dir=build,
+        )
 
         # run "pipeline" for 1 second
         cheetah.run(timeout=1)
 
         # Load parsed cheetah logs fixture
-        dummy_parsed = json.load(open(os.path.join(DATA_DIR,
-            "candidate_pipeline_log.json"), encoding="utf8"))
+        dummy_parsed = json.load(
+            open(
+                os.path.join(DATA_DIR, "candidate_pipeline_log.json"),
+                encoding="utf8",
+            )
+        )
 
         # Test log parser returns content expected
         assert json.loads(cheetah.logs) == dummy_parsed
 
         # Test the subprocess call
-        subprocess.Popen.assert_called_once_with([executable,
-            '--config=tests/data/examples/cand_pipeline_config.xml',
-            '-p', 'empty',
-            '-s', 'spead'], stderr=-1, stdout=-1)
+        subprocess.Popen.assert_called_once_with(
+            [
+                executable,
+                "--config=tests/data/examples/cand_pipeline_config.xml",
+                "-p",
+                "empty",
+                "-s",
+                "spead",
+            ],
+            stderr=-1,
+            stdout=-1,
+        )
 
         shutil.rmtree(build)
 
@@ -320,44 +381,60 @@ class RunnerTests:
         os.environ["CHEETAH_BUILD"] = build
 
         # Set cheetah log messages
-        cheetah_log = open(os.path.join(DATA_DIR,
-            "cheetah_pipeline_log.txt"), 'r', encoding="utf8").read().encode()
+        cheetah_log = (
+            open(
+                os.path.join(DATA_DIR, "cheetah_pipeline_log.txt"),
+                "r",
+                encoding="utf8",
+            )
+            .read()
+            .encode()
+        )
 
-        class ChildStub():
+        class ChildStub:
             """
             Mocks call to child process
             """
+
             returncode = -9
 
             def communicate(self, timeout):
                 """
                 Emulate subprocess.communicate()
                 """
-                return(cheetah_log, b'')
+                return (cheetah_log, b"")
 
         # Intercept call to subprocess with child_stub()
-        mocker.patch('subprocess.Popen')
+        mocker.patch("subprocess.Popen")
         subprocess.Popen.side_effect = [ChildStub()]
 
         # Instantiate "cheetah pipeline" and run it
-        cheetah = Cheetah("cheetah_pipeline",
-                          SPS_CONFIG,
-                          "sigproc",
-                          "SinglePulse")
+        cheetah = Cheetah(
+            "cheetah_pipeline", SPS_CONFIG, "sigproc", "SinglePulse"
+        )
         cheetah.run()
 
         # Load parsed cheetah logs fixture
-        dummy_parsed = json.load(open(os.path.join(DATA_DIR,
-            "cheetah_pipeline_log.json")))
+        dummy_parsed = json.load(
+            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"))
+        )
 
         # Test log parser returns content expected
         assert json.loads(cheetah.logs) == dummy_parsed
 
         # Test the subprocess call
-        subprocess.Popen.assert_called_once_with([executable,
-            '--config=tests/data/examples/sps_pipeline_config.xml',
-            '-p', 'SinglePulse',
-            '-s', 'sigproc'], stderr=-1, stdout=-1)
+        subprocess.Popen.assert_called_once_with(
+            [
+                executable,
+                "--config=tests/data/examples/sps_pipeline_config.xml",
+                "-p",
+                "SinglePulse",
+                "-s",
+                "sigproc",
+            ],
+            stderr=-1,
+            stdout=-1,
+        )
 
         shutil.rmtree(build)
 
@@ -369,43 +446,56 @@ class RunnerTests:
 
         build, executable = resource("emulator", "cheetah_emulator")
 
-        cheetah_log = open(os.path.join(DATA_DIR,
-            "emulator_log.txt"), 'r', encoding="utf8").read().encode()
+        cheetah_log = (
+            open(
+                os.path.join(DATA_DIR, "emulator_log.txt"),
+                "r",
+                encoding="utf8",
+            )
+            .read()
+            .encode()
+        )
 
-        class ChildStub():
+        class ChildStub:
             """
             Mocks call to child process
             """
+
             returncode = -9
 
             def communicate(self, timeout):
                 """
                 Emulate subprocess.communicate()
                 """
-                return(cheetah_log, b'')
+                return (cheetah_log, b"")
 
         # Intercept call to subprocess with child_stub()
-        mocker.patch('subprocess.Popen')
+        mocker.patch("subprocess.Popen")
         subprocess.Popen.side_effect = [ChildStub()]
 
         # Instantiate "cheetah pipeline" and run it
-        cheetah = Cheetah("cheetah_emulator",
-                          "tests/data/examples/emulator_config.xml",
-                          build_dir=build)
-        
+        cheetah = Cheetah(
+            "cheetah_emulator",
+            "tests/data/examples/emulator_config.xml",
+            build_dir=build,
+        )
+
         # run "pipeline" for 5 seconds
         cheetah.run(timeout=5)
 
         # Load parsed cheetah logs fixture
-        dummy_parsed = json.load(open(os.path.join(DATA_DIR,
-            "emulator_log.json"), encoding="utf8"))
+        dummy_parsed = json.load(
+            open(os.path.join(DATA_DIR, "emulator_log.json"), encoding="utf8")
+        )
 
         # Test log parser returns content expected
         assert json.loads(cheetah.logs) == dummy_parsed
 
         # Test the subprocess call
-        subprocess.Popen.assert_called_once_with([executable,
-            '--config=tests/data/examples/emulator_config.xml'],
-            stderr=-1, stdout=-1)
+        subprocess.Popen.assert_called_once_with(
+            [executable, "--config=tests/data/examples/emulator_config.xml"],
+            stderr=-1,
+            stdout=-1,
+        )
 
         shutil.rmtree(build)

@@ -61,20 +61,24 @@
     **************************************************************************
 """
 
-import os
 import logging
+import os
+
 import numpy as np
-from src.ska_pss_protest.fil import VHeader
 
+from ska_pss_protest.fil import VHeader
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
 # pylint: disable=C0301,W1202,C0209,W0703,W0631,C0103,R0914
 
 
-class Filterbank():
+class Filterbank:
     """
     Parses candidate data products from PSS pipelines
 
@@ -86,6 +90,7 @@ class Filterbank():
     extension : str
         File extention of candidate filterbanks
     """
+
     def __init__(self, cand_dir=None, extension=".fil"):
 
         self.cand_dir = cand_dir
@@ -121,7 +126,9 @@ class Filterbank():
             if this_file.endswith(ext):
                 files.append(os.path.join(location, this_file))
         if len(files) == 0:
-            raise FileNotFoundError("No candidates found in {}".format(location))
+            raise FileNotFoundError(
+                "No candidates found in {}".format(location)
+            )
         logging.info("Detected {} candidate filterbanks".format(len(files)))
         return files
 
@@ -142,7 +149,6 @@ class Filterbank():
             this_header = VHeader(this_file)
             self.headers.append(this_header)
         return self.headers
-
 
     def compare_data(self, truth_vector, chunk_size=1024) -> bool:
         """
@@ -180,17 +186,22 @@ class Filterbank():
 
         # Get truth header size, open file, and seek to that position in stream
         truth_header = VHeader(truth_vector)
-        truth = open(truth_vector, 'rb')
+        truth = open(truth_vector, "rb")
         truth.seek(truth_header.header_size())
 
-        # Get candidate header size, open file, and seek to that position in stream
+        # Get candidate header size, open file,
+        # and seek to that position in stream
         candidate_header_size = header.header_size()
-        this_candidate = open(self.files[0], 'rb')
+        this_candidate = open(self.files[0], "rb")
         this_candidate.seek(candidate_header_size)
 
         # Check number of channels match  between files
         if header.nchans() != truth_header.nchans():
-            raise IndexError("Filterbanks have different numbers of channels. {} vs. {}".format(header.nchans(), truth_header.nchans()))
+            raise IndexError(
+                "Filterbanks have different numbers of channels. {} vs. {}".format(  # noqa
+                    header.nchans(), truth_header.nchans()
+                )
+            )
 
         nbytes = int(chunk_size * header.nchans())
 
@@ -201,13 +212,19 @@ class Filterbank():
         # and exit if batches differ
         logging.info("Conducting bitwise search.....")
         while True:
-            cand_raw = np.fromfile(this_candidate, dtype=np.uint8, count=nbytes)
-            cand_channelised = cand_raw.reshape(-1, header.nchans()).astype(np.uint8)
+            cand_raw = np.fromfile(
+                this_candidate, dtype=np.uint8, count=nbytes
+            )
+            cand_channelised = cand_raw.reshape(-1, header.nchans()).astype(
+                np.uint8
+            )
             if cand_raw.shape[0] == 0:
                 pass
 
             truth_raw = np.fromfile(truth, dtype=np.uint8, count=nbytes)
-            truth_channelised = truth_raw.reshape(-1, truth_header.nchans()).astype(np.uint8)
+            truth_channelised = truth_raw.reshape(
+                -1, truth_header.nchans()
+            ).astype(np.uint8)
             if truth_raw.shape[0] == 0:
                 break
 
@@ -215,7 +232,9 @@ class Filterbank():
             truth_samples += len(truth_raw)
 
             if not np.all(truth_channelised == cand_channelised):
-                logging.info("Difference detected in bitwise search. Files differ")
+                logging.info(
+                    "Difference detected in bitwise search. Files differ"
+                )
                 return self.result
 
         # Double check we counted the same number of
@@ -224,6 +243,8 @@ class Filterbank():
             logging.info("Different numbers of samples processed")
             return self.result
 
-        logging.info("Files identical. Samples processed: {}".format(truth_samples))
+        logging.info(
+            "Files identical. Samples processed: {}".format(truth_samples)
+        )
         self.result = True
         return self.result

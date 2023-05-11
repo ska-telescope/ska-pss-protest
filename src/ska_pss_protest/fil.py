@@ -108,15 +108,20 @@
     |DAMAGE.                                                                 |
     **************************************************************************
 """
-import os
-import numpy as np
 import logging
+import os
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+import numpy as np
 
-class VHeader():
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
+
+
+class VHeader:
     """
     This class reads and parses sigproc file header data
 
@@ -132,32 +137,35 @@ class VHeader():
         parameters of sigproc file
     """
 
-    _inttypes = ['machine_id',
-                 'telescope_id',
-                 'data_type',
-                 'nchans',
-                 'nbits',
-                 'nifs',
-                 'scan_number',
-                 'barycentric',
-                 'pulsarcentric',
-                 'nbeams',
-                 'ibeam']
+    _inttypes = [
+        "machine_id",
+        "telescope_id",
+        "data_type",
+        "nchans",
+        "nbits",
+        "nifs",
+        "scan_number",
+        "barycentric",
+        "pulsarcentric",
+        "nbeams",
+        "ibeam",
+    ]
 
-    _strtypes = ['source_name',
-                 'rawdatafile']
+    _strtypes = ["source_name", "rawdatafile"]
 
-    _dbltypes = ['tstart',
-                 'tsamp',
-                 'fch1',
-                 'foff',
-                 'refdm',
-                 'az_start',
-                 'za_start',
-                 'src_raj',
-                 'src_dej']
+    _dbltypes = [
+        "tstart",
+        "tsamp",
+        "fch1",
+        "foff",
+        "refdm",
+        "az_start",
+        "za_start",
+        "src_raj",
+        "src_dej",
+    ]
 
-    _chrtypes = ['signed']
+    _chrtypes = ["signed"]
 
     def __init__(self, path):
 
@@ -172,7 +180,11 @@ class VHeader():
         """
         nchar = np.fromfile(infile, dtype=np.int32, count=1)[0]
         if nchar < 1 or nchar > 80:
-            raise Exception("Cannot parse filterbank header (Nchar was {} when reading string).".format(nchar))
+            raise Exception(
+                "Cannot parse filterbank header (Nchar was {} when reading string).".format(  # noqa
+                    nchar
+                )
+            )
         byte_data = infile.read(nchar)
         string_data = byte_data.decode("UTF-8")
         return string_data
@@ -187,14 +199,16 @@ class VHeader():
 
     @staticmethod
     def _get_signal_pars(filename: str):
-        basename = os.path.splitext(os.path.basename(filename))[0].split('_') 
+        basename = os.path.splitext(os.path.basename(filename))[0].split("_")
         try:
-            signal_pars = {"freq" : float(basename[2]),
-                           "width" : float(basename[3]),
-                           "disp" : float(basename[4]),
-                           "sig" : float(basename[7])}
+            signal_pars = {
+                "freq": float(basename[2]),
+                "width": float(basename[3]),
+                "disp": float(basename[4]),
+                "sig": float(basename[7]),
+            }
             return signal_pars
-        except:
+        except Exception:
             logging.info("Non-standard vector: skipping signal extraction")
             return {}
 
@@ -205,7 +219,7 @@ class VHeader():
         and places each key and its value in a dict object.
         """
         header = {}
-        fil = open(path, 'rb')
+        fil = open(path, "rb")
         key = VHeader._read_string(fil)
         bytes_read = len(key) + 4
 
@@ -221,14 +235,19 @@ class VHeader():
                     header[key] = np.fromfile(fil, dtype=np.int32, count=1)[0]
                     bytes_read += 4
                 elif key in VHeader._dbltypes:
-                    header[key] = np.fromfile(fil, dtype=np.float64,
-                                              count=1)[0]
+                    header[key] = np.fromfile(fil, dtype=np.float64, count=1)[
+                        0
+                    ]
                     bytes_read += 8
                 elif key in VHeader._chrtypes:
                     header[key] = np.fromfile(fil, dtype=np.int8, count=1)[0]
                     bytes_read += 1
                 else:
-                    raise Exception("Cannot parse filterbank header, key '{}' not understood".format(key))
+                    raise Exception(
+                        "Cannot parse filterbank header, key '{}' not understood".format(  # noqa
+                            key
+                        )
+                    )
 
                 key = VHeader._read_string(fil)
                 bytes_read += len(key) + 4
@@ -332,9 +351,9 @@ class VHeader():
         """
         Returns the duration of the observation in seconds
         """
-        file_size = VHeader._get_size(self.path)
-        duration = ((self.total_size() - self.header_size()) /
-                    self.nchans()) * self.tsamp()
+        duration = (
+            (self.total_size() - self.header_size()) / self.nchans()
+        ) * self.tsamp()
         return duration
 
     def data_size(self) -> int:
@@ -342,7 +361,6 @@ class VHeader():
         Returns the size of the data component of
         the filterbank.
         """
-        file_size = VHeader._get_size(self.path)
         data_size = self.total_size() - self.header_size()
         return data_size
 

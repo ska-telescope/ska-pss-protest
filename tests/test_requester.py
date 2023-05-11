@@ -46,9 +46,11 @@
 
 import os
 import tempfile
-from pytest import mark
+
 import pytest
-from src.ska_pss_protest.requester import VectorPull
+from pytest import mark
+
+from ska_pss_protest import VectorPull
 
 # pylint: disable=R0201,E1123,C0114,W1514
 
@@ -90,8 +92,10 @@ class RequesterTests:
         except KeyError:
             pass
         pull = VectorPull()
-        assert pull.cache_dir == os.path.expanduser("~") \
-            + "/.cache/SKA/test_vectors"
+        assert (
+            pull.cache_dir
+            == os.path.expanduser("~") + "/.cache/SKA/test_vectors"
+        )
         pull.from_name(VECTOR)
         assert pull.local_path == os.path.join(pull.cache_dir, VECTOR)
         assert os.path.isfile(pull.local_path)
@@ -139,14 +143,16 @@ class RequesterTests:
         pull = VectorPull()
         assert pull.cache_dir == env_cache_dir
         assert os.path.isdir(env_cache_dir)
-        pull.from_url(os.path.join("http://testvectors.jb.man.ac.uk/TEST",
-                                   VECTOR))
+        pull.from_url(
+            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
+        )
         assert pull.local_path == env_cache_dir + "/" + VECTOR
         assert os.path.isfile(pull.local_path)
 
         # Pull again with vector already in cache
-        pull.from_url(os.path.join("http://testvectors.jb.man.ac.uk/TEST",
-                                   VECTOR))
+        pull.from_url(
+            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
+        )
         assert pull.local_path == env_cache_dir + "/" + VECTOR
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
@@ -197,7 +203,7 @@ class RequesterTests:
         cache_dir = tempfile.mkdtemp()
         pull = VectorPull(cache_dir=cache_dir)
         local_vector_path = os.path.join(cache_dir, VECTOR)
-        open(local_vector_path, 'a').close()
+        open(local_vector_path, "a").close()
         before_size = os.stat(local_vector_path).st_size
         pull.from_name(VECTOR)
         after_size = os.stat(pull.local_path).st_size
@@ -213,10 +219,11 @@ class RequesterTests:
         cache_dir = tempfile.mkdtemp()
         pull = VectorPull(cache_dir=cache_dir)
         local_vector_path = os.path.join(cache_dir, VECTOR)
-        open(local_vector_path, 'a').close()
+        open(local_vector_path, "a").close()
         before_size = os.stat(local_vector_path).st_size
-        pull.from_url(os.path.join("http://testvectors.jb.man.ac.uk/TEST",
-                                   VECTOR))
+        pull.from_url(
+            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
+        )
         after_size = os.stat(pull.local_path).st_size
         assert after_size > before_size
         pull.flush_cache()
@@ -230,7 +237,7 @@ class RequesterTests:
         cache_dir = tempfile.mkdtemp()
         pull = VectorPull(cache_dir=cache_dir)
         local_vector_path = os.path.join(cache_dir, VECTOR)
-        open(local_vector_path, 'a').close()
+        open(local_vector_path, "a").close()
         before_size = os.stat(local_vector_path).st_size
         pull.from_name(VECTOR, check_remote=False)
         after_size = os.stat(pull.local_path).st_size

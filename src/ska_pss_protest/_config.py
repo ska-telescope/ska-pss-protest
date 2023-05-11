@@ -10,7 +10,7 @@ correctly.
 """
 # pylint: disable=C0209
 
-import os, sys
+import os
 
 # Cheetah build directory can be set here
 BUILD_DIR = None
@@ -38,11 +38,9 @@ requirements = {
 }
 
 
-def setup_pipeline(executable,
-                   config,
-                   source=None,
-                   pipeline=None,
-                   build_dir=None) -> str:
+def setup_pipeline(
+    executable, config, source=None, pipeline=None, build_dir=None
+) -> str:
 
     """
     Checks inputs provided by user make sense and

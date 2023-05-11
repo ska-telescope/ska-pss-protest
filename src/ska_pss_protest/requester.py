@@ -70,23 +70,28 @@
     **************************************************************************
 """
 
-import os
-from typing import Union
 import logging
+import os
 import shutil
+from typing import Union
+
 import requests
 
-logging.basicConfig(format='1|%(asctime)s|%(levelname)s|%(funcName)s|%(module)s#%(lineno)d|%(message)s',
-                    datefmt='%Y-%m-%dT%I:%M:%S',
-                    level=logging.INFO)
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
 # pylint: disable=C0301,W1202,C0209,W0703
 
 
-class VectorPull():
+class VectorPull:
     """
     Class docstring
     """
+
     def __init__(self, cache_dir=None):
 
         self.cache_dir = cache_dir
@@ -121,8 +126,9 @@ class VectorPull():
             self.cache_dir = os.environ["CACHE_DIR"]
         except KeyError:
             # Cache dir not set anywhere. Use a default.
-            self.cache_dir = os.path.expanduser("~") \
-                + "/.cache/SKA/test_vectors"
+            self.cache_dir = (
+                os.path.expanduser("~") + "/.cache/SKA/test_vectors"
+            )
         logging.info("Cache location: {}".format(self.cache_dir))
         self._dir_exists(self.cache_dir)
 
@@ -209,11 +215,11 @@ class VectorPull():
         free_space = shutil.disk_usage(cache)[2]
 
         # Check size of vector
-        vector_size = self._remote_header(vector_url)['Content-Length']
+        vector_size = self._remote_header(vector_url)["Content-Length"]
 
         # Set a disk buffer of 0.5 GB as a minimum amount of disk space
         # to have left on device after downloading
-        disk_buffer = 0.5*(1024**3)
+        disk_buffer = 0.5 * (1024**3)
         req_space = int(vector_size) + disk_buffer
         if int(req_space) > int(free_space):
             raise OSError("Unsufficient disk space")
@@ -253,7 +259,9 @@ class VectorPull():
         bool: True if sizes match, else False
         """
         local_size = os.stat(local_path).st_size
-        if int(local_size) == int(self._remote_header(remote_path)['Content-Length']):
+        if int(local_size) == int(
+            self._remote_header(remote_path)["Content-Length"]
+        ):
             return True
         return False
 
@@ -274,8 +282,9 @@ class VectorPull():
         """
 
         # Set local path in cache directory.
-        local_path = os.path.join(self.cache_dir,
-                                  os.path.basename(remote_path))
+        local_path = os.path.join(
+            self.cache_dir, os.path.basename(remote_path)
+        )
 
         # Check that there is enough disk space to download
         self.check_disk_space(remote_path, self.cache_dir)
@@ -287,7 +296,7 @@ class VectorPull():
         logging.info("Pulling {}".format(remote_path))
 
         # Write content to local_path
-        with open(local_path, 'wb') as writer:
+        with open(local_path, "wb") as writer:
             for chunk in stream.iter_content(chunk_size=8192):
                 writer.write(chunk)
         logging.info("Data written to {}".format(local_path))
@@ -330,7 +339,11 @@ class VectorPull():
                 if self._compare_remote(this_path, remote_path):
                     self.local_path = this_path
                     return
-                logging.info("{} and {} are different sizes. Pulling new version".format(this_path, remote_path))
+                logging.info(
+                    "{} and {} are different sizes. Pulling new version".format(  # noqa
+                        this_path, remote_path
+                    )
+                )
             else:
                 self.local_path = this_path
                 return
@@ -372,7 +385,11 @@ class VectorPull():
                 if self._compare_remote(this_path, vector_url):
                     self.local_path = this_path
                     return
-                logging.info("{} and {} are different sizes. Pulling new version".format(this_path, vector_url))
+                logging.info(
+                    "{} and {} are different sizes. Pulling new version".format(  # noqa
+                        this_path, vector_url
+                    )
+                )
             else:
                 self.local_path = this_path
                 return
@@ -380,10 +397,17 @@ class VectorPull():
         # If no, pass to downloader.
         self.local_path = self._download(vector_url)
 
-    def from_properties(self, vectype="SPS-MID",
-                        freq=0.2, duty=0.2, disp=740.0, acc=0.0,
-                        shape="Gaussian", sig=50.0,
-                        refresh=False):
+    def from_properties(
+        self,
+        vectype="SPS-MID",
+        freq=0.2,
+        duty=0.2,
+        disp=740.0,
+        acc=0.0,
+        shape="Gaussian",
+        sig=50.0,
+        refresh=False,
+    ):
         """
         Queries the server for a test vector for which
         we don't know the file name or if it exists but for which
@@ -417,15 +441,17 @@ class VectorPull():
         """
 
         # Construct dictionary of search parameters
-        params = {"type": vectype,
-                  "freq": freq,
-                  "duty": duty,
-                  "dm": disp,
-                  "acceleration": acc,
-                  "shape": shape,
-                  "sn": sig,
-                  "seed": "None",
-                  "version": "None"}
+        params = {
+            "type": vectype,
+            "freq": freq,
+            "duty": duty,
+            "dm": disp,
+            "acceleration": acc,
+            "shape": shape,
+            "sn": sig,
+            "seed": "None",
+            "version": "None",
+        }
 
         # Ask server to look for test vector with params
         query = requests.get(self.prefix + "/query", params=params)
@@ -457,4 +483,8 @@ class VectorPull():
                 os.unlink(this_file)
                 logging.info("Deleted: {}".format(this_file))
             except Exception as this_ex:
-                logging.error("Failed to delete {}. Reason: {}".format(this_file, this_ex))
+                logging.error(
+                    "Failed to delete {}. Reason: {}".format(
+                        this_file, this_ex
+                    )
+                )

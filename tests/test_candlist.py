@@ -48,19 +48,23 @@
 """
 
 import os
-import tempfile
 import shutil
+import tempfile
 from pathlib import Path
-import pytest
-import src.ska_pss_protest.candlist as cand
-from src.ska_pss_protest.fil import VHeader
-from src.ska_pss_protest.requester import VectorPull
+
 import numpy as np
+import pytest
 from pytest import mark
+
+import ska_pss_protest.candlist as cand
+from ska_pss_protest import VectorPull, VHeader
 
 # pylint: disable=R0201,R1732,W1514,E1120,W0621
 
-DATA_DIR = os.path.join(Path(os.path.abspath(__file__)).parents[1],  "tests/data/candidate_lists")
+DATA_DIR = os.path.join(
+    Path(os.path.abspath(__file__)).parents[1], "tests/data/candidate_lists"
+)
+
 
 @pytest.fixture(scope="session")
 def get_vector():
@@ -71,8 +75,11 @@ def get_vector():
     Vector is cleared from disk after tests have run.
     """
     vector = VectorPull()
-    vector.from_name("SPS-MID_747e95f_0.2_0.2_1.0_0.0_Gaussian_20.0_123123123.fil")
+    vector.from_name(
+        "SPS-MID_747e95f_0.2_0.2_1.0_0.0_Gaussian_20.0_123123123.fil"
+    )
     yield vector
+
 
 @pytest.fixture(scope="session")
 def get_high_dm_vector():
@@ -83,7 +90,9 @@ def get_high_dm_vector():
     Vector is cleared from disk after tests have run.
     """
     vector = VectorPull()
-    vector.from_name("SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_123123123.fil")
+    vector.from_name(
+        "SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_123123123.fil"
+    )
     yield vector
 
 
@@ -181,8 +190,8 @@ class SpCclTests:
 
         with pytest.raises(IOError):
             # Generate empty files in directory
-            open(file1, 'a').close()
-            open(file2, 'a').close()
+            open(file1, "a").close()
+            open(file2, "a").close()
             cand.SpCcl(spccl_dir)
         shutil.rmtree(spccl_dir)
 
@@ -241,8 +250,12 @@ class SpCclTests:
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1/fil.fch1())**2.0 * pars['disp']
-        arrival_time = fil.start_time() + (((1/pars["freq"])/86400)/2) + (dm_offset / 1000 / 86400)
+        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        arrival_time = (
+            fil.start_time()
+            + (((1 / pars["freq"]) / 86400) / 2)
+            + (dm_offset / 1000 / 86400)
+        )
 
         fiducial_detected = False
 
@@ -259,7 +272,9 @@ class SpCclTests:
             assert pars["disp"] == pytest.approx(exp[i][1], 1e-07)
             assert candidate.cands[i][1] == pytest.approx(exp[i][1], 1e-09)
             # Check the width
-            assert pars["width"] / pars["freq"] * 1000 == pytest.approx(exp[i][2], 1e-04)
+            assert pars["width"] / pars["freq"] * 1000 == pytest.approx(
+                exp[i][2], 1e-04
+            )
             assert candidate.cands[i][2] == pytest.approx(exp[i][2], 1e-09)
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
@@ -299,8 +314,12 @@ class SpCclTests:
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1/fil.fch1())**2.0 * pars['disp']
-        arrival_time = fil.start_time() + (((1/pars["freq"])/86400)/2) + (dm_offset / 1000 / 86400)
+        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        arrival_time = (
+            fil.start_time()
+            + (((1 / pars["freq"]) / 86400) / 2)
+            + (dm_offset / 1000 / 86400)
+        )
 
         fiducial_detected = False
 
@@ -317,7 +336,9 @@ class SpCclTests:
             assert pars["disp"] == pytest.approx(exp[i][1], 1e-07)
             assert candidate.cands[i][1] == pytest.approx(exp[i][1], 1e-09)
             # Check the width
-            assert pars["width"] / pars["freq"] * 1000 == pytest.approx(exp[i][2], 1e-04)
+            assert pars["width"] / pars["freq"] * 1000 == pytest.approx(
+                exp[i][2], 1e-04
+            )
             assert candidate.cands[i][2] == pytest.approx(exp[i][2], 1e-09)
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
@@ -334,8 +355,9 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
         candidate = cand.SpCcl(spccl_dir)
 
-        expected_spccl = os.path.join(DATA_DIR,
-                                      "spccl_3/candidates_noheader.txt")
+        expected_spccl = os.path.join(
+            DATA_DIR, "spccl_3/candidates_noheader.txt"
+        )
         candidate.from_spccl(expected_spccl)
         contents = np.loadtxt(expected_spccl, skiprows=0)
         assert np.all(contents == candidate.expected)
@@ -348,8 +370,9 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
         candidate = cand.SpCcl(spccl_dir)
 
-        expected_spccl = os.path.join(DATA_DIR,
-                                      "spccl_3/candidates_header.txt")
+        expected_spccl = os.path.join(
+            DATA_DIR, "spccl_3/candidates_header.txt"
+        )
         candidate.from_spccl(expected_spccl)
         contents = np.loadtxt(expected_spccl, skiprows=1)
         assert np.all(contents == candidate.expected)
@@ -362,8 +385,9 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
         candidate = cand.SpCcl(spccl_dir)
 
-        expected_spccl = os.path.join(DATA_DIR,
-                                      "spccl_3/candidates_header2.txt")
+        expected_spccl = os.path.join(
+            DATA_DIR, "spccl_3/candidates_header2.txt"
+        )
         with pytest.raises(ValueError):
             candidate.from_spccl(expected_spccl)
 
@@ -384,9 +408,11 @@ class SpCclTests:
         correctly computed by the DmTol class.
         """
         pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-        tols = cand.DmTol(pulse_metadata,
-                          VHeader(get_vector.local_path).allpars(),
-                          sn_thresh=0.85)
+        tols = cand.DmTol(
+            pulse_metadata,
+            VHeader(get_vector.local_path).allpars(),
+            sn_thresh=0.85,
+        )
         assert tols.min_sn == pytest.approx(12.2686932, 1e-7)
         assert tols.width_tol == pytest.approx(76.812356, 1e-6)
         assert tols.dm_tol == pytest.approx(0.9300746, 1e-7)
@@ -400,9 +426,11 @@ class SpCclTests:
         pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
         invalid_vector = "tests/data/sigproc/56352_54818_B1929+10_test.fil"
         with pytest.raises(KeyError):
-            cand.DmTol(pulse_metadata,
-                       VHeader(invalid_vector).allpars(),
-                       sn_thresh=0.85)
+            cand.DmTol(
+                pulse_metadata,
+                VHeader(invalid_vector).allpars(),
+                sn_thresh=0.85,
+            )
 
     def test_compare_dm_within_tol_using_vector(self, get_vector):
         """
@@ -423,14 +451,17 @@ class SpCclTests:
         manually specified source properties.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
-        source_properties = {'fch1': 1670.0,
-                             'foff': -0.078125,
-                             'nchans': 4096,
-                             'tsamp': 6.4e-05,
-                             'freq': 0.2}
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+        }
         candidate = cand.SpCcl(spccl_dir)
-        candidate.from_spccl(os.path.join(DATA_DIR,
-                                          "spccl_2/lowdm/expected.spccl"))
+        candidate.from_spccl(
+            os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
+        )
         candidate.compare_dm(source_properties)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -443,14 +474,17 @@ class SpCclTests:
         candidate metadata file).
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm_incorrect")
-        source_properties = {'fch1': 1670.0,
-                             'foff': -0.078125,
-                             'nchans': 4096,
-                             'tsamp': 6.4e-05,
-                             'freq': 0.2}
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+        }
         candidate = cand.SpCcl(spccl_dir)
-        candidate.from_spccl(os.path.join(DATA_DIR,
-                                          "spccl_2/lowdm/expected.spccl"))
+        candidate.from_spccl(
+            os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
+        )
         candidate.compare_dm(source_properties)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0

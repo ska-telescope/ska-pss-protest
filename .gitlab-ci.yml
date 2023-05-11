@@ -1,14 +1,36 @@
-default:
-    image: python:3.6
+image: $SKA_K8S_TOOLS_DOCKER_BUILDER_IMAGE
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-    - test
+  - lint
+  - test
+  - scan
+  - build
+  - publish
 
-before_script:
+lint:
+  stage: lint
+  image: python:3.6
+  before_script:
     - pip install --upgrade pip
-    - pip install -r requirements.txt
+    - pip install .[dev]
+  script:
+    - isort --check-only --profile black src/ tests/
+    - black --check --line-length 79 src/ tests/
+    - flake8 --show-source --statistics src/ tests/
 
-test:
-    stage: test 
-    script:
-        - pytest -m unit
+include:
+  # Python test jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
+  # Python scan jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-scan.gitlab-ci.yml'
+  # Python build jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-build.gitlab-ci.yml'
+  # Python release jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-publish.gitlab-ci.yml'

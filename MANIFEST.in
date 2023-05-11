@@ -1,0 +1,4 @@
+include src/ska_pss_protest/features/*
+include src/ska_pss_protest/data/config_templates/*
+include src/ska_pss_protest/conftest.py
+include src/ska_pss_protest/pytest.ini
