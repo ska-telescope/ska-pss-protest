@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Helper class to pipeline.py which
 will check the user's inputs are
@@ -10,7 +8,16 @@ correctly.
 """
 # pylint: disable=C0209
 
+from shutil import which
 import os
+import logging
+
+logging.basicConfig(
+    format="1|%(asctime)s|%(levelname)s\
+            |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
+    datefmt="%Y-%m-%dT%I:%M:%S",
+    level=logging.INFO,
+)
 
 # Cheetah build directory can be set here
 BUILD_DIR = None
@@ -48,13 +55,19 @@ def setup_pipeline(
     """
 
     # Have we set the build directory for cheetah?
-    if not build_dir:
-        build_dir = set_build()
+    #if not build_dir:
+    #    pass
+    #    #build_dir = set_build()
 
     # Does the executable exist?
     if executable in requirements.keys():
         args = requirements[executable]
-        path = os.path.join(build_dir, args["path"])
+        if not build_dir:
+            logging.info("No build or install directory set")
+            path = locate_launcher(executable)
+        else:
+            path = os.path.join(build_dir, args["path"])
+            logging.info("Build directory set: {}".format(build_dir))
         isfile(path)
         isexec(path)
     else:
@@ -75,7 +88,6 @@ def setup_pipeline(
 
     return path
 
-
 def isfile(this_file):
     """
     Checks a file exists,
@@ -83,7 +95,6 @@ def isfile(this_file):
     """
     if not os.path.isfile(this_file):
         raise FileNotFoundError("{} not found".format(this_file))
-
 
 def isexec(this_file):
     """
@@ -93,22 +104,24 @@ def isexec(this_file):
     if not os.access(this_file, os.X_OK):
         raise PermissionError("{} not executable".format(this_file))
 
+def search_path(launcher):
+    # Is the launcher (executable) in the $PATH?
+    this_launcher = which(launcher)
+    if this_launcher is not None:
+        logging.info("Found cheetah launcher: {}".format(this_launcher))
+        return this_launcher
+    else:
+        raise FileNotFoundError("Cannot locate a working pipeline launcher")
 
-def set_build():
-    """
-    Sets the cheetah build directory if not
-    provided as argument to pipeline
-    """
+def generate_path(cheetah_dir, launcher):
+    # Is this an install directory?
+    install_path = os.path.join(cheetah_dir, launcher)
+    if isfile(install_path):
+        logging.info("Located cheetah executable: {}".format(install_path))
+        return install_path
+    else:
 
-    # Is the build directory set above?
-    if BUILD_DIR:
-        return BUILD_DIR
-    try:
-        # Is the build directory set in env?
-        build_dir = os.environ["CHEETAH_BUILD"]
-        return build_dir
-    except KeyError:
-        pass
-    # Build dir isn't set anywhere so cheetah cannot
-    # be found - raise exception.
-    raise EnvironmentError("Cheetah build dir not found")
+        return install_path
+
+
+
