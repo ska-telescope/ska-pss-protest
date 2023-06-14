@@ -28,7 +28,8 @@ setup(
                 'isort',
                 'flake8',
                 'pylint',
-                'pylint-junit'
+                'pylint-junit',
+                'pytest-cov'
                 ]
         },
     classifiers=[
