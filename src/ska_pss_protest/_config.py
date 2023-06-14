@@ -16,7 +16,7 @@ import os
 BUILD_DIR = None
 
 cheetah_pipeline = {
-    "path": "pipeline/cheetah_pipeline",
+    "path": "pipelines/search_pipeline/cheetah_pipeline",
     "sources": ["sigproc", "udp_low", "udp"],
     "pipelines": ["SinglePulse", "Empty", "Tdas", "RfiDetectionPipeline"],
 }
@@ -26,7 +26,7 @@ cheetah_emulator = {
 }
 
 cheetah_candidate_pipeline = {
-    "path": "candidate_pipeline/cheetah_candidate_pipeline",
+    "path": "pipelines/candidate_pipeline/cheetah_candidate_pipeline",
     "sources": ["spead"],
     "pipelines": ["empty"],
 }

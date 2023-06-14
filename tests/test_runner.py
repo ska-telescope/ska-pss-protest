@@ -87,7 +87,7 @@ def resource():
     def _setup(module, binary):
         build = tempfile.mkdtemp()
         module = os.path.join(build, module)
-        os.mkdir(module)
+        os.makedirs(module)
         executable = os.path.join(module, binary)
         open(executable, "a", encoding="utf8").close()
         attr = os.stat(executable)
@@ -125,7 +125,7 @@ class RunnerTests:
         If the name of the executable passed
         is not correct, raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(EnvironmentError):
             Cheetah(
                 "cheet_pipeline",
@@ -155,7 +155,7 @@ class RunnerTests:
         If the name of the pipeline is not valid,
         raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
             Cheetah(
                 "cheetah_pipeline",
@@ -171,7 +171,7 @@ class RunnerTests:
         If the name of the source is not valid,
         raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
             Cheetah(
                 "cheetah_pipeline",
@@ -189,7 +189,9 @@ class RunnerTests:
         """
 
         # Set up fake cheetah resorces
-        build, executable = resource("pipeline", "cheetah_pipeline")
+        build, executable = resource(
+            "pipelines/search_pipeline", "cheetah_pipeline"
+        )
 
         # Disable execute permission on cheetah binary
         current = stat.S_IMODE(os.lstat(executable).st_mode)
@@ -208,7 +210,7 @@ class RunnerTests:
         shutil.rmtree(build)
 
     def test_no_config_file(self, resource):
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(FileNotFoundError):
             Cheetah(
                 "cheetah_pipeline",
@@ -226,7 +228,9 @@ class RunnerTests:
         """
 
         # Set up fake cheetah resources
-        build, executable = resource("pipeline", "cheetah_pipeline")
+        build, executable = resource(
+            "pipelines/search_pipeline", "cheetah_pipeline"
+        )
 
         # Set cheetah log messages
         cheetah_log = (
@@ -300,7 +304,7 @@ class RunnerTests:
         """
 
         build, executable = resource(
-            "candidate_pipeline", "cheetah_candidate_pipeline"
+            "pipelines/candidate_pipeline", "cheetah_candidate_pipeline"
         )
 
         cheetah_log = (
@@ -377,7 +381,9 @@ class RunnerTests:
         """
 
         # Set up fake cheetah resources
-        build, executable = resource("pipeline", "cheetah_pipeline")
+        build, executable = resource(
+            "pipelines/search_pipeline", "cheetah_pipeline"
+        )
         os.environ["CHEETAH_BUILD"] = build
 
         # Set cheetah log messages
