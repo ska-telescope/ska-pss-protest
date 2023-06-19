@@ -60,16 +60,25 @@ def setup_pipeline(
     #    #build_dir = set_build()
 
     # Does the executable exist?
+    """
     if executable in requirements.keys():
         args = requirements[executable]
         if not build_dir:
             logging.info("No build or install directory set")
-            path = locate_launcher(executable)
+            path = search_path(executable)
         else:
             path = os.path.join(build_dir, args["path"])
             logging.info("Build directory set: {}".format(build_dir))
         isfile(path)
         isexec(path)
+    else:
+        raise EnvironmentError("Pipeline not found")
+
+    """
+    if executable in requirements.keys():
+        args = requirements[executable]
+        if build_dir:
+            path = search_build(build_dir, args)
     else:
         raise EnvironmentError("Pipeline not found")
 
@@ -95,6 +104,8 @@ def isfile(this_file):
     """
     if not os.path.isfile(this_file):
         raise FileNotFoundError("{} not found".format(this_file))
+    return True
+
 
 def isexec(this_file):
     """
@@ -113,15 +124,11 @@ def search_path(launcher):
     else:
         raise FileNotFoundError("Cannot locate a working pipeline launcher")
 
-def generate_path(cheetah_dir, launcher):
-    # Is this an install directory?
-    install_path = os.path.join(cheetah_dir, launcher)
-    if isfile(install_path):
-        logging.info("Located cheetah executable: {}".format(install_path))
-        return install_path
+def search_build(cheetah_dir, launcher):
+    #install_path = os.path.join(cheetah_dir, launcher)
+    build_path = os.path.join(cheetah_dir, launcher['path'])
+    if isfile(build_path):
+        logging.info("Located cheetah executable: {}".format(build_path))
+        return build_path
     else:
-
-        return install_path
-
-
-
+        raise FileNotFoundError("Cannot find executable")
