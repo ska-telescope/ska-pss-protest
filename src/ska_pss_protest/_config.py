@@ -46,7 +46,7 @@ requirements = {
 
 
 def setup_pipeline(
-    executable, config, source=None, pipeline=None, build_dir=None
+    executable, config, source=None, pipeline=None, cheetah_dir=None
 ) -> str:
 
     """
@@ -54,31 +54,12 @@ def setup_pipeline(
     are available
     """
 
-    # Have we set the build directory for cheetah?
-    #if not build_dir:
-    #    pass
-    #    #build_dir = set_build()
-
-    # Does the executable exist?
-    """
     if executable in requirements.keys():
         args = requirements[executable]
-        if not build_dir:
-            logging.info("No build or install directory set")
-            path = search_path(executable)
+        if cheetah_dir:
+            path = search_build(cheetah_dir, executable, args)
         else:
-            path = os.path.join(build_dir, args["path"])
-            logging.info("Build directory set: {}".format(build_dir))
-        isfile(path)
-        isexec(path)
-    else:
-        raise EnvironmentError("Pipeline not found")
-
-    """
-    if executable in requirements.keys():
-        args = requirements[executable]
-        if build_dir:
-            path = search_build(build_dir, args)
+            path = search_path(executable)
     else:
         raise EnvironmentError("Pipeline not found")
 
@@ -102,9 +83,8 @@ def isfile(this_file):
     Checks a file exists,
     raises exception if not.
     """
-    if not os.path.isfile(this_file):
-        raise FileNotFoundError("{} not found".format(this_file))
-    return True
+    if os.path.isfile(this_file):
+        return True
 
 
 def isexec(this_file):
@@ -122,13 +102,16 @@ def search_path(launcher):
         logging.info("Found cheetah launcher: {}".format(this_launcher))
         return this_launcher
     else:
-        raise FileNotFoundError("Cannot locate a working pipeline launcher")
+        raise FileNotFoundError("No pipeline launcher in $PATH")
 
-def search_build(cheetah_dir, launcher):
-    #install_path = os.path.join(cheetah_dir, launcher)
-    build_path = os.path.join(cheetah_dir, launcher['path'])
+def search_build(cheetah_dir, launcher, launcher_dict):
+    install_path = os.path.join(cheetah_dir, launcher)
+    build_path = os.path.join(cheetah_dir, launcher_dict['path'])
     if isfile(build_path):
         logging.info("Located cheetah executable: {}".format(build_path))
         return build_path
+    if isfile(install_path):
+        logging.info("Located cheetah executable: {}".format(install_path))
+        return install_path
     else:
         raise FileNotFoundError("Cannot find executable")
