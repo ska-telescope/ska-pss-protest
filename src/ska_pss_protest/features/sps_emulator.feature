@@ -1,4 +1,4 @@
-@product
+@product @cpu @sps
 Feature: Sps emulator
     A simple emulator of SPS data products
 
