@@ -441,6 +441,7 @@ class RunnerTests:
         shutil.rmtree(build)
 
     """
+
     def test_subprocess_call_to_emulator(self, mocker, resource):
         """
         Test that a call to ./cheetah_emulator is correctly made by

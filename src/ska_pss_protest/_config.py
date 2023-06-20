@@ -8,9 +8,9 @@ correctly.
 """
 # pylint: disable=C0209
 
-from shutil import which
-import os
 import logging
+import os
+from shutil import which
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
@@ -64,7 +64,8 @@ def setup_pipeline(
         raise EnvironmentError("Pipeline not found")
 
     # Does the config file exist?
-    isfile(config)
+    if not os.path.isfile(config):
+        raise FileNotFoundError("Config file {} not found".format(config))
 
     # Is the source in the "allowed" list?
     if "sources" in args:
@@ -77,6 +78,7 @@ def setup_pipeline(
             raise KeyError("Pipeline {} not valid".format(pipeline))
 
     return path
+
 
 def isfile(this_file):
     """
@@ -95,6 +97,7 @@ def isexec(this_file):
     if not os.access(this_file, os.X_OK):
         raise PermissionError("{} not executable".format(this_file))
 
+
 def search_path(launcher):
     # Is the launcher (executable) in the $PATH?
     this_launcher = which(launcher)
@@ -104,13 +107,16 @@ def search_path(launcher):
     else:
         raise FileNotFoundError("No pipeline launcher in $PATH")
 
+
 def search_build(cheetah_dir, launcher, launcher_dict):
     install_path = os.path.join(cheetah_dir, launcher)
-    build_path = os.path.join(cheetah_dir, launcher_dict['path'])
+    build_path = os.path.join(cheetah_dir, launcher_dict["path"])
     if isfile(build_path):
+        isexec(build_path)
         logging.info("Located cheetah executable: {}".format(build_path))
         return build_path
     if isfile(install_path):
+        isexec(install_path)
         logging.info("Located cheetah executable: {}".format(install_path))
         return install_path
     else:
