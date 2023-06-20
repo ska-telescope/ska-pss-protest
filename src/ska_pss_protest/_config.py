@@ -53,11 +53,16 @@ def setup_pipeline(
     Checks inputs provided by user make sense and
     are available
     """
-
+    # Is the executable a valid pipeline launcher
     if executable in requirements.keys():
+        # Obtain the necessary dict params for the launcher
         args = requirements[executable]
+
+        # If a cheetah build/install directory has been supplied,
+        # search it the the launcher
         if cheetah_dir:
             path = search_build(cheetah_dir, executable, args)
+        # If no, assume the executable is in the user's $PATH
         else:
             path = search_path(executable)
     else:
@@ -99,6 +104,11 @@ def isexec(this_file):
 
 
 def search_path(launcher):
+    """
+    Checks the user's system path to the executable they
+    intend to run. If found, the full path is returned,
+    else and Exception is raised. 
+    """
     # Is the launcher (executable) in the $PATH?
     this_launcher = which(launcher)
     if this_launcher is not None:
@@ -109,15 +119,29 @@ def search_path(launcher):
 
 
 def search_build(cheetah_dir, launcher, launcher_dict):
+    """
+    If the user has supplied a build/install directory, this
+    function will search these paths for the executable they
+    wish to run. If found, the full path will be returned, else
+    and exception will be raised. The function will first assume
+    the path supplied represents a cheetah build tree. If this is
+    not the case, the function will assume it is install/bin.
+    """
+
+    # Possible paths for the executable, given the launcher name supplied
     install_path = os.path.join(cheetah_dir, launcher)
     build_path = os.path.join(cheetah_dir, launcher_dict["path"])
+
+    # Is a build tree found? If so, return a path to the launcher
     if isfile(build_path):
         isexec(build_path)
         logging.info("Located cheetah executable: {}".format(build_path))
         return build_path
-    if isfile(install_path):
+    # Is a bin/ directory found? If so, return a path to the launcher
+    elif isfile(install_path):
         isexec(install_path)
         logging.info("Located cheetah executable: {}".format(install_path))
         return install_path
+    # Neither are found - raise Exception
     else:
         raise FileNotFoundError("Cannot find executable")
