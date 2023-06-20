@@ -107,7 +107,7 @@ def search_path(launcher):
     """
     Checks the user's system path to the executable they
     intend to run. If found, the full path is returned,
-    else and Exception is raised. 
+    else and Exception is raised.
     """
     # Is the launcher (executable) in the $PATH?
     this_launcher = which(launcher)
