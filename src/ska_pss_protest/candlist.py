@@ -282,7 +282,6 @@ class SpCcl:
         basename = os.path.splitext(os.path.basename(vector))[0].split("_")
 
         # Determine signal properties from name of vector
-        print(basename) # delete
         freq = float(basename[2])
         period = 1 / freq
         width = float(basename[3]) * period * 1000  # milliseconds
