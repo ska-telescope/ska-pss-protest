@@ -284,7 +284,7 @@ class SpCcl:
         # Determine signal properties from name of vector
         freq = float(basename[2])
         period = 1 / freq
-        width = float(basename[3]) * period * 1000  # microseconds
+        width = float(basename[3]) * period * 1000  # milliseconds
         disp = float(basename[4])
 
         # Folded S/N and S/N per pulse

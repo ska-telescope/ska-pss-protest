@@ -84,7 +84,7 @@ class ProTest:
             The test type to be executed
         """
 
-        test_types = ["product"]
+        test_types = ["product", "cpu", "sps"]
 
         if mark not in test_types:
             raise Exception(f"Test type {mark} not found")
@@ -97,11 +97,13 @@ class ProTest:
         ini_path = os.path.join(self.src, "pytest.ini")
 
         # Set up path to PSS
-        pss_path = "--path=" + self.path
+        try:
+            pss_path = "--path=" + self.path
+            pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
+        except TypeError:
+            pytest_args = ["-m", self.mark, "-c", ini_path, self.src]
 
-        pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
         print("Running pytest", " ".join(pytest_args))
-
         sys.exit(pytest.main(pytest_args))
 
 
@@ -111,7 +113,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
     parser.add_argument(
-        "-p", "--path", help="Path to cheetah build tree", required=True
+        "-p", "--path", help="Path to cheetah build tree", required=False, default=None
     )
     parser.add_argument(
         "-m",

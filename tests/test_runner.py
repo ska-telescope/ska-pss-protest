@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -67,7 +65,7 @@ from pathlib import Path
 import pytest
 from pytest import mark
 
-from ska_pss_protest import Cheetah
+from ska_pss_protest import Cheetah, _config
 
 # pylint: disable=R0201,E1123,C0114,E1101,W0621,W0613,R0903
 
@@ -87,7 +85,7 @@ def resource():
     def _setup(module, binary):
         build = tempfile.mkdtemp()
         module = os.path.join(build, module)
-        os.mkdir(module)
+        os.makedirs(module)
         executable = os.path.join(module, binary)
         open(executable, "a", encoding="utf8").close()
         attr = os.stat(executable)
@@ -112,10 +110,13 @@ class RunnerTests:
         If the name of the build directory
         is not set, raise exception.
         """
+
+        """
         try:
             del os.environ["CHEETAH_BUILD"]
         except KeyError:
             pass
+        """
 
         with pytest.raises(EnvironmentError):
             Cheetah("cheetah_pipeline", SPS_CONFIG, "sigproc", "SinglePulse")
@@ -125,7 +126,7 @@ class RunnerTests:
         If the name of the executable passed
         is not correct, raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(EnvironmentError):
             Cheetah(
                 "cheet_pipeline",
@@ -155,7 +156,7 @@ class RunnerTests:
         If the name of the pipeline is not valid,
         raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
             Cheetah(
                 "cheetah_pipeline",
@@ -171,7 +172,7 @@ class RunnerTests:
         If the name of the source is not valid,
         raise exception.
         """
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(KeyError):
             Cheetah(
                 "cheetah_pipeline",
@@ -189,7 +190,9 @@ class RunnerTests:
         """
 
         # Set up fake cheetah resorces
-        build, executable = resource("pipeline", "cheetah_pipeline")
+        build, executable = resource(
+            "pipelines/search_pipeline", "cheetah_pipeline"
+        )
 
         # Disable execute permission on cheetah binary
         current = stat.S_IMODE(os.lstat(executable).st_mode)
@@ -208,7 +211,7 @@ class RunnerTests:
         shutil.rmtree(build)
 
     def test_no_config_file(self, resource):
-        build, _ = resource("pipeline", "cheetah_pipeline")
+        build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(FileNotFoundError):
             Cheetah(
                 "cheetah_pipeline",
@@ -219,6 +222,50 @@ class RunnerTests:
             )
         shutil.rmtree(build)
 
+    def test_search_path(self):
+        """
+        Tests the cases where the user does not supply a
+        path to a cheetah build/install directory, and instead
+        assumed the executable they wish ProTest to launch
+        already exists in the system $PATH
+
+        To test this we use ls
+        """
+        # Test the case where the executable is found
+        launcher = "ls"
+        path = _config.search_path(launcher).split("/")
+        assert launcher in path
+
+        # Test the case where the executable is not found
+        launcher = "non-existent-binary"
+        with pytest.raises(FileNotFoundError):
+            _config.search_path(launcher).split("/")
+
+    def test_install_dir_search(self):
+        """
+        Tests the case where the user has supplied
+        a path to an install directory (i.e., when building
+        cheetah, the command "make install" was executed,
+        producing a directory "install/bin" in which all
+        pipeline launchers are to be found
+        """
+        # Set up executable in an "install" dir
+        cheetah_dir = tempfile.mkdtemp()
+        launcher = "cheetah_pipeline"
+        executable = os.path.join(cheetah_dir, launcher)
+        open(executable, "a", encoding="utf8").close()
+        attr = os.stat(executable)
+        os.chmod(executable, attr.st_mode | stat.S_IEXEC)
+        launcher_dict = {"path": "/some/path"}
+
+        # Test the case where the executable is found under the install dir
+        path = _config.search_build(cheetah_dir, launcher, launcher_dict)
+        assert launcher in path.split("/")
+
+        # Test the case where the executable is not found under the install dir
+        with pytest.raises(FileNotFoundError):
+            _config.search_build(cheetah_dir, "bad_launcher", launcher_dict)
+
     def test_subprocess_call_to_cheetah_pipeline(self, mocker, resource):
         """
         Test that a call to ./cheetah_pipeline is correctly made by
@@ -226,7 +273,9 @@ class RunnerTests:
         """
 
         # Set up fake cheetah resources
-        build, executable = resource("pipeline", "cheetah_pipeline")
+        build, executable = resource(
+            "pipelines/search_pipeline", "cheetah_pipeline"
+        )
 
         # Set cheetah log messages
         cheetah_log = (
@@ -300,7 +349,7 @@ class RunnerTests:
         """
 
         build, executable = resource(
-            "candidate_pipeline", "cheetah_candidate_pipeline"
+            "pipelines/candidate_pipeline", "cheetah_candidate_pipeline"
         )
 
         cheetah_log = (
@@ -362,75 +411,6 @@ class RunnerTests:
                 "empty",
                 "-s",
                 "spead",
-            ],
-            stderr=-1,
-            stdout=-1,
-        )
-
-        shutil.rmtree(build)
-
-    def test_subprocess_call_to_cheetah_pipeline_env(self, mocker, resource):
-        """
-        Test that a call to ./cheetah_pipeline is correctly made by
-        the subprocess when cheetah build directory is set as an
-        environment variable.
-        """
-
-        # Set up fake cheetah resources
-        build, executable = resource("pipeline", "cheetah_pipeline")
-        os.environ["CHEETAH_BUILD"] = build
-
-        # Set cheetah log messages
-        cheetah_log = (
-            open(
-                os.path.join(DATA_DIR, "cheetah_pipeline_log.txt"),
-                "r",
-                encoding="utf8",
-            )
-            .read()
-            .encode()
-        )
-
-        class ChildStub:
-            """
-            Mocks call to child process
-            """
-
-            returncode = -9
-
-            def communicate(self, timeout):
-                """
-                Emulate subprocess.communicate()
-                """
-                return (cheetah_log, b"")
-
-        # Intercept call to subprocess with child_stub()
-        mocker.patch("subprocess.Popen")
-        subprocess.Popen.side_effect = [ChildStub()]
-
-        # Instantiate "cheetah pipeline" and run it
-        cheetah = Cheetah(
-            "cheetah_pipeline", SPS_CONFIG, "sigproc", "SinglePulse"
-        )
-        cheetah.run()
-
-        # Load parsed cheetah logs fixture
-        dummy_parsed = json.load(
-            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"))
-        )
-
-        # Test log parser returns content expected
-        assert json.loads(cheetah.logs) == dummy_parsed
-
-        # Test the subprocess call
-        subprocess.Popen.assert_called_once_with(
-            [
-                executable,
-                "--config=tests/data/examples/sps_pipeline_config.xml",
-                "-p",
-                "SinglePulse",
-                "-s",
-                "sigproc",
             ],
             stderr=-1,
             stdout=-1,
