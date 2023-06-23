@@ -59,7 +59,7 @@ def setup_pipeline(
         args = requirements[executable]
 
         # If a cheetah build/install directory has been supplied,
-        # search it the the launcher
+        # search it for the launcher
         if cheetah_dir:
             path = search_build(cheetah_dir, executable, args)
         # If no, assume the executable is in the user's $PATH
