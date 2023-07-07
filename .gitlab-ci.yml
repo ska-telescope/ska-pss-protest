@@ -9,6 +9,7 @@ stages:
   - scan
   - build
   - publish
+  - pages
 
 lint:
   stage: lint
