@@ -1,44 +1,27 @@
-.. skeleton documentation master file, created by
-   sphinx-quickstart on Thu May 17 15:17:35 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+SDP Configuration Library
+=========================
 
+This repository contains the library for accessing SKA SDP configuration
+information. It provides ways for SDP controller and processing components to
+discover and manipulate the intended state of the system.
 
-.. HOME SECTION ==================================================
-
-.. Hidden toctree to manage the sidebar navigation.
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Home
-  :hidden:
-
-
-.. README =============================================================
-
-.. This project most likely has it's own README. We include it here.
+At the moment this is implemented on top of ``etcd``, a highly-available
+database. This library provides primitives for atomic queries and updates to
+the stored configuration information.
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Readme
+  :maxdepth: 1
 
-   ../../README
-
-.. COMMUNITY SECTION ==================================================
-
-..
-
-.. toctree::
-  :maxdepth: 2
-  :caption: Package name
-  :hidden:
-
-  package/guide
+  installation
+  design
+  schema
+  api
+  cli
 
 
-Project-name documentation HEADING
-==================================
+Indices and tables
+------------------
 
-These are all the packages, functions and scripts that form part of the project.
+- :ref:`genindex`
+- :ref:`modindex`
 
-- :doc:`package/guide`
