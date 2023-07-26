@@ -4,7 +4,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline in dm-width p
     
 
     Scenario: Detecting single pulses
-        Given A 60 second duration <type> test vector containing 7 single pulses, with a dispersion measure of <dm> and a duty cycle of <width>
+        Given A 60 second duration <type> test vector containing "0.125" pulses per second, each with a dispersion measure of <dm>, a duty cycle of <width> and a S/N of "14"
         And A cheetah configuration to ingest the test vector
         And A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata
 
