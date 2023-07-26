@@ -21,6 +21,7 @@ The basic workflow of ProTest is summarised in the following diagram.
   :maxdepth: 1
 
   install 
+  run
   product
-  developing
+  develop
 
