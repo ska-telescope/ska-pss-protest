@@ -55,6 +55,7 @@
 
 import logging
 import os
+from xml.etree import ElementTree as et
 
 import numpy as np
 
@@ -561,3 +562,99 @@ class DmTol:
         tol_us = self.weff / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         tol_s = tol_us * 1e-06
         self.timestamp_tol = tol_s / 86400
+
+
+
+class DMstepTol:
+    """
+    Class to compute the tolerances on the single pulses using
+    DM and width steps from the config file as basic tolerances. 
+    This is calculated as:
+    - DM tolerance = +/- 1 DM step from DM plan
+    - Width tolerance = +/- hald a convolution width used in SPDT
+    - S/N tolerance as calculated from the radiometers equation and
+      effective pulse width from DM smearing
+    - time stamp tolerance from the effective pulse width
+    
+    This class is only relevant for a single pulse search
+    and not a periodicity search.
+    
+    The class takes a list of pulse metadata parameters that represent
+    the expected values, and computes a tolerance value for each of them.
+    This can then be compared to the detected candidate metadata parameters.
+
+    Parameters
+    ----------
+    expected : list
+        A list of known metadata parameters in the form
+        [Timestamp (MJD), DM (pc/cc), Width (ms), S/N]
+
+    config: str
+    
+    pars : dict
+        A dictionary of parameters describing the properties
+        of the filterbank being searched and of the signal
+        injected into the filterbank.
+    """
+
+    def __init__(self, expected: list, config=None):
+        self.expected = expected
+        self.config = config
+
+        self.width_tol = None
+        self.min_sn = None
+        self.dm_tol = None
+        self.timestamp_tol = None
+        self.weff = None
+
+        # Have we set a config file?
+        if not self.config:
+            raise OSError("No config specified")
+        # Does the config file exist on the filesystem?
+        if not os.path.isfile(self.config):
+            raise OSError("No such directory: {}".format(self.config))
+
+        self.calc_tols()
+
+
+    def calc_tols(self):
+        """
+        Generates tolerance data for each
+        SpCcl metadata parameter.
+        """
+
+        # Compute period in us
+#        period = (1.0 / self.pars["freq"]) * 1e6
+
+        #self.sig(self.expected[3])
+        #self.width(self.expected[2] * 1000, period)
+    #    self.dispersion(self.expected[1], "/Users/user/DATA/SKA/from_dokimi/fullDMrange.xml")
+        self.dispersion(self.expected[1], self.config)
+        #self.timestamp()
+
+    def dispersion(self, disp: float, config: str):
+        """
+        Gets the DM tolerance from the Cheetah config file
+        and sets it equal to one DM step
+        
+        Parameters
+        ----------
+        disp : float
+             The "true" DM of the pulse
+
+        config: str
+             Path to the config file
+        """
+
+        tree = et.parse(config)
+        root = tree.getroot()
+        for dm in root.iter('dedispersion'):
+            first = float(dm.find('start').text)
+            last = float(dm.find('end').text)
+            if disp>first and disp<last:
+                this_dm_tol = float(dm.find('step').text)
+        
+        self.dm_tol = this_dm_tol
+        
+
+        

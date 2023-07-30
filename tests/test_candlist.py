@@ -219,6 +219,7 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             cands.from_vector("/this/random/path.fil")
 
+
     def test_from_vector_exact(self, get_vector):
         """
         Tests that the from_vector() method generates
@@ -344,9 +345,10 @@ class SpCclTests:
             assert candidate.cands[i][0] == exp[i][0]
             # Check the fiducial pulse timestamp (compared with calculations)
             if arrival_time == pytest.approx(exp[i][0], fil.tsamp()):
-                fiducial_detected = True
+                  fiducial_detected = True
         assert fiducial_detected is True
 
+        
     def test_from_spccl_no_header(self):
         """
         Test that from_spccl() correctly parses a SpCcl metadata
@@ -488,3 +490,22 @@ class SpCclTests:
         candidate.compare_dm(source_properties)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
+
+
+    def test_new_tolerances(self):
+        """
+        Tests that the new tolerances work as expected
+        """
+        CONFIG_DIR = os.path.join(
+            Path(os.path.abspath(__file__)).parents[1], "tests/data/examples/"
+        )
+        config = os.path.join(CONFIG_DIR, "fullDMrange_config.xml")
+
+        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
+        tols = cand.DMstepTol(
+            pulse_metadata,
+            config
+        )
+        assert tols.dm_tol == pytest.approx(0.307, 1e-7)
+
+        
