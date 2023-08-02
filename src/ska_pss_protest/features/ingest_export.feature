@@ -1,4 +1,4 @@
-@product @cpu
+@product @cpu @testvector
 Feature: Ingest and export of test vector data
     PSS pipeline exports filterbank data with correct properties
 
