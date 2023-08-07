@@ -147,7 +147,7 @@
     <priority>0</priority>
     <dedispersion_samples>180000</dedispersion_samples>
     <klotski_bruteforce>
-      <active>true</active>
+      <active>false</active>
     </klotski_bruteforce>
     <astroaccelerate>
       <active>false</active>
@@ -300,7 +300,7 @@
       <active>false</active>
     </astroaccelerate>
     <klotski_bruteforce>
-      <active>true</active>
+      <active>false</active>
     </klotski_bruteforce>
     <cpu>
       <active>false</active>
