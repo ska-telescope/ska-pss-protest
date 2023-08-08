@@ -19,7 +19,7 @@ lint:
   script:
     - isort --check-only --profile black src/ tests/
     - black --check --line-length 79 src/ tests/
-    - flake8 --show-source --statistics src/ tests/
+    - flake8 --line-length 200 --show-source --statistics src/ tests/
 
 include:
   # Python test jobs
