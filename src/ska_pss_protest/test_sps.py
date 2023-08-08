@@ -3,14 +3,13 @@ Module docstring placeholder
 """
 
 import os
-import shutil
 import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, Filterbank, VectorPull, VHeader
+from ska_pss_protest import Cheetah, Filterbank, SpCcl, VectorPull, VHeader
 
 # pylint: disable=W0621,W0212
 
@@ -97,6 +96,7 @@ def set_sink(config, context):
 
     # Set output location for candidate metdata files
     config("beams/beam/sinks/sink_configs/sp_candidate_data/dir", outdir)
+    context["candidate_dir"] = outdir
 
 
 @when("An SPS pipeline runs")
@@ -112,17 +112,45 @@ def run_cheetah(context, config, pytestconfig):
     )
 
     # Launch cheetah with our configuration
+    cheetah = Cheetah(
+        "cheetah_pipeline",
+        context["config_path"],
+        "sigproc",
+        "SinglePulse",
+        build_dir=pytestconfig.getoption("path"),
+    )
+    cheetah.run()
+    assert cheetah.exit_code == 0
+
+    # Clean up
+    os.remove(context["config_path"])
 
 
 @then(
     "Candidate filterbanks are exported to disk and their header properties are consistent with the test vector"
 )
-def validate_exported_data(context):
-    pass
+def validate_exported_candidates(context):
+    # Load candidates
+    candidates = Filterbank(context["candidate_dir"])
+    candidates.get_headers()
+
+    # Get header info from test vector
+    input_header = context["vector_header"]
+
+    # Compare expected common properties candidate vectors with input vector
+    for header in candidates.headers:
+        assert isinstance(header, VHeader)
+        assert header.fch1() == input_header.fch1()
+        assert header.nchans() == input_header.nchans()
+        assert header.nbits() == input_header.nbits()
+        assert header.chbw() == input_header.chbw()
+        assert header.tsamp() == input_header.tsamp()
+        assert header.start_time() >= input_header.start_time()
 
 
 @then(
     "A candidate metadata file is produced which contains detections of the input signals within tolerances"
 )
-def do_last_bit(context):
-    pass
+def validate_candidate_metadata(context):
+    cand_metadata = SpCcl(context["candidate_dir"])
+    assert cand_metadata
