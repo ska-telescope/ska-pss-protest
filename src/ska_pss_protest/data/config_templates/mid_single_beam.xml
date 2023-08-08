@@ -128,20 +128,6 @@
       <window>0</window>
     </rfim_sum_threshold>
   </rfim>
-  <channel_mask>
-    <policy></policy>
-    <channel_numbers></channel_numbers>
-    <policies>
-      <replace_constant>
-        <value></value>
-      </replace_constant>
-    </policies>
-    <range>
-      <start_number></start_number>
-      <end_number></end_number>
-      <id>1</id>
-    </range>
-  </channel_mask>
   <ddtr>
     <pool-id>default</pool-id>
     <priority>0</priority>
@@ -200,74 +186,12 @@
   <psbc>
     <dump_time>600</dump_time>
   </psbc>
-  <scan>
-    <accel_range></accel_range>
-    <beam_bw></beam_bw>
-    <beam_id></beam_id>
-    <bit_per_sample></bit_per_sample>
-    <disp_measure></disp_measure>
-    <freq_channels></freq_channels>
-    <scan_id></scan_id>
-    <scan_time></scan_time>
-    <sub_array_id></sub_array_id>
-    <time_resolution></time_resolution>
-    <time_samples></time_samples>
-    <trials_number></trials_number>
-  </scan>
   <acceleration>
     <fdas>
       <pool-id>default</pool-id>
       <priority>0</priority>
       <active>false</active>
     </fdas>
-    <tdas>
-      <pool-id>false</pool-id>
-      <priority>0</priority>
-      <dm_trials_per_task>50</dm_trials_per_task>
-      <minimum_size>19</minimum_size>
-      <size>23</size>
-      <nharmonics>4</nharmonics>
-      <active>false</active>
-      <acceleration_list_generator>
-        <acc_lo>-5.0</acc_lo>
-        <acc_hi>5.0</acc_hi>
-        <tol>1.10</tol>
-        <pulse_width>0.000064</pulse_width>
-        <cfreq></cfreq>
-        <bw></bw>
-      </acceleration_list_generator>
-      <cuda>
-        <active>false</active>
-        <brdz/>
-        <dred>
-          <oversmoothing_factor>5</oversmoothing_factor>
-          <cuda/>
-          <pwft>
-            <cuda/>
-          </pwft>
-        </dred>
-        <fft>
-          <freq_complex_to_complex/>
-          <freq_complex_to_real/>
-          <time_complex_to_complex/>
-          <time_real_to_complex/>
-        </fft>
-        <hrms>
-          <cuda/>
-        </hrms>
-        <pwft>
-          <cuda/>
-        </pwft>
-        <tdao>
-          <significance_threshold>9</significance_threshold>
-          <minimum_search_frequency>0.0</minimum_search_frequency>
-          <maximum_search_frequency>5000</maximum_search_frequency>
-        </tdao>
-        <tdrt>
-          <cuda/>
-        </tdrt>
-      </cuda>
-    </tdas>
   </acceleration>
   <sift>
     <pool-id>default</pool-id>
@@ -284,13 +208,6 @@
     <cpu>
       <active>false</active>
     </cpu>
-    <origami_cuda>
-      <active>false</active>
-      <enable_split>false</enable_split>
-      <phases></phases>
-      <nsubints></nsubints>
-      <nsubbands></nsubbands>
-    </origami_cuda>
   </fldo>
   <sps>
     <pool-id>default</pool-id>
