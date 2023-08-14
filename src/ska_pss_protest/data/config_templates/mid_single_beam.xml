@@ -15,7 +15,9 @@
             <sink>
               <id>spccl_files</id>
             </sink>
-            <id>candidate_files</id>
+            <sink>
+              <id>candidate_files</id>
+            </sink>
           </sps_events>
         </channels>
         <sink_configs>
@@ -29,12 +31,6 @@
             <dir>/tmp</dir>
             <id>scl_files</id>
           </scl_files>
-          <sigproc>
-            <spectra_per_file>0</spectra_per_file>
-            <dir>/tmp</dir>
-            <extension>.fil</extension>
-            <id>candidate_files</id>
-          </sigproc>
           <sp_candidate_data>
             <extension>spccl</extension>
             <dir>/tmp</dir>
@@ -50,8 +46,8 @@
             <dir>/tmp</dir>
             <extension>.fil</extension>
             <candidate_window>
-              <ms_before>10</ms_before>
-              <ms_after>10</ms_after>
+              <ms_before>500</ms_before>
+              <ms_after>1000</ms_after>
             </candidate_window>
             <id>candidate_files</id>
           </spccl_sigproc_files>
@@ -131,10 +127,14 @@
   <ddtr>
     <pool-id>default</pool-id>
     <priority>0</priority>
-    <dedispersion_samples>180000</dedispersion_samples>
+    <dedispersion_samples>131072</dedispersion_samples>
     <klotski_bruteforce>
       <active>false</active>
     </klotski_bruteforce>
+    <klotski>
+      <active>false</active>
+      <precise>false</precise>
+    </klotski>
     <astroaccelerate>
       <active>false</active>
       <copy_dmtrials_to_host>false</copy_dmtrials_to_host>
@@ -156,29 +156,29 @@
     </rfiexcision>
     <dedispersion>
       <start>0.0</start>
-      <end>370.0</end>
-      <step>0.307</step>
+      <end>100.0</end>
+      <step>0.1</step>
     </dedispersion>
     <dedispersion>
-      <start>370.0</start>
-      <end>740.0</end>
-      <step>0.652</step>
+      <start>100.0</start>
+      <end>300.0</end>
+      <step>0.2</step>
     </dedispersion>
     <dedispersion>
-      <start>740.0</start>
-      <end>1480.0</end>
-      <step>1.266</step>
+      <start>300.0</start>
+      <end>700.0</end>
+      <step>0.4</step>
     </dedispersion>
     <dedispersion>
-      <start>1480.0</start>
-      <end>2950.0</end>
-      <step>2.512</step>
+      <start>700.0</start>
+      <end>1500.0</end>
+      <step>0.8</step>
     </dedispersion>
     <dedispersion>
-      <start>2950.0</start>
-      <end>5000.0</end>
-      <step>4.0</step>
-   </dedispersion>
+      <start>1500.0</start>
+      <end>3100.0</end>
+      <step>1.6</step>
+    </dedispersion>
   </ddtr>
   <empty>
     <exit_count>0</exit_count>
@@ -219,6 +219,9 @@
     <klotski_bruteforce>
       <active>false</active>
     </klotski_bruteforce>
+    <klotski>
+      <active>false</active>
+    </klotski>
     <cpu>
       <active>false</active>
       <samples_per_iteration>1024</samples_per_iteration>
