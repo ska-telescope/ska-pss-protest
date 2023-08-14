@@ -5,6 +5,7 @@ Module docstring placeholder
 import os
 import tempfile
 from xml.etree import ElementTree as et
+import shutil
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
@@ -54,12 +55,12 @@ def config():
         "A 60 second duration {vector_type} containing {freq} pulses per second, each with a dispersion measure of {dm}, a duty cycle of {width} and a combined S/N of {sn}"
     )
 )
-def pull_test_vector(context, vector_type, freq, dm, width, sn):
+def pull_test_vector(context, pytestconfig, vector_type, freq, dm, width, sn):
     """
     Get test vector and add path to it to the config file
     """
     test_vector = VectorPull(
-        cache_dir="/home/benshaw/.cache/SKA/test_vectors/temp"
+        cache_dir=pytestconfig.getoption("cache")
     )
     test_vector.from_properties(
         vectype=vector_type, freq=freq, duty=width, disp=dm, sig=sn
@@ -89,13 +90,13 @@ def set_source(context, config):
     "A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata"
 )
 def set_sink(config, context):
-
     # Set output location for candidate filterbanks
     outdir = tempfile.mkdtemp()
-    config("beams/beam/sinks/sink_configs/sigproc/dir", outdir)
+    config("beams/beam/sinks/channels/sps_events/active", "true")
+    config("beams/beam/sinks/sink_configs/spccl_sigproc_files/dir", outdir)
 
     # Set output location for candidate metdata files
-    config("beams/beam/sinks/sink_configs/sp_candidate_data/dir", outdir)
+    config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
     context["candidate_dir"] = outdir
 
 
@@ -106,8 +107,11 @@ def run_cheetah(context, config, pytestconfig):
     run cheetah
     """
     # Set DDTR Algorithm
-    config("ddtr/klotski_bruteforce/active", "true")
-    config("sps/klotski_bruteforce/active", "true").write(
+    config("ddtr/klotski/active", "true")
+    config("ddtr/klotski/precise", "false")
+    config("sps/klotski/active", "true")
+    # Set SPS S/N threshold
+    config("sps/threshold", "6.0").write(
         context["config_path"]
     )
 
@@ -125,7 +129,6 @@ def run_cheetah(context, config, pytestconfig):
     # Clean up
     os.remove(context["config_path"])
 
-
 @then(
     "Candidate filterbanks are exported to disk and their header properties are consistent with the test vector"
 )
@@ -141,16 +144,19 @@ def validate_exported_candidates(context):
     for header in candidates.headers:
         assert isinstance(header, VHeader)
         assert header.fch1() == input_header.fch1()
+        assert header.nspectra() <= input_header.nspectra()
         assert header.nchans() == input_header.nchans()
         assert header.nbits() == input_header.nbits()
         assert header.chbw() == input_header.chbw()
         assert header.tsamp() == input_header.tsamp()
         assert header.start_time() >= input_header.start_time()
-
+        assert header.duration() <= input_header.duration()
 
 @then(
     "A candidate metadata file is produced which contains detections of the input signals within tolerances"
 )
 def validate_candidate_metadata(context):
     cand_metadata = SpCcl(context["candidate_dir"])
-    assert cand_metadata
+    assert len(cand_metadata.cands) >= int(context["vector_header"].duration() * context["vector_header"].allpars()["freq"])
+
+    shutil.rmtree(context["candidate_dir"])
