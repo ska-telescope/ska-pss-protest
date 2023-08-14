@@ -59,9 +59,7 @@ def pull_test_vector(context, pytestconfig, vector_type, freq, dm, width, sn):
     """
     Get test vector and add path to it to the config file
     """
-    test_vector = VectorPull(
-        cache_dir=pytestconfig.getoption("cache")
-    )
+    test_vector = VectorPull(cache_dir=pytestconfig.getoption("cache"))
     test_vector.from_properties(
         vectype=vector_type, freq=freq, duty=width, disp=dm, sig=sn
     )
@@ -111,9 +109,7 @@ def run_cheetah(context, config, pytestconfig):
     config("ddtr/klotski/precise", "false")
     config("sps/klotski/active", "true")
     # Set SPS S/N threshold
-    config("sps/threshold", "6.0").write(
-        context["config_path"]
-    )
+    config("sps/threshold", "6.0").write(context["config_path"])
 
     # Launch cheetah with our configuration
     cheetah = Cheetah(
@@ -128,6 +124,7 @@ def run_cheetah(context, config, pytestconfig):
 
     # Clean up
     os.remove(context["config_path"])
+
 
 @then(
     "Candidate filterbanks are exported to disk and their header properties are consistent with the test vector"
@@ -152,11 +149,15 @@ def validate_exported_candidates(context):
         assert header.start_time() >= input_header.start_time()
         assert header.duration() <= input_header.duration()
 
+
 @then(
     "A candidate metadata file is produced which contains detections of the input signals within tolerances"
 )
 def validate_candidate_metadata(context):
     cand_metadata = SpCcl(context["candidate_dir"])
-    assert len(cand_metadata.cands) >= int(context["vector_header"].duration() * context["vector_header"].allpars()["freq"])
+    assert len(cand_metadata.cands) >= int(
+        context["vector_header"].duration()
+        * context["vector_header"].allpars()["freq"]
+    )
 
     shutil.rmtree(context["candidate_dir"])
