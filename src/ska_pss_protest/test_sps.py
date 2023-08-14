@@ -3,9 +3,9 @@ Module docstring placeholder
 """
 
 import os
+import shutil
 import tempfile
 from xml.etree import ElementTree as et
-import shutil
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
