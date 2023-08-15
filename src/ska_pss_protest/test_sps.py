@@ -108,6 +108,11 @@ def run_cheetah(context, config, pytestconfig):
     config("ddtr/klotski/active", "true")
     config("ddtr/klotski/precise", "false")
     config("sps/klotski/active", "true")
+
+    # Set number of samples in dedispersion buffer
+    context["dd_samples"] = 131072
+    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
 
@@ -154,10 +159,13 @@ def validate_exported_candidates(context):
     "A candidate metadata file is produced which contains detections of the input signals within tolerances"
 )
 def validate_candidate_metadata(context):
-    cand_metadata = SpCcl(context["candidate_dir"])
-    assert len(cand_metadata.cands) >= int(
+    spccl = SpCcl(context["candidate_dir"])
+    assert len(spccl.cands) >= int(
         context["vector_header"].duration()
         * context["vector_header"].allpars()["freq"]
     )
+    # Generate list of expected candidates
+    spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
+    spccl.compare_dm(context["vector_header"].allpars())
 
     shutil.rmtree(context["candidate_dir"])
