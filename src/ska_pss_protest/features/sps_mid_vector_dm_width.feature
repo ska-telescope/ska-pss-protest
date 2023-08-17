@@ -1,4 +1,4 @@
-@product @cpu @sps @testvector @positive @mid
+@product @cpu @sps @testvector @positive @mid @nasm
 Feature: Tests of detection capability of a CPU-based SPS pipeline in dm-width parameter space
     SPS pipeline exports filterbanks and candidate lists corresponding to injected single-pulses covering multiple dispersion measures and pulse widths
 
