@@ -87,9 +87,9 @@ def set_source(context, config):
 @given(
     "A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata"
 )
-def set_sink(config, context):
+def set_sink(config, context, pytestconfig):
     # Set output location for candidate filterbanks
-    outdir = tempfile.mkdtemp()
+    outdir = tempfile.mkdtemp(dir=pytestconfig.getoption("outdir"))
     config("beams/beam/sinks/channels/sps_events/active", "true")
     config("beams/beam/sinks/sink_configs/spccl_sigproc_files/dir", outdir)
 
@@ -160,12 +160,10 @@ def validate_exported_candidates(context):
 )
 def validate_candidate_metadata(context):
     spccl = SpCcl(context["candidate_dir"])
-    assert len(spccl.cands) >= int(
-        context["vector_header"].duration()
-        * context["vector_header"].allpars()["freq"]
-    )
     # Generate list of expected candidates
+
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     spccl.compare_dm(context["vector_header"].allpars())
+    assert len(spccl.cands) >= len(spccl.expected)
 
     shutil.rmtree(context["candidate_dir"])
