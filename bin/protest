@@ -50,6 +50,7 @@ import os
 import sys
 
 import pytest
+
 import ska_pss_protest
 
 
@@ -59,36 +60,17 @@ class ProTest:
     PSS product tests
     """
 
-    def __init__(self, path, cache, mark="product"):
-
-        # Verify test type
-        self.verify_type(mark)
+    def __init__(self, path, cache, outdir, mark="product"):
 
         self.path = path
         self.mark = mark
         self.cache = cache
+        self.outdir = outdir
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
 
         self.run()
-
-    @staticmethod
-    def verify_type(mark):
-        """
-        Private method to verify that the product
-        test type requested is valid
-
-        Parameters
-        ----------
-        mark : str
-            The test type to be executed
-        """
-
-        test_types = ["product", "cpu", "sps", "newtest"]
-
-        if mark not in test_types:
-            raise Exception(f"Test type {mark} not found")
 
     def run(self):
         """
@@ -106,6 +88,9 @@ class ProTest:
         if self.cache:
             cache_arg = ["--cache=" + self.cache]
             pytest_args = cache_arg + pytest_args
+        if self.outdir:
+            outdir_arg = ["--outdir=" + self.outdir]
+            pytest_args = outdir_arg + pytest_args
 
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
@@ -117,10 +102,18 @@ def main():
     """
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
     parser.add_argument(
-        "-p", "--path", help="Path to cheetah build tree", required=False, default=None
+        "-p",
+        "--path",
+        help="Path to cheetah build tree",
+        required=False,
+        default=None,
     )
+    parser.add_argument("--cache", help="Cache", required=False, default=None)
     parser.add_argument(
-        "--cache", help="Cache", required=False, default=None
+        "--outdir",
+        help="Directory to store candidate data",
+        required=False,
+        default="/tmp",
     )
     parser.add_argument(
         "-m",
@@ -130,7 +123,7 @@ def main():
     )
     args = parser.parse_args()
 
-    protest = ProTest(args.path, args.cache, args.mark)
+    protest = ProTest(args.path, args.cache, args.outdir, args.mark)
     protest.run()
 
 
