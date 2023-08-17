@@ -160,7 +160,7 @@ def validate_exported_candidates(context):
 )
 def validate_candidate_metadata(context):
     spccl = SpCcl(context["candidate_dir"])
-    
+
     # Generate list of expected candidates
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     assert len(spccl.cands) >= len(spccl.expected)
