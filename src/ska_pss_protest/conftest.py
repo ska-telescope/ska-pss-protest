@@ -11,3 +11,4 @@ def pytest_addoption(parser):
     """
     parser.addoption("--path", action="store", default=None)
     parser.addoption("--cache", action="store", default=None)
+    parser.addoption("--outdir", action="store", default="/tmp")
