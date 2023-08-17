@@ -108,10 +108,15 @@ def main():
         required=False,
         default=None,
     )
-    parser.add_argument("--cache", help="Cache", required=False, default=None)
+    parser.add_argument(
+        "--cache",
+        help="Directory containing locally stored test vectors",
+        required=False,
+        default=None,
+    )
     parser.add_argument(
         "--outdir",
-        help="Directory to store candidate data",
+        help="Directory to store candidate data products",
         required=False,
         default="/tmp",
     )
