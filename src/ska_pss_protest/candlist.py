@@ -570,8 +570,8 @@ class DMstepTol:
     This is calculated as:
     - DM tolerance = +/- 1 DM step from DM plan
     - Width tolerance = +/- hald a convolution width used in SPDT
-    - S/N tolerance as calculated from the radiometers equation and
-      effective pulse width from DM smearing
+    - S/N tolerance as calculated from the radiometer equation and
+      effective pulse width from closest convolution width
     - time stamp tolerance from the effective pulse width
 
     This class is only relevant for a single pulse search
@@ -595,15 +595,17 @@ class DMstepTol:
         injected into the filterbank.
     """
 
-    def __init__(self, expected: list, config=None):
+    # def __init__(self, expected: list, config = None):
+    def __init__(self, expected: list, pars: dict, config=None):
         self.expected = expected
         self.config = config
+        self.pars = pars
 
         self.width_tol = None
         self.min_sn = None
         self.dm_tol = None
         self.timestamp_tol = None
-        self.weff = None
+        self.weffbox = None
 
         # Have we set a config file?
         if not self.config:
@@ -620,13 +622,13 @@ class DMstepTol:
         SpCcl metadata parameter.
         """
 
-        # Compute period in us
-        #   period = (1.0 / self.pars["freq"]) * 1e6
+        # Compute period in seconds
+        period = 1.0 / self.pars["freq"]
 
-        # self.sig(self.expected[3])
-        # self.width(self.expected[2] * 1000, period)
         self.dispersion(self.expected[1], self.config)
-        # self.timestamp()
+        self.timestamp(self.expected[2])
+        self.width(self.expected[2], self.config)
+        self.sig(self.expected[3], self.expected[2], period)
 
     def dispersion(self, disp: float, config: str):
         """
@@ -648,7 +650,94 @@ class DMstepTol:
             first = float(dm.find("start").text)
             last = float(dm.find("end").text)
             if first < disp < last:
-                # if disp>first and disp<last:
                 this_dm_tol = float(dm.find("step").text)
 
         self.dm_tol = this_dm_tol
+
+    def timestamp(self, wint: float):
+        """
+        Returns a timestamp tolerance in days
+
+        Parameters
+        ----------
+        wint: float
+            The "true" width of the pulse in seconds
+        """
+
+        tol_s = wint / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        self.timestamp_tol = tol_s / 86400
+
+    def width(self, wint: float, config: str):
+        """
+        Gets the width tolerance by comparing
+        the closest width box car used in SPS
+        and sets it equal to one width box car
+        The searched widths are set to
+        1, 2, 4, 8, ..., 2^n bins, where n is
+        set in the Cheetah config file or default is n=10.
+
+        Parameters
+        ----------
+        wint : float
+             The injected width of the pulse in seconds
+
+        config: str
+             Path to the config file
+        """
+
+        max_width_index = 10
+        tree = et.parse(config)
+        root = tree.getroot()
+        for klotski in root.iter("klotski_bruteforce"):
+            active = klotski.find("active").text
+            if active == "true":
+                if len(klotski.findall("number_of_widths")) > 0:
+                    max_width_index = int(
+                        klotski.find("number_of_widths").text
+                    )
+                else:
+                    max_width_index = 10
+
+        tsamp = self.pars["tsamp"]
+        # tsamp = 0.000064
+
+        box_widths = []
+        diff_box_width = []
+        n = 1
+        while n <= max_width_index:
+            fit_width = 2**n * tsamp
+            diff = abs(fit_width - wint)
+            box_widths.append(fit_width)
+            diff_box_width.append(diff)
+            n += 1
+
+        min_index = diff_box_width.index(min(diff_box_width))
+        closest_box = box_widths[min_index]
+
+        self.weffbox = float(closest_box)
+        self.width_tol = closest_box
+
+    def sig(self, sn_int: float, wint: float, period: float):
+        """
+        Sets the S/N tolerance by using the radiometer
+        equation for two pulses with different widths,
+        where wint is the injected pulse width and weff
+        is the closest box car width.
+
+        Parameters
+        ----------
+        sn_int: float
+             The injected single pulse S/N
+
+        wint : float
+             The injected width of the pulse in us
+
+        period: float
+             Injected pulse period in us
+        """
+
+        up = wint * (period - self.weffbox)
+        down = self.weffbox * (period - wint)
+        sn_tol = sn_int * np.sqrt(up / down)
+
+        self.min_sn = sn_tol
