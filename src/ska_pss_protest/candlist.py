@@ -56,8 +56,6 @@
 import logging
 import os
 
-# from xml.etree import ElementTree as et
-
 import numpy as np
 
 from ska_pss_protest.fil import VHeader
