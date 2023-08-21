@@ -55,7 +55,8 @@
 
 import logging
 import os
-from xml.etree import ElementTree as et
+
+# from xml.etree import ElementTree as et
 
 import numpy as np
 
@@ -595,24 +596,19 @@ class DMstepTol:
         injected into the filterbank.
     """
 
-    # def __init__(self, expected: list, config = None):
-    def __init__(self, expected: list, pars: dict, config=None):
+    def __init__(
+        self, expected: list, pars: dict, dmplan: list, max_width_index=int
+    ):
         self.expected = expected
-        self.config = config
         self.pars = pars
+        self.dmplan = dmplan
+        self.max_width_index = max_width_index
 
         self.width_tol = None
         self.min_sn = None
         self.dm_tol = None
         self.timestamp_tol = None
         self.weffbox = None
-
-        # Have we set a config file?
-        if not self.config:
-            raise OSError("No config specified")
-        # Does the config file exist on the filesystem?
-        if not os.path.isfile(self.config):
-            raise OSError("No such directory: {}".format(self.config))
 
         self.calc_tols()
 
@@ -624,13 +620,14 @@ class DMstepTol:
 
         # Compute period in seconds
         period = 1.0 / self.pars["freq"]
+        # period = 1.0 / 0.2
 
-        self.dispersion(self.expected[1], self.config)
+        self.dispersion(self.expected[1], self.dmplan)
         self.timestamp(self.expected[2])
-        self.width(self.expected[2], self.config)
+        self.width(self.expected[2])
         self.sig(self.expected[3], self.expected[2], period)
 
-    def dispersion(self, disp: float, config: str):
+    def dispersion(self, disp: float, dmplan: list):
         """
         Gets the DM tolerance from the Cheetah config file
         and sets it equal to one DM step
@@ -644,14 +641,14 @@ class DMstepTol:
              Path to the config file
         """
 
-        tree = et.parse(config)
-        root = tree.getroot()
-        for dm in root.iter("dedispersion"):
-            first = float(dm.find("start").text)
-            last = float(dm.find("end").text)
-            if first < disp < last:
-                this_dm_tol = float(dm.find("step").text)
+        # dmplan = [[start, end, step], [start, end, step],...].
+        for dm in dmplan:
+            start = dm[0]
+            end = dm[1]
+            if start < disp < end:
+                step = dm[2]
 
+        this_dm_tol = step
         self.dm_tol = this_dm_tol
 
     def timestamp(self, wint: float):
@@ -667,7 +664,7 @@ class DMstepTol:
         tol_s = wint / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         self.timestamp_tol = tol_s / 86400
 
-    def width(self, wint: float, config: str):
+    def width(self, wint: float):
         """
         Gets the width tolerance by comparing
         the closest width box car used in SPS
@@ -680,31 +677,15 @@ class DMstepTol:
         ----------
         wint : float
              The injected width of the pulse in seconds
-
-        config: str
-             Path to the config file
         """
 
-        max_width_index = 10
-        tree = et.parse(config)
-        root = tree.getroot()
-        for klotski in root.iter("klotski_bruteforce"):
-            active = klotski.find("active").text
-            if active == "true":
-                if len(klotski.findall("number_of_widths")) > 0:
-                    max_width_index = int(
-                        klotski.find("number_of_widths").text
-                    )
-                else:
-                    max_width_index = 10
-
         tsamp = self.pars["tsamp"]
-        # tsamp = 0.000064
+        #        tsamp = 0.000064
 
         box_widths = []
         diff_box_width = []
         n = 1
-        while n <= max_width_index:
+        while n <= self.max_width_index:
             fit_width = 2**n * tsamp
             diff = abs(fit_width - wint)
             box_widths.append(fit_width)
