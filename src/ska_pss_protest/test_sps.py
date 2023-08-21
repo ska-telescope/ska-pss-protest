@@ -18,7 +18,7 @@ from pytest_bdd import given, parsers, scenarios, then, when
 
 from ska_pss_protest import Cheetah, Filterbank, SpCcl, VectorPull, VHeader
 
-# pylint: disable=W0621,W0212
+# pylint: disable=W0621,W0212,C0116,C0103,C0301
 
 scenarios("features/sps_mid_vector_dm_width.feature")
 
@@ -137,7 +137,7 @@ def run_cheetah(context, config, pytestconfig):
     assert cheetah.exit_code == 0
 
     # Clean up
-    #os.remove(context["config_path"])
+    os.remove(context["config_path"])
 
 
 @then(
@@ -174,4 +174,4 @@ def validate_candidate_metadata(context):
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     assert len(spccl.cands) >= len(spccl.expected)
 
-    #shutil.rmtree(context["candidate_dir"])
+    shutil.rmtree(context["candidate_dir"])
