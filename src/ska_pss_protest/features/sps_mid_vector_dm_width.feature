@@ -9,7 +9,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline in dm-width p
 
         When An SPS pipeline runs
         Then Candidate filterbanks are exported to disk and their header properties are consistent with the test vector
-        And A candidate metadata file is produced which contains detections of the input signals within tolerances
+        And A candidate metadata file is produced which contains detections of the input signals
 
         Examples:
         | vector_type | dm     | width     | freq  | sn |
