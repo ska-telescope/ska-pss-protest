@@ -388,6 +388,64 @@ class SpCcl:
                 # Add to list of non-detected pulses.
                 self.non_detections.append(expected)
 
+    def compare_dmstep(self, pars=None, dmplan=None, windex=None):
+        """
+        Function to search for each expected pulse from the
+        list of candidate detections. A match is defined if
+        a candidate signal matches an expected signal within
+        tolerances, as defined in the DMstepTol class. This
+        method requires information about the observing band and the
+        frequency of the pulse in the test vector. These can be provided
+        as a dictionary using the VHeader() method allpars().
+        Further info in DMstepTol() class below.
+
+        Parameters
+        ----------
+        pars : dict
+            dictionary of test vector header and signal parameters.
+            Required parameters are:
+            "freq": the spin-frequency in Hz,
+            "fch1: the frequency of the first channel (in MHz),
+            "foff: the channel bandwidth (negative, in MHz),
+            "nchans": the number of channels.
+
+            E.g.,
+            pars = {"freq" : 1.0,
+                    "fch1 : 1670.0,
+                    "foff" : -20.0,
+                    "nchans" : 16}
+        dmplan : list
+            List of lists, containing DM plan from
+            Cheetah configuration file
+
+            E.g.
+            dmplan = [[start, end, step], [start, end, step],...]
+
+        windex : int
+            Maximum number of widths as searched by the relevant
+            SPS algotrithm used. The searched widths are set to
+            1, 2, 4, 8, ..., 2^n bins, where n is set in
+            the Cheetah config file.
+        """
+        logging.info("Using ruleset: DMstep")
+
+        # For each known pulse in the test vector...
+        for expected in self.expected:
+            logging.info("Searching candidates for {}".format(expected))
+
+            # Generate rules from the known pulse parameters and the
+            # test vector parameters
+            rules = DMstepTol(expected, pars, dmplan, windex)
+            # rules = DMstepTol(expected, dmplan, windex)
+
+            # If we find it..
+            if self._compare(expected, self.cands, rules):
+                # Add to list of detected pulses
+                self.detections.append(expected)
+            else:
+                # Add to list of non-detected pulses.
+                self.non_detections.append(expected)
+
     @staticmethod
     def _compare(exp: list, cands: list, rules: object) -> bool:
         """
@@ -616,14 +674,14 @@ class DMstepTol:
         SpCcl metadata parameter.
         """
 
-        # Compute period in seconds
-        period = 1.0 / self.pars["freq"]
-        # period = 1.0 / 0.2
+        # Compute period in microseconds
+        period = 1.0 / self.pars["freq"] * 1e6
+        # period = 1.0 / 0.2 * 1e6
 
         self.dispersion(self.expected[1], self.dmplan)
-        self.timestamp(self.expected[2])
-        self.width(self.expected[2])
-        self.sig(self.expected[3], self.expected[2], period)
+        self.timestamp(self.expected[2] * 1000)
+        self.width(self.expected[2] * 1000)
+        self.sig(self.expected[3], self.expected[2] * 1000, period)
 
     def dispersion(self, disp: float, dmplan: list):
         """
@@ -635,8 +693,11 @@ class DMstepTol:
         disp : float
              The "true" DM of the pulse
 
-        config: str
-             Path to the config file
+        dmplan: list
+             List of lists of DM start, DM end, and DM step
+             from DM plan in configuration file.
+             E.g.,
+             dmplan = [[start, end, step], [start, end, step],...]
         """
 
         # dmplan = [[start, end, step], [start, end, step],...].
@@ -656,10 +717,11 @@ class DMstepTol:
         Parameters
         ----------
         wint: float
-            The "true" width of the pulse in seconds
+            The "true" width of the pulse in microseconds
         """
 
-        tol_s = wint / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        wint_s = wint / 1e6
+        tol_s = wint_s / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         self.timestamp_tol = tol_s / 86400
 
     def width(self, wint: float):
@@ -674,18 +736,18 @@ class DMstepTol:
         Parameters
         ----------
         wint : float
-             The injected width of the pulse in seconds
+             The injected width of the pulse in microseconds
         """
 
         tsamp = self.pars["tsamp"]
-        #        tsamp = 0.000064
+        # tsamp = 0.000064
 
         box_widths = []
         diff_box_width = []
         n = 1
         while n <= self.max_width_index:
             fit_width = 2**n * tsamp
-            diff = abs(fit_width - wint)
+            diff = abs(fit_width - wint / 1e6)
             box_widths.append(fit_width)
             diff_box_width.append(diff)
             n += 1
@@ -693,8 +755,9 @@ class DMstepTol:
         min_index = diff_box_width.index(min(diff_box_width))
         closest_box = box_widths[min_index]
 
-        self.weffbox = float(closest_box)
-        self.width_tol = closest_box
+        # Set width tolerance in microseconds
+        self.weffbox = float(closest_box) * 1e6
+        self.width_tol = self.weffbox
 
     def sig(self, sn_int: float, wint: float, period: float):
         """
