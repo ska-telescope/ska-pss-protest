@@ -1,5 +1,11 @@
 """
-Module docstring placeholder
+This product level test and verifies the single-pulse search
+(SPS) capability of the PSS pipeline. The test pulls 30 test vectors
+from the PSS test vector repository and prepares a config
+file which configures cheetah to read in time-frequency data
+from the test vector, search it for single pulses, and produce
+candidate filterbank files and a candidate metadata file for each
+of the 30 test vectors.
 """
 
 import os
@@ -93,7 +99,7 @@ def set_sink(config, context, pytestconfig):
     config("beams/beam/sinks/channels/sps_events/active", "true")
     config("beams/beam/sinks/sink_configs/spccl_sigproc_files/dir", outdir)
 
-    # Set output location for candidate metdata files
+    # Set output location for candidate metadata files
     config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
     context["candidate_dir"] = outdir
 
@@ -113,6 +119,9 @@ def run_cheetah(context, config, pytestconfig):
     context["dd_samples"] = 131072
     config("ddtr/dedispersion_samples", str(context["dd_samples"]))
 
+    # Set number of widths to search
+    config("sps/cpu/number_of_widths", "15")
+
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
 
@@ -128,7 +137,7 @@ def run_cheetah(context, config, pytestconfig):
     assert cheetah.exit_code == 0
 
     # Clean up
-    os.remove(context["config_path"])
+    #os.remove(context["config_path"])
 
 
 @then(
@@ -156,7 +165,7 @@ def validate_exported_candidates(context):
 
 
 @then(
-    "A candidate metadata file is produced which contains detections of the input signals within tolerances"
+    "A candidate metadata file is produced which contains detections of the input signals"
 )
 def validate_candidate_metadata(context):
     spccl = SpCcl(context["candidate_dir"])
@@ -165,4 +174,4 @@ def validate_candidate_metadata(context):
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     assert len(spccl.cands) >= len(spccl.expected)
 
-    shutil.rmtree(context["candidate_dir"])
+    #shutil.rmtree(context["candidate_dir"])
