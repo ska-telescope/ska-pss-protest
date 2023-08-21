@@ -489,24 +489,6 @@ class SpCclTests:
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
-    #    def test_new_tolerances(self, get_vector):
-    #        """
-    #        Tests that the new tolerances work as expected
-    #        """
-    #        config_fir = os.path.join(
-    #            Path(os.path.abspath(__file__)).parents[1], "tests/data/examples/"
-    #        )
-    #        config = os.path.join(config_fir, "fullDMrange_klotski.xml")
-    #
-    #        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-    #        tols = cand.DMstepTol(
-    #            pulse_metadata, VHeader(get_vector.local_path).allpars(), config
-    #        )
-    #        assert tols.dm_tol == pytest.approx(0.307, 1e-7)
-    #        assert tols.timestamp_tol == pytest.approx(9.83011342925948e-07, 1e-16)
-    #        assert tols.width_tol == pytest.approx(0.262144, 1e-7)
-    #        assert tols.min_sn == pytest.approx(12.52549007, 1e-7)
-
     def test_new_tolerances(self, get_vector):
         """
         Tests that the new tolerances work as expected
