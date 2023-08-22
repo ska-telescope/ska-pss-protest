@@ -644,12 +644,22 @@ class DMstepTol:
         A list of known metadata parameters in the form
         [Timestamp (MJD), DM (pc/cc), Width (ms), S/N]
 
-    config: str
-
     pars : dict
         A dictionary of parameters describing the properties
         of the filterbank being searched and of the signal
         injected into the filterbank.
+
+    dmplan : list
+        List of lists of DM start, DM end, and DM step
+        from DM plan in configuration file.
+        E.g.,
+        dmplan = [[start, end, step], [start, end, step],...]
+
+    max_width_index : int
+        Maximum number of widths as searched by the relevant
+        SPS algotrithm used. The searched widths are set to
+        1, 2, 4, 8, ..., 2^n bins, where n is set in
+        the Cheetah config file.
     """
 
     def __init__(
@@ -676,14 +686,13 @@ class DMstepTol:
 
         # Compute period in microseconds
         period = 1.0 / self.pars["freq"] * 1e6
-        # period = 1.0 / 0.2 * 1e6
 
-        self.dispersion(self.expected[1], self.dmplan)
+        self.dispersion(self.expected[1])
         self.timestamp(self.expected[2] * 1000)
         self.width(self.expected[2] * 1000)
         self.sig(self.expected[3], self.expected[2] * 1000, period)
 
-    def dispersion(self, disp: float, dmplan: list):
+    def dispersion(self, disp: float):
         """
         Gets the DM tolerance from the Cheetah config file
         and sets it equal to one DM step
@@ -700,8 +709,7 @@ class DMstepTol:
              dmplan = [[start, end, step], [start, end, step],...]
         """
 
-        # dmplan = [[start, end, step], [start, end, step],...].
-        for dm in dmplan:
+        for dm in self.dmplan:
             start = dm[0]
             end = dm[1]
             if start < disp < end:
@@ -740,8 +748,9 @@ class DMstepTol:
         """
 
         tsamp = self.pars["tsamp"]
-        # tsamp = 0.000064
 
+        # Convert number of bins in boxcar to seconds and
+        # check which boxcar is closest to injected pulse width
         box_widths = []
         diff_box_width = []
         n = 1
