@@ -119,9 +119,6 @@ def run_cheetah(context, config, pytestconfig):
     context["dd_samples"] = 131072
     config("ddtr/dedispersion_samples", str(context["dd_samples"]))
 
-    # Set number of widths to search
-    config("sps/cpu/number_of_widths", "15")
-
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
 
