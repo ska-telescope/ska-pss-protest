@@ -1,4 +1,4 @@
-@product @cpu @sps
+@product @cpu @sps @testvector @positive
 Feature: Sps emulator
     A simple emulator of SPS data products
 
