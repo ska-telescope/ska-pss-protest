@@ -252,7 +252,7 @@ class SpCcl:
         timestamps.sort()
         return timestamps
 
-    def from_vector(self, vector: str) -> list:
+    def from_vector(self, vector: str, reject_last=None) -> list:
         """
         Extract parameters of each of the single pulses
         contained in a PSS SPS test vector. The parameters
@@ -264,6 +264,12 @@ class SpCcl:
         ----------
         vector: str
             Path to test vector
+
+        reject_last : int
+            Do not expect candidates to be detected
+            after this number of samples into the scan.
+            Cheetah currently rejects all candidates that occur
+            in the last dedispersion buffer.
 
         Returns
         -------
@@ -278,6 +284,8 @@ class SpCcl:
 
         logging.info("Extracting pulse data from {}".format(vector))
 
+        header = VHeader(vector)
+
         # Split path and extension from vector filename
         basename = os.path.splitext(os.path.basename(vector))[0].split("_")
 
@@ -289,10 +297,28 @@ class SpCcl:
 
         # Folded S/N and S/N per pulse
         sig_fold = float(basename[7])
-        sig_pp = sig_fold * np.sqrt(period / VHeader(vector).duration())
+        sig_pp = sig_fold * np.sqrt(period / header.duration())
 
         # Get list of timestamps
         timestamps = self._get_timestamps(vector, freq, disp)
+
+        # If we want to not include the candidates in the final dedispersion
+        # buffer, we can pass the number of samples in that buffer to
+        # reject_last. By doing this, ProTest will not expect them.
+        if reject_last:
+            # Convert number of samples into a number of days
+            reject_window = (reject_last * header.tsamp()) / 86400
+
+            # Compute MJD of end of scan
+            scan_end = header.start_time() + (header.duration() / 86400)
+
+            # Compute the epoch after which candidates are not considered
+            reject_after = scan_end - reject_window
+
+            # Create a modified list of timestamps that does not include the
+            # final buffer
+            timestamps_filtered = [k for k in timestamps if k <= reject_after]
+            timestamps = timestamps_filtered
 
         # Populate candidate array with expected parameters
         expected = []
