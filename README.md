@@ -22,8 +22,6 @@ In brief, to develop ProTest code, it is recommended a virtual environment provi
 
         pip install .[dev] --no-cache-dir
 
-Then verify the installation by running the unit tests
+This will install ProTest and all of its project dependencies. Verify the installation by running the unit tests (this can take some time)
 
         make python-test
-
-This can take some time.
