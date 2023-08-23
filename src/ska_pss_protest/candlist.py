@@ -816,7 +816,7 @@ class DMstepTol:
         """
 
         sn_tol = sn_int * np.sqrt(
-            wint * (period - self.weffbox) / self.weffbox * (period - wint)
+            (wint * (period - self.weffbox)) / (self.weffbox * (period - wint))
         )
 
         self.min_sn = sn_tol
