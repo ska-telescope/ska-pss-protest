@@ -652,7 +652,7 @@ class DMstepTol:
     DM and width steps from the config file as basic tolerances.
     This is calculated as:
     - DM tolerance = +/- 1 DM step from DM plan
-    - Width tolerance = +/- hald a convolution width used in SPDT
+    - Width tolerance = +/- 1 convolution width used in SPDT
     - S/N tolerance as calculated from the radiometer equation and
       effective pulse width from closest convolution width
     - time stamp tolerance from the effective pulse width
@@ -798,8 +798,10 @@ class DMstepTol:
         """
         Sets the S/N tolerance by using the radiometer
         equation for two pulses with different widths,
-        where wint is the injected pulse width and weff
+        where wint is the injected pulse width and weffbox
         is the closest box car width.
+        More information on the S/N tolerance is given in
+        documents connected to feature SP-2949.
 
         Parameters
         ----------
@@ -813,8 +815,8 @@ class DMstepTol:
              Injected pulse period in us
         """
 
-        up = wint * (period - self.weffbox)
-        down = self.weffbox * (period - wint)
-        sn_tol = sn_int * np.sqrt(up / down)
+        sn_tol = sn_int * np.sqrt(
+            wint * (period - self.weffbox) / self.weffbox * (period - wint)
+        )
 
         self.min_sn = sn_tol
