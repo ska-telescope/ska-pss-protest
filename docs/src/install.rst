@@ -36,3 +36,9 @@ Verify that protest has successfully installed.
 
    protest -h
 
+If required, you can verify the install further by executing the unit tests
+
+.. code-block:: bash
+
+    make python-test
+
