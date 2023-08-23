@@ -14,9 +14,16 @@ Installing ProTest for development
 
 Fuller installation instructions for both users and developers of ProTest can be found in `docs`.
 
-In brief, to develop ProTest code, it is recommended a virtual environment provided python>=3.6 is used. Once this is created and activated, and this repository is cloned
+In brief, to develop ProTest code, it is recommended a virtual environment provided python>=3.6 is used. Once this is created and activated, run
+
+        git clone --recursive http://gitlab.com/ska-telescope/pss/ska-pss-protest.git
+
+        cd ska-pss-protest
 
         pip install .[dev] --no-cache-dir
 
-t 
+Then verify the installation by running the unit tests
 
+        make python-test
+
+This can take some time.
