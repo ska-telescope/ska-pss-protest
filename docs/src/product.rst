@@ -20,6 +20,12 @@ To import the required BDD functionality required to write the test, import the 
     import pytest
     from pytest_bdd import given, parsers, scenarios, then, when
 
+To import ProTest, do
+
+.. code-block:: bash
+
+    import ska_pss_protest
+
 The test must then be linked to the feature file that was written in the previous step using the **scenarios** method as follows:
 
 .. code-block:: bash
@@ -36,7 +42,7 @@ Following this, each Gherkin step described in the feature ticket can be impleme
          Write test code
          """
 
-As variables cannot be passed between test stage (i.e., a variable declared in the *given* step cannot be accessed in any other steps), it is useful to define a context *fixture* that contains a dictionary of variables we wish to pass around the different stages, e.g.,
+As variables cannot automatically be passed between test stages (i.e., a variable declared in the *given* function cannot be accessed in any other functions), it is useful to define a context *fixture* that contains a dictionary of variables we wish to pass around the different stages, e.g.,
 
 .. code-block:: bash
 
@@ -55,7 +61,9 @@ This dictionary can then be accessed for the purpose of added or extracting shar
     @given(parsers.parse("Some initial condition"))
     def some_function(context):
          """
-         shared_variable = context["<key>"]
+         shared_variable = context["<key>"] # access existing variable
+
+         context["<key>"] = new_variable # Create a new shared variable
          """
 
 Accessing command line arguments
@@ -102,3 +110,5 @@ and then ProTest can be executed in the usual way
 .. code-block:: bash
 
     protest -m <marker> --cache </path/to/cache> --path </path/to/cheetah/build> --outdir </path/to/output/directory>
+
+Detailed instruction on how to run ProTest product tests can be found in :doc:`run`
