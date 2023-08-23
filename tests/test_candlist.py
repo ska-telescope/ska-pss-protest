@@ -59,7 +59,7 @@ from pytest import mark
 import ska_pss_protest.candlist as cand
 from ska_pss_protest import VectorPull, VHeader
 
-# pylint: disable=R0201,R1732,W1514,E1120,W0621
+# pylint: disable=R1732,W1514,E1120,W0621
 
 DATA_DIR = os.path.join(
     Path(os.path.abspath(__file__)).parents[1], "tests/data/candidate_lists"
@@ -486,5 +486,107 @@ class SpCclTests:
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
         candidate.compare_dm(source_properties)
+        assert len(candidate.detections) < len(candidate.expected)
+        assert len(candidate.non_detections) > 0
+
+    def test_new_tolerances(self, get_vector):
+        """
+        Tests that the new tolerances work as expected
+        """
+        pulse_metadata = [56000.251365, 100.0, 100.0, 14.4337567]
+        max_width_index = 14
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        tols = cand.DMstepTol(
+            pulse_metadata,
+            VHeader(get_vector.local_path).allpars(),
+            dmplan,
+            max_width_index,
+        )
+        assert tols.dm_tol == pytest.approx(0.307, 1e-7)
+        assert tols.timestamp_tol == pytest.approx(4.91505671462974e-7, 1e-16)
+        assert tols.width_tol == pytest.approx(1048576.0, 1)
+        assert tols.min_sn == pytest.approx(12.567330991971536, 1e-7)
+
+    def test_compare_dmstep_within_tol_no_vector(self):
+        """
+        Tests that candidates are recovered by compare_dmstep() using
+        manually specified source properties.
+        """
+        spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+        }
+        candidate = cand.SpCcl(spccl_dir)
+        candidate.from_spccl(
+            os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
+        )
+        max_width_index = 14
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
+        assert len(candidate.detections) == len(candidate.expected)
+        assert len(candidate.non_detections) == 0
+
+    def test_compare_dmstep_within_tol_using_vector(self, get_vector):
+        """
+        Tests that candidates are recovered by compare_dmstep() using
+        source properties computed using header reader VHeader().
+        """
+        spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
+        candidate = cand.SpCcl(spccl_dir)
+        candidate.from_vector(get_vector.local_path)
+        max_width_index = 14
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        candidate.compare_dmstep(
+            VHeader(get_vector.local_path).allpars(), dmplan, max_width_index
+        )
+        assert len(candidate.detections) == len(candidate.expected)
+        assert len(candidate.non_detections) == 0
+
+    def test_compare_dmstep_tol_exceeded_no_vector(self):
+        """
+        Tests that compare_dmstep() correctly identifies
+        missing candidates (i.e., signals present in the test
+        vector that were not "detected" and written to the
+        candidate metadata file).
+        """
+        spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm_incorrect")
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+        }
+        candidate = cand.SpCcl(spccl_dir)
+        candidate.from_spccl(
+            os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
+        )
+        max_width_index = 14
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
