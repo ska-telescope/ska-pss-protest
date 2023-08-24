@@ -1,7 +1,7 @@
 ProTest - The PSS Product Testing Framework
 ===========================================
 
-This repository is the home of ProTest - A suite of high-level tests and supporting libraries for testing the Pulsar Searching Sub-system (PSS).
+This repository is the home of ProTest - A suite of high-level tests and supporting libraries for testing the SKA Pulsar Searching Sub-system (PSS).
 
 Documentation
 -------------
@@ -14,7 +14,7 @@ Installing ProTest for development
 
 Fuller installation instructions for both users and developers of ProTest can be found in `docs`.
 
-In brief, to develop ProTest code, it is recommended a virtual environment provided python>=3.6 is used. Once this is created and activated, run
+In brief, to develop ProTest code, it is recommended a virtual environment providing python>=3.6 is used. Once this is created and activated, run
 
         git clone --recursive http://gitlab.com/ska-telescope/pss/ska-pss-protest.git
 
