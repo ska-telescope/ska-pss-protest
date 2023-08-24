@@ -9,7 +9,7 @@ Cheetah is a command line application which requires a number of command line ar
 
 Examples of command line arguments required by cheetah are as follows.
 
-* The pipeline type (i.e., what are we searching for? Pulsars or single pulses).
+* The pipeline type (i.e., what are we searching for? Pulsars and/or single pulses).
 * The data source (e.g., a test vector (filterbank file) or a UDP data stream).
 * A configuration. This is usually an XML file which enables/disables and tunes each of cheetah's modules so that they can pieced together to form a pipeline. 
 
