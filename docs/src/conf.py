@@ -69,7 +69,7 @@ author = 'SKA PSS Developers'
 # built documents.
 #
 
-with open('VERSION.txt') as version_file:
+with open('../../VERSION.txt') as version_file:
     VERSION = version_file.read()
 
 # The short X.Y.Z version.
