@@ -22,6 +22,7 @@ Install from source
 .. code-block:: bash
 
    git clone --recursive https://gitlab.com/ska-telescope/pss/ska-pss-protest.git
+   cd ska-pss-protest
    pip install .
 
 If you are planning to contribute to ProTest, install from source as above and then run 
