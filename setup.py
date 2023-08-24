@@ -29,7 +29,10 @@ setup(
                 'flake8',
                 'pylint',
                 'pylint-junit',
-                'pytest-cov'
+                'pytest-cov',
+                'sphinx',
+                'sphinx_rtd_theme',
+                'recommonmark'
                 ]
         },
     classifiers=[
