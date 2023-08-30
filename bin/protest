@@ -60,19 +60,42 @@ class ProTest:
     PSS product tests
     """
 
-    def __init__(self, path, cache, outdir, mark="product"):
+    def __init__(self, path, cache, outdir, mark=None, exclude=None):
 
         self.path = path
         self.mark = mark
+        self.exclude = exclude
         self.cache = cache
         self.outdir = outdir
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
 
-        self.run()
+        # Set up markers
+        markers = self.set_markers()
 
-    def run(self):
+        self.run(markers)
+
+    def set_markers(self):
+        marker_string = ""
+        if self.mark:
+            marker_string += self.mark[0]
+            for i in range(1, len(self.mark)):
+                marker_string += " and " + self.mark[i]
+        if self.exclude:
+            if self.mark:
+                marker_string += " and not " + self.exclude[0]
+                for i in range(1, len(self.exclude)):
+                    marker_string += " and not " + self.exclude[i]
+            else:
+                marker_string += "not " + self.exclude[0]
+                for i in range(1, len(self.exclude)):
+                    marker_string += " and not " + self.exclude[i]
+        if not marker_string:
+            return "product"
+        return marker_string
+
+    def run(self, marker_string):
         """
         Main method
         """
@@ -82,9 +105,9 @@ class ProTest:
         # Set up path to PSS
         try:
             pss_path = "--path=" + self.path
-            pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
+            pytest_args = ["-m", f'"{marker_string}"', "-c", ini_path, pss_path, self.src]
         except TypeError:
-            pytest_args = ["-m", self.mark, "-c", ini_path, self.src]
+            pytest_args = ["-m", f'"{marker_string}"', "-c", ini_path, self.src]
         if self.cache:
             cache_arg = ["--cache=" + self.cache]
             pytest_args = cache_arg + pytest_args
@@ -92,7 +115,7 @@ class ProTest:
             outdir_arg = ["--outdir=" + self.outdir]
             pytest_args = outdir_arg + pytest_args
 
-        print("Running pytest", " ".join(pytest_args))
+        print("Running pytest", " ".join(pytest_args)) ; raise sdfsdfjk
         sys.exit(pytest.main(pytest_args))
 
 
@@ -123,12 +146,15 @@ def main():
     parser.add_argument(
         "-m",
         "--mark",
+        nargs="+",
         help="Marker of test type to execute (def=product)",
         required=False,
     )
+
+    parser.add_argument("-e", "--exclude",  nargs="+", help="Marker of test type to ignore", required=False)
     args = parser.parse_args()
 
-    protest = ProTest(args.path, args.cache, args.outdir, args.mark)
+    protest = ProTest(args.path, args.cache, args.outdir, args.mark, args.exclude)
     protest.run()
 
 
