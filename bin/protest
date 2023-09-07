@@ -20,6 +20,9 @@
     |  -h, --help            show this help message and exit                 |
     |  -p PATH, --path PATH  Path to cheetah build tree                      |
     |  -m MARK, --mark MARK  Marker of test type to execute (def=product)    |
+    |  --exclude EXCLUDE  Marker of test type to ignore                      |
+    |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
+    |  --cache CACHE  Directory to read/write local test vector cache        |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
