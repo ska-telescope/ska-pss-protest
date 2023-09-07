@@ -77,6 +77,10 @@ class ProTest:
         self.run(markers)
 
     def set_markers(self):
+        """
+        Parses the required markers from the user to pytest
+        using parameters set on the command line.
+        """
         marker_string = ""
         if self.mark:
             marker_string += self.mark[0]
