@@ -1,4 +1,4 @@
-@product @cpu @testvector @positive @mid
+@product @cpu @testvector @positive @mid @container @physhw @partial
 Feature: Ingest and export of test vector data
     PSS pipeline exports filterbank data with correct properties
 
