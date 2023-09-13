@@ -17,10 +17,11 @@
     | Run PSS Product Tests                                                  |
     |                                                                        |
     | optional arguments:                                                    |
-    |  -h, --help            show this help message and exit                 |
+    |  -h, --help show this help message and exit                            |
+    |  -H --show_help Show list of available test markers                    |
     |  -p PATH, --path PATH  Path to cheetah build tree                      |
-    |  -m MARK, --mark MARK  Marker of test type to execute (def=product)    |
-    |  --exclude EXCLUDE  Marker of test type to ignore                      |
+    |  -i  INCLUDE, --include INCLUDE  Test types to execute (def=product)   |
+    |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
     |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
     |  --cache CACHE  Directory to read/write local test vector cache        |
     |                                                                        |
@@ -63,7 +64,9 @@ class ProTest:
     PSS product tests
     """
 
-    def __init__(self, path, cache, outdir, mark=None, exclude=None):
+    def __init__(
+        self, path, cache, outdir, mark=None, exclude=None, show_help=False
+    ):
 
         self.path = path
         self.mark = mark
@@ -73,6 +76,14 @@ class ProTest:
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
+
+        if show_help:
+            pytest_args = [
+                "-c",
+                os.path.join(self.src, "pytest.ini"),
+                "--markers",
+            ]
+            sys.exit(pytest.main(pytest_args))
 
         # Set up markers
         markers = self.set_markers()
@@ -112,9 +123,16 @@ class ProTest:
         # Set up path to PSS
         try:
             pss_path = "--path=" + self.path
-            pytest_args = ["-m", f'"{marker_string}"', "-c", ini_path, pss_path, self.src]
+            pytest_args = [
+                "-m",
+                f"{marker_string}",
+                "-c",
+                ini_path,
+                pss_path,
+                self.src,
+            ]
         except TypeError:
-            pytest_args = ["-m", f'"{marker_string}"', "-c", ini_path, self.src]
+            pytest_args = ["-m", f"{marker_string}", "-c", ini_path, self.src]
         if self.cache:
             cache_arg = ["--cache=" + self.cache]
             pytest_args = cache_arg + pytest_args
@@ -122,7 +140,7 @@ class ProTest:
             outdir_arg = ["--outdir=" + self.outdir]
             pytest_args = outdir_arg + pytest_args
 
-        print("Running pytest", " ".join(pytest_args)) ; raise sdfsdfjk
+        print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
 
 
@@ -131,6 +149,13 @@ def main():
     Entrypoint method
     """
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
+    parser.add_argument(
+        "-H",
+        "--show_help",
+        help="Show detailed help on test options",
+        required=False,
+        action="store_true",
+    )
     parser.add_argument(
         "-p",
         "--path",
@@ -151,17 +176,30 @@ def main():
         default="/tmp",
     )
     parser.add_argument(
-        "-m",
-        "--mark",
+        "-i",
+        "--include",
         nargs="+",
-        help="Marker of test type to execute (def=product)",
+        help="Include the following test types (def=product)",
         required=False,
     )
 
-    parser.add_argument("-e", "--exclude",  nargs="+", help="Marker of test type to ignore", required=False)
+    parser.add_argument(
+        "-e",
+        "--exclude",
+        nargs="+",
+        help="Exclude the following test types",
+        required=False,
+    )
     args = parser.parse_args()
 
-    protest = ProTest(args.path, args.cache, args.outdir, args.mark, args.exclude)
+    protest = ProTest(
+        args.path,
+        args.cache,
+        args.outdir,
+        args.include,
+        args.exclude,
+        args.show_help,
+    )
     protest.run()
 
 
