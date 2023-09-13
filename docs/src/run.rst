@@ -56,7 +56,7 @@ For clarity the <build_dir> refers to the directory in which *make* was executed
 
 .. code-block:: bash
 
-   Running pytest -i sps -c /home/bshaw/.venvs/protest/lib/python3.8/site-packages/ska_pss_protest/pytest.ini --path=/raid/bshaw/cheetah_builds/release_basic_cheetah_panda/cheetah /home/bshaw/.venvs/protest/lib/python3.8/site-packages/ska_pss_protest
+   Running pytest -m sps -c /home/bshaw/.venvs/protest/lib/python3.8/site-packages/ska_pss_protest/pytest.ini --path=/raid/bshaw/cheetah_builds/release_basic_cheetah_panda/cheetah /home/bshaw/.venvs/protest/lib/python3.8/site-packages/ska_pss_protest
   =============================================================================================== test session starts ===============================================================================================
   platform linux -- Python 3.8.13, pytest-7.4.0, pluggy-1.2.0
   rootdir: /home/bshaw/.venvs/protest/lib/python3.8/site-packages/ska_pss_protest
