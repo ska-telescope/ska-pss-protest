@@ -145,3 +145,22 @@ def search_build(cheetah_dir, launcher, launcher_dict):
     # Neither are found - raise Exception
     else:
         raise FileNotFoundError("Cannot find executable")
+
+def set_markers(mark=False, exclude=False):
+    marker_string = ""
+    if mark:
+        marker_string += mark[0]
+        for i in range(1, len(mark)):
+            marker_string += " and " + mark[i]
+    if exclude:
+        if mark:
+            marker_string += " and not " + exclude[0]
+            for i in range(1, len(exclude)):
+                marker_string += " and not " + exclude[i]
+        else:
+            marker_string += "not " + exclude[0]
+            for i in range(1, len(exclude)):
+                marker_string += " and not " + exclude[i]
+    if not marker_string:
+        return "product"
+    return marker_string

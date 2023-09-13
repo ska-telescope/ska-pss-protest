@@ -24,6 +24,7 @@
     |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
     |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
     |  --cache CACHE  Directory to read/write local test vector cache        |
+    |        (def=/home/<user>/.cache/SKA)                                   |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
@@ -56,6 +57,7 @@ import sys
 import pytest
 
 import ska_pss_protest
+from ska_pss_protest._config import set_markers
 
 
 class ProTest:
@@ -86,39 +88,18 @@ class ProTest:
             sys.exit(pytest.main(pytest_args))
 
         # Set up markers
-        markers = self.set_markers()
+        self.markers = set_markers(self.mark, self.exclude)
 
-        self.run(markers)
+        self.run()
 
-    def set_markers(self):
-        """
-        Parses the required markers from the user to pytest
-        using parameters set on the command line.
-        """
-        marker_string = ""
-        if self.mark:
-            marker_string += self.mark[0]
-            for i in range(1, len(self.mark)):
-                marker_string += " and " + self.mark[i]
-        if self.exclude:
-            if self.mark:
-                marker_string += " and not " + self.exclude[0]
-                for i in range(1, len(self.exclude)):
-                    marker_string += " and not " + self.exclude[i]
-            else:
-                marker_string += "not " + self.exclude[0]
-                for i in range(1, len(self.exclude)):
-                    marker_string += " and not " + self.exclude[i]
-        if not marker_string:
-            return "product"
-        return marker_string
-
-    def run(self, marker_string):
+    def run(self):
         """
         Main method
         """
         # Get path to pytest.ini
         ini_path = os.path.join(self.src, "pytest.ini")
+
+        marker_string = self.markers
 
         # Set up path to PSS
         try:
