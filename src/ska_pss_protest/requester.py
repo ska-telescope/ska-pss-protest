@@ -389,52 +389,6 @@ class VectorPull:
 
         self.local_path = self._download(remote_path)
 
-    def from_url(self, vector_url: str, refresh=False, check_remote=True):
-        """
-        Gets vector from vector URL.
-        This method is used if the absolute remote URL of the vector
-        is known a-priori. It the vector exists in the local
-        cache then it will be used. Else it will be pulled
-        from the remote repo.
-
-        Parameters
-        ----------
-        vector_name: str
-            The filename of the vector.
-
-        refresh: bool
-            Check local cache if True, else False
-
-        check_remote: bool
-            Verify test vector header with origin
-        """
-        basename = os.path.basename(vector_url)
-        this_path = None
-
-        # Check our local cache for the vector if required.
-        if not refresh:
-            this_path = self._check_cache(basename)
-
-        # Is vector on local machine and does
-        # it have the correct file size?
-        if this_path:
-            if check_remote:
-                # Do size check and exit if they match
-                if self._compare_remote(this_path, vector_url):
-                    self.local_path = this_path
-                    return
-                logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(  # noqa
-                        this_path, vector_url
-                    )
-                )
-            else:
-                self.local_path = this_path
-                return
-
-        # If no, pass to downloader.
-        self.local_path = self._download(vector_url)
-
     def from_properties(
         self,
         vectype="SPS-MID",
