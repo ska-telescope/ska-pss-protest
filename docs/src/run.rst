@@ -11,17 +11,21 @@ This should produce the following output.
 
 .. code-block:: bash
 
-    usage: protest [-h] [-p PATH] [--cache CACHE] [--outdir OUTDIR] [-m MARK]
+    usage: protest [-h] [-p PATH] [--cache CACHE] [--outdir OUTDIR]
+               [-m MARK [MARK ...]] [-e EXCLUDE [EXCLUDE ...]]
 
     Run PSS Product Tests
 
     optional arguments:
       -h, --help            show this help message and exit
+      -H, --show_help       Show detailed help on test options
       -p PATH, --path PATH  Path to cheetah build tree
       --cache CACHE         Directory containing locally stored test vectors
       --outdir OUTDIR       Directory to store candidate data products
-      -m MARK, --mark MARK  Marker of test type to execute (def=product)
-
+      -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
+                        Include the following test types (def=product)
+      -e EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
+                        Exclude the following test types
 
 ProTest takes a number of optional arguments. The first (-p PATH) is the path to a cheetah build. This can be either of the following
 
@@ -32,9 +36,11 @@ ProTest will determine which of these options you are providing under the hood.
 
 If -p is not provided, ProTest will assume you have the cheetah executable(s) in your system $PATH and will look there for the relevant one for each of its tests. If it cannot find cheetah in your $PATH, then an exception will be raised and ProTest will exit.
 
-The -m MARK option tells ProTest which group of tests you wish to run. ProTest tests PSS pipelines which rely on different processing resources that may not necessarily be available on all hardware that it runs on. For example, tests of PSS pipelines which requried GPUs will not execute sucessfully on a machine which only has CPUs available. Furthermore, as a tester, you may only wish to test one pipeline type (e.g., Single Pulse Search pipelines but not Acceleration Search pipelines). You may wish to run tests only associated with SKA-LOW but not SKA-MID. For this reason we utilise the marker functionality provided by pytest. Each test is *decorated* with a set of markers which classify tests into groups, thereby allowing the tester to run only the subset of tests that are of interest to them.
+The -i INCLUDE option tells ProTest which group(s) of tests you wish to run according to how they are *marked*. ProTest tests PSS pipelines which rely on different processing resources that may not necessarily be available on all hardware that it runs on. For example, tests of PSS pipelines which requried GPUs will not execute sucessfully on a machine which only has CPUs available. Furthermore, as a tester, you may only wish to test one pipeline type (e.g., Single Pulse Search pipelines but not Acceleration Search pipelines). You may wish to run tests only associated with SKA-LOW but not SKA-MID. For this reason we utilise the marker functionality provided by pytest. Each test is *decorated* with a set of markers which classify tests into groups, thereby allowing the tester to run only the subset of tests that are of interest to them. The user can specify as many markers as required to enable a specific combination of test types. 
 
-If -m is not provided, ProTest will execute all of the tests that it has (as specified by the *product* marker). Available markers can be found in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_
+If -i is not provided, ProTest will execute all of the tests that it has (as specified by the *product* marker). Available markers can be found in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_ or by running *protest -H*
+
+The -e EXCLUDE option tells ProTest which group(s) of tests should not be executed. The user can specify as many markers as required to exclude a specific combination of test types. 
 
 --cache is a path to a local repository of PSS test vectors. This may be an existing cache, or a new cache into which new vectors will be pulled and stored. If the vectors required by the tests are not found in the cache directory provided on the command line, then they will be downloaded from the PSS test vector server. --cache is an optional argument. If it is not provided, ProTest will create and use a directory in the user's $HOME area. ProTest will check there is sufficient space on the drive to download a test vector before doing so.
 
@@ -44,7 +50,7 @@ To demonstrate, let's run all of the available SPS (Single Pulse Search) tests. 
 
 .. code-block:: bash
 
-   protest -m sps -p <path/to/cheetah/build_dir>/cheetah/
+   protest -i sps -p <path/to/cheetah/build_dir>/cheetah/
 
 For clarity the <build_dir> refers to the directory in which *make* was executed, whereafter a subdirectory called *cheetah* is generated. At the time of writing, this command will produce the following output
 

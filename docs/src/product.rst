@@ -9,7 +9,13 @@ The first step in the development of a product test is to encode the behaviour t
 
    @product @cuda @sps
 
-A list of valid markers can be found in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_. New markers may be declared in this file as required.
+A list of valid markers can be found by running
+
+.. code-block:: bash
+
+    protest -H 
+
+or in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_. New markers may be declared in this file as required.
 
 The test itself should be written in a separate file in `src/ska-pss-protest <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/tree/main/src/ska_pss_protest?ref_type=heads>`_. In order for the test to be discovered by ProTest, the file name must be in the form **test_<some_description>.py**. Should any new naming conventions be required, these too must be declared in pytest.ini.
 
@@ -109,6 +115,6 @@ and then ProTest can be executed in the usual way
 
 .. code-block:: bash
 
-    protest -m <marker> --cache </path/to/cache> --path </path/to/cheetah/build> --outdir </path/to/output/directory>
+    protest -i <marker> --cache </path/to/cache> --path </path/to/cheetah/build> --outdir </path/to/output/directory>
 
 Detailed instruction on how to run ProTest product tests can be found in :doc:`run`

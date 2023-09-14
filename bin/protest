@@ -17,9 +17,16 @@
     | Run PSS Product Tests                                                  |
     |                                                                        |
     | optional arguments:                                                    |
-    |  -h, --help            show this help message and exit                 |
+    |  -h, --help show this help message and exit                            |
+    |  -H --show_help Show list of available test markers                    |
     |  -p PATH, --path PATH  Path to cheetah build tree                      |
-    |  -m MARK, --mark MARK  Marker of test type to execute (def=product)    |
+    |  -i  INCLUDE, --include INCLUDE  Test types to execute                 |
+            e.g., -i type_a type_b (def=product)                             |
+    |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
+            e.g., -e type_a type_b                                           |
+    |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
+    |  --cache CACHE  Directory to read/write local test vector cache        |
+    |        (def=/home/<user>/.cache/SKA)                                   |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
@@ -52,6 +59,7 @@ import sys
 import pytest
 
 import ska_pss_protest
+from ska_pss_protest._config import set_markers
 
 
 class ProTest:
@@ -60,15 +68,29 @@ class ProTest:
     PSS product tests
     """
 
-    def __init__(self, path, cache, outdir, mark="product"):
+    def __init__(
+        self, path, cache, outdir, mark=None, exclude=None, show_help=False
+    ):
 
         self.path = path
         self.mark = mark
+        self.exclude = exclude
         self.cache = cache
         self.outdir = outdir
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
+
+        if show_help:
+            pytest_args = [
+                "-c",
+                os.path.join(self.src, "pytest.ini"),
+                "--markers",
+            ]
+            sys.exit(pytest.main(pytest_args))
+
+        # Set up markers
+        self.markers = set_markers(self.mark, self.exclude)
 
         self.run()
 
@@ -79,12 +101,21 @@ class ProTest:
         # Get path to pytest.ini
         ini_path = os.path.join(self.src, "pytest.ini")
 
+        marker_string = self.markers
+
         # Set up path to PSS
         try:
             pss_path = "--path=" + self.path
-            pytest_args = ["-m", self.mark, "-c", ini_path, pss_path, self.src]
+            pytest_args = [
+                "-m",
+                f"{marker_string}",
+                "-c",
+                ini_path,
+                pss_path,
+                self.src,
+            ]
         except TypeError:
-            pytest_args = ["-m", self.mark, "-c", ini_path, self.src]
+            pytest_args = ["-m", f"{marker_string}", "-c", ini_path, self.src]
         if self.cache:
             cache_arg = ["--cache=" + self.cache]
             pytest_args = cache_arg + pytest_args
@@ -101,6 +132,13 @@ def main():
     Entrypoint method
     """
     parser = argparse.ArgumentParser(description="Run PSS Product Tests")
+    parser.add_argument(
+        "-H",
+        "--show_help",
+        help="Show detailed help on test options",
+        required=False,
+        action="store_true",
+    )
     parser.add_argument(
         "-p",
         "--path",
@@ -121,14 +159,30 @@ def main():
         default="/tmp",
     )
     parser.add_argument(
-        "-m",
-        "--mark",
-        help="Marker of test type to execute (def=product)",
+        "-i",
+        "--include",
+        nargs="+",
+        help="Include the following test types (def=product)",
+        required=False,
+    )
+
+    parser.add_argument(
+        "-e",
+        "--exclude",
+        nargs="+",
+        help="Exclude the following test types",
         required=False,
     )
     args = parser.parse_args()
 
-    protest = ProTest(args.path, args.cache, args.outdir, args.mark)
+    protest = ProTest(
+        args.path,
+        args.cache,
+        args.outdir,
+        args.include,
+        args.exclude,
+        args.show_help,
+    )
     protest.run()
 
 
