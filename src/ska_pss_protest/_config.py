@@ -146,6 +146,7 @@ def search_build(cheetah_dir, launcher, launcher_dict):
     else:
         raise FileNotFoundError("Cannot find executable")
 
+
 def set_markers(mark=False, exclude=False):
     marker_string = ""
     if mark:
