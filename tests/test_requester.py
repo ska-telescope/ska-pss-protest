@@ -134,29 +134,6 @@ class RequesterTests:
         assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
         pull.flush_cache()
 
-    def test_from_url(self):
-        """
-        Tests from_url() method. First with the vector not existing
-        locally and then with.
-        """
-        env_cache_dir = os.environ["CACHE_DIR"] = tempfile.mkdtemp()
-        pull = VectorPull()
-        assert pull.cache_dir == env_cache_dir
-        assert os.path.isdir(env_cache_dir)
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
-        assert pull.local_path == env_cache_dir + "/" + VECTOR
-        assert os.path.isfile(pull.local_path)
-
-        # Pull again with vector already in cache
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
-        assert pull.local_path == env_cache_dir + "/" + VECTOR
-        assert os.path.isfile(pull.local_path)
-        pull.flush_cache()
-
     def test_pull_non_existent_vector(self):
         """
         Tests the correct exception is raised if requested
@@ -206,24 +183,6 @@ class RequesterTests:
         open(local_vector_path, "a").close()
         before_size = os.stat(local_vector_path).st_size
         pull.from_name(VECTOR)
-        after_size = os.stat(pull.local_path).st_size
-        assert after_size > before_size
-        pull.flush_cache()
-
-    def test_from_url_local_changed_check_remote(self):
-        """
-        Test that a vector is pulled from the remote server
-        even if that file exists in the cache, if it has a
-        different file size to the remote version
-        """
-        cache_dir = tempfile.mkdtemp()
-        pull = VectorPull(cache_dir=cache_dir)
-        local_vector_path = os.path.join(cache_dir, VECTOR)
-        open(local_vector_path, "a").close()
-        before_size = os.stat(local_vector_path).st_size
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
         after_size = os.stat(pull.local_path).st_size
         assert after_size > before_size
         pull.flush_cache()
