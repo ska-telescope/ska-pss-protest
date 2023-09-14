@@ -73,6 +73,7 @@
 import logging
 import os
 import shutil
+from time import sleep
 from typing import Union
 
 import requests
@@ -334,16 +335,29 @@ class VectorPull:
         # Is vector on local machine and does
         # it have the correct file size?
         if this_path:
+            file_size = os.stat(this_path).st_size
             if check_remote:
                 # Do size check and exit if they match
                 if self._compare_remote(this_path, remote_path):
                     self.local_path = this_path
                     return
-                logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(  # noqa
-                        this_path, remote_path
-                    )
-                )
+                logging.info("{} and {} are different sizes.".format(this_path, remote_path))
+                delay_time = 5
+                while True:
+                    """
+                    Implement backoff loop here
+                    """
+                    logging.info("Backing off for {} seconds".format(delay_time))
+                    sleep(delay_time)
+                    file_size_now = os.stat(this_path).st_size
+                    if file_size_now != file_size:
+                        logging.info("Another processes is writing to {}".format(this_path))
+                        file_size = file_size_now
+                        delay_time *= 2
+                    else:
+                        if self._compare_remote(this_path, remote_path):
+                            logging.info("{} passed checks. Proceeding with test".format(this_path))
+                            return 
             else:
                 self.local_path = this_path
                 return
