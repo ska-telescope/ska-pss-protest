@@ -353,7 +353,11 @@ class VectorPull:
                 # disk, we wait, using an exponential backoff loop, until that process stops.
                 # If that happens and the file is still the same (wrong) size, we pull a fresh
                 # copy, or, if it's now the correct size, we pass that vector on to the test.
-                logging.info("{} and {} are different sizes.".format(this_path, remote_path))
+                logging.info(
+                    "{} and {} are different sizes.".format(
+                        this_path, remote_path
+                    )
+                )
                 base = random.uniform(1.5, 2.0)
                 adverse_events = 1
 
@@ -362,8 +366,10 @@ class VectorPull:
                     # is t = b**c, where b is the base factor and c is the number of adverse
                     # events. The loop will be exited if the file size does not change between
                     # backoff durations.
-                    delay_time = int(base ** adverse_events)
-                    logging.info("Backing off for {} seconds".format(delay_time))
+                    delay_time = int(base**adverse_events)
+                    logging.info(
+                        "Backing off for {} seconds".format(delay_time)
+                    )
                     sleep(delay_time)
 
                     # After our backoff period, has the file size changed?
@@ -376,11 +382,15 @@ class VectorPull:
                         # If we're here, the file size is stable and we can proceed with the test
                         if self._compare_remote(this_path, remote_path):
                             # The file size matches that of the remote vector. No further action.
-                            logging.info("{} passed checks. Proceeding with test".format(this_path))
-                            return 
+                            logging.info(
+                                "{} passed checks. Proceeding with test".format(
+                                    this_path
+                                )
+                            )
+                            return
                         else:
                             # If we're here, the file size has stablised, but is not the correct
-                            # size. Therefore we repull from the test vector server. 
+                            # size. Therefore we repull from the test vector server.
                             logging.info("Repulling {}".format(this_path))
                             break
             else:
