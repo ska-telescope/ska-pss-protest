@@ -76,6 +76,7 @@ class RequesterTests:
         with each other. To do this we utlised the multiprocessing
         module to launch two downloads.
         """
+
         def task(cache_dir):
             """
             A function to set up a requester object and request
