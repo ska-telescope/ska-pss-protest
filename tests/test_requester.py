@@ -45,7 +45,9 @@
 """
 
 import os
+import shutil
 import tempfile
+from multiprocessing import Process
 
 import pytest
 from pytest import mark
@@ -66,6 +68,64 @@ class RequesterTests:
     vector pulling and cacheing capabilities in
     testapps/requester.py.
     """
+
+    def test_two_simultaneous_downloads(self):
+        """
+        Tests that two simulataneous downloads of the same vector
+        to the same location on the filesystem cannot interfere
+        with each other. To do this we utlised the multiprocessing
+        module to launch two downloads.
+        """
+        def task(cache_dir):
+            """
+            A function to set up a requester object and request
+            download of an FDAS test vector. This will be called by
+            the multiprocessing method Process()
+            """
+            pull = VectorPull(cache_dir=cache_dir)
+            pull.from_properties(
+                vectype="FDAS-HSUM-MID",
+                freq=500.0,
+                duty=0.05,
+                disp=1.0,
+                acc=100.397,
+                sig=50.0,
+            )
+
+        cache_dir = tempfile.mkdtemp()
+
+        # Check that we don't already have the file we want
+        # to test the download of
+        assert not os.path.isfile(
+            os.path.join(
+                cache_dir,
+                "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil",
+            )
+        )
+
+        processes = []
+
+        # Set and launch the first download process
+        process_a = Process(target=task, args=(cache_dir,))
+        processes.append(process_a)
+        process_a.start()
+        # Set and launch the second download process
+        process_b = Process(target=task, args=(cache_dir,))
+        processes.append(process_b)
+        process_b.start()
+
+        # Wait for both process to complete
+        for this_process in processes:
+            this_process.join()
+
+        # Check that we have our file at the location we expect
+        assert os.path.isfile(
+            os.path.join(
+                cache_dir,
+                "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil",
+            )
+        )
+        shutil.rmtree(cache_dir)
 
     def test_from_name_with_cache_env(self):
         """
