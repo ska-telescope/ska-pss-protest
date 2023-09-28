@@ -45,7 +45,9 @@
 """
 
 import os
+import shutil
 import tempfile
+from multiprocessing import Process
 
 import pytest
 from pytest import mark
@@ -66,6 +68,67 @@ class RequesterTests:
     vector pulling and cacheing capabilities in
     testapps/requester.py.
     """
+
+    def test_two_simultaneous_downloads(self):
+        """
+        Tests that two simulataneous downloads of the same vector
+        to the same location on the filesystem cannot interfere
+        with each other. To do this we utilise the multiprocessing
+        module to launch two downloads in parallel.
+        """
+
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil"
+
+        def task(cache_dir):
+            """
+            A function to set up a requester object and request
+            download of an FDAS test vector. This will be called by
+            the multiprocessing method Process().
+            """
+            pull = VectorPull(cache_dir=cache_dir)
+            pull.from_properties(
+                vectype="FDAS-HSUM-MID",
+                freq=500.0,
+                duty=0.05,
+                disp=1.0,
+                acc=100.397,
+                sig=50.0,
+            )
+
+        cache_dir = tempfile.mkdtemp()
+
+        # Check that we don't already have the file we want
+        # to test the download of
+        assert not os.path.isfile(
+            os.path.join(
+                cache_dir,
+                vector,
+            )
+        )
+
+        processes = []
+
+        # Set and launch the first download process
+        process_a = Process(target=task, args=(cache_dir,))
+        processes.append(process_a)
+        process_a.start()
+        # Set and launch the second download process
+        process_b = Process(target=task, args=(cache_dir,))
+        processes.append(process_b)
+        process_b.start()
+
+        # Wait for both process to complete
+        for this_process in processes:
+            this_process.join()
+
+        # Check that we have our file at the location we expect
+        assert os.path.isfile(
+            os.path.join(
+                cache_dir,
+                vector,
+            )
+        )
+        shutil.rmtree(cache_dir)
 
     def test_from_name_with_cache_env(self):
         """
@@ -134,29 +197,6 @@ class RequesterTests:
         assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
         pull.flush_cache()
 
-    def test_from_url(self):
-        """
-        Tests from_url() method. First with the vector not existing
-        locally and then with.
-        """
-        env_cache_dir = os.environ["CACHE_DIR"] = tempfile.mkdtemp()
-        pull = VectorPull()
-        assert pull.cache_dir == env_cache_dir
-        assert os.path.isdir(env_cache_dir)
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
-        assert pull.local_path == env_cache_dir + "/" + VECTOR
-        assert os.path.isfile(pull.local_path)
-
-        # Pull again with vector already in cache
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
-        assert pull.local_path == env_cache_dir + "/" + VECTOR
-        assert os.path.isfile(pull.local_path)
-        pull.flush_cache()
-
     def test_pull_non_existent_vector(self):
         """
         Tests the correct exception is raised if requested
@@ -206,24 +246,6 @@ class RequesterTests:
         open(local_vector_path, "a").close()
         before_size = os.stat(local_vector_path).st_size
         pull.from_name(VECTOR)
-        after_size = os.stat(pull.local_path).st_size
-        assert after_size > before_size
-        pull.flush_cache()
-
-    def test_from_url_local_changed_check_remote(self):
-        """
-        Test that a vector is pulled from the remote server
-        even if that file exists in the cache, if it has a
-        different file size to the remote version
-        """
-        cache_dir = tempfile.mkdtemp()
-        pull = VectorPull(cache_dir=cache_dir)
-        local_vector_path = os.path.join(cache_dir, VECTOR)
-        open(local_vector_path, "a").close()
-        before_size = os.stat(local_vector_path).st_size
-        pull.from_url(
-            os.path.join("http://testvectors.jb.man.ac.uk/TEST", VECTOR)
-        )
         after_size = os.stat(pull.local_path).st_size
         assert after_size > before_size
         pull.flush_cache()

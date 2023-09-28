@@ -72,7 +72,9 @@
 
 import logging
 import os
+import random
 import shutil
+from time import sleep
 from typing import Union
 
 import requests
@@ -97,6 +99,12 @@ class VectorPull:
         self.cache_dir = cache_dir
         self.local_path = None
         self.prefix = "http://testvectors.jb.man.ac.uk/"
+
+        # Hold of before processing the test vector for a random
+        # period of time. This prevents mutiple test processes from
+        # evaluating the write status of a locally stored test vector
+        # at the same time.
+        sleep(random.uniform(0, 5))
 
         self._setup_cache()
 
@@ -334,68 +342,66 @@ class VectorPull:
         # Is vector on local machine and does
         # it have the correct file size?
         if this_path:
+            # Get the size of the file we've found
+            file_size = os.stat(this_path).st_size
             if check_remote:
                 # Do size check and exit if they match
                 if self._compare_remote(this_path, remote_path):
                     self.local_path = this_path
                     return
+
+                # If we're here, the local test vector has a different size to the remote
+                # vector. In this scenario, we check that no other process is currently
+                # writing to the file, and if that is true, then we begin the download
+                # of a fresh copy. If another file is writing that test vector to our local
+                # disk, we wait, using an exponential backoff loop, until that process stops.
+                # If that happens and the file is still the same (wrong) size, we pull a fresh
+                # copy, or, if it's now the correct size, we pass that vector on to the test.
                 logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(  # noqa
+                    "{} and {} are different sizes.".format(
                         this_path, remote_path
                     )
                 )
-            else:
-                self.local_path = this_path
-                return
+                base = random.uniform(1.5, 2.0)
+                adverse_events = 1
 
-        # If no, pass to downloader.
-        self.local_path = self._download(remote_path)
-
-    def from_url(self, vector_url: str, refresh=False, check_remote=True):
-        """
-        Gets vector from vector URL.
-        This method is used if the absolute remote URL of the vector
-        is known a-priori. It the vector exists in the local
-        cache then it will be used. Else it will be pulled
-        from the remote repo.
-
-        Parameters
-        ----------
-        vector_name: str
-            The filename of the vector.
-
-        refresh: bool
-            Check local cache if True, else False
-
-        check_remote: bool
-            Verify test vector header with origin
-        """
-        basename = os.path.basename(vector_url)
-        this_path = None
-
-        # Check our local cache for the vector if required.
-        if not refresh:
-            this_path = self._check_cache(basename)
-
-        # Is vector on local machine and does
-        # it have the correct file size?
-        if this_path:
-            if check_remote:
-                # Do size check and exit if they match
-                if self._compare_remote(this_path, vector_url):
-                    self.local_path = this_path
-                    return
-                logging.info(
-                    "{} and {} are different sizes. Pulling new version".format(  # noqa
-                        this_path, vector_url
+                while True:
+                    # This while loop is an exponential backoff loop. That is, the backoff time
+                    # is t = b**c, where b is the base factor and c is the number of adverse
+                    # events. The loop will be exited if the file size does not change between
+                    # backoff durations.
+                    delay_time = int(base**adverse_events)
+                    logging.info(
+                        "Backing off for {} seconds".format(delay_time)
                     )
-                )
+                    sleep(delay_time)
+
+                    # After our backoff period, has the file size changed?
+                    file_size_now = os.stat(this_path).st_size
+                    if file_size_now != file_size:
+                        # Our file size has changed. Wait one backoff duration and try again
+                        file_size = file_size_now
+                        adverse_events += 1
+                    else:
+                        # If we're here, the file size is stable and we can proceed with the test
+                        if self._compare_remote(this_path, remote_path):
+                            # The file size matches that of the remote vector. No further action.
+                            logging.info(
+                                "{} passed checks. Proceeding with test".format(
+                                    this_path
+                                )
+                            )
+                            return
+                        else:
+                            # If we're here, the file size has stablised, but is not the correct
+                            # size. Therefore we repull from the test vector server.
+                            logging.info("Repulling {}".format(this_path))
+                            break
             else:
                 self.local_path = this_path
                 return
 
-        # If no, pass to downloader.
-        self.local_path = self._download(vector_url)
+        self.local_path = self._download(remote_path)
 
     def from_properties(
         self,
