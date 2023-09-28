@@ -100,6 +100,10 @@ class VectorPull:
         self.local_path = None
         self.prefix = "http://testvectors.jb.man.ac.uk/"
 
+        # Hold of before processing the test vector for a random
+        # period of time. This prevents mutiple test processes from
+        # evaluating the write status of a locally stored test vector
+        # at the same time.
         sleep(random.uniform(0, 5))
 
         self._setup_cache()
