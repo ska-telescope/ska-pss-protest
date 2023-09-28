@@ -73,15 +73,17 @@ class RequesterTests:
         """
         Tests that two simulataneous downloads of the same vector
         to the same location on the filesystem cannot interfere
-        with each other. To do this we utlised the multiprocessing
-        module to launch two downloads.
+        with each other. To do this we utilise the multiprocessing
+        module to launch two downloads in parallel.
         """
+
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil"
 
         def task(cache_dir):
             """
             A function to set up a requester object and request
             download of an FDAS test vector. This will be called by
-            the multiprocessing method Process()
+            the multiprocessing method Process().
             """
             pull = VectorPull(cache_dir=cache_dir)
             pull.from_properties(
@@ -100,7 +102,7 @@ class RequesterTests:
         assert not os.path.isfile(
             os.path.join(
                 cache_dir,
-                "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil",
+                vector,
             )
         )
 
@@ -123,7 +125,7 @@ class RequesterTests:
         assert os.path.isfile(
             os.path.join(
                 cache_dir,
-                "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil",
+                vector,
             )
         )
         shutil.rmtree(cache_dir)
