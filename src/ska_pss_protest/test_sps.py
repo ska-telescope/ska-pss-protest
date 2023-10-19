@@ -134,7 +134,7 @@ def run_cheetah(context, config, pytestconfig):
     assert cheetah.exit_code == 0
 
     # Clean up
-     os.remove(context["config_path"])
+    os.remove(context["config_path"])
 
 
 @then(
