@@ -130,7 +130,7 @@ def run_cheetah(context, config, pytestconfig):
         "SinglePulse",
         build_dir=pytestconfig.getoption("path"),
     )
-    cheetah.run()
+    cheetah.run(timeout=600)
     assert cheetah.exit_code == 0
 
     # Clean up

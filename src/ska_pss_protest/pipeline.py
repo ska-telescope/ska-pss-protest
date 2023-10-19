@@ -154,6 +154,7 @@ class Cheetah:
             # Indefinite process needs to be terminated by kernel.
             child.kill()
             out, err = child.communicate()
+            logging.info("cheetah exceeded {} s timeout".format(timeout))
 
         # Handle STDERR
         self.err = err.decode("utf-8")
