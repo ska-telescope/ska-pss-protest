@@ -134,7 +134,7 @@ def run_cheetah(context, config, pytestconfig):
     assert cheetah.exit_code == 0
 
     # Clean up
-    os.remove(context["config_path"])
+    #os.remove(context["config_path"])
 
 
 @then(
@@ -169,6 +169,19 @@ def validate_candidate_metadata(context):
 
     # Generate list of expected candidates
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    assert len(spccl.cands) >= len(spccl.expected)
+    max_width_index = 14
+    dmplan = [
+            [0, 100, 0.1],
+            [100, 300, 0.2],
+            [300, 700, 0.4],
+            [700, 1500, 0.8],
+            [1500, 3100, 1.6],
+    ]
+    spccl.compare_dmstep(
+            context["vector_header"].allpars(), dmplan, max_width_index
+        )
 
-    shutil.rmtree(context["candidate_dir"])
+    assert len(spccl.detections) == len(spccl.expected)
+    assert len(spccl.non_detections) == 0
+
+    #shutil.rmtree(context["candidate_dir"])
