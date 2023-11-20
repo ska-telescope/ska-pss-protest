@@ -171,15 +171,15 @@ def validate_candidate_metadata(context):
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     max_width_index = 14
     dmplan = [
-            [0, 100, 0.1],
-            [100, 300, 0.2],
-            [300, 700, 0.4],
-            [700, 1500, 0.8],
-            [1500, 3100, 1.6],
+        [0, 100, 0.1],
+        [100, 300, 0.2],
+        [300, 700, 0.4],
+        [700, 1500, 0.8],
+        [1500, 3100, 1.6],
     ]
     spccl.compare_dmstep(
-            context["vector_header"].allpars(), dmplan, max_width_index
-        )
+        context["vector_header"].allpars(), dmplan, max_width_index
+    )
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
