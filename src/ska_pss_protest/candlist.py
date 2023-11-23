@@ -502,11 +502,14 @@ class SpCcl:
             if not detected:
                 # Does the detected value of each parameter match that of
                 # the known signal, with the tolerances set by the rules?
+                # Note: We currently do not test on S/N.
                 if (
-                    # cand[3] >= rules.min_sn
-                    np.abs(exp[1] - cand[1]) <= rules.dm_tol
-                    and np.abs(exp[2] - cand[2]) <= rules.width_tol / 1000
-                    and np.abs(exp[0] - cand[0]) <= rules.timestamp_tol
+                    cand[1] >= exp[1] - rules.dm_tol
+                    and cand[1] <= exp[1] + rules.dm_tol
+                    and cand[2] >= exp[2] - rules.width_tol / 1000
+                    and cand[2] <= exp[2] + rules.width_tol / 1000
+                    and cand[0] >= exp[0] - rules.timestamp_tol
+                    and cand[0] <= exp[0] + rules.timestamp_tol
                 ):
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
