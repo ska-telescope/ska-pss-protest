@@ -959,7 +959,9 @@ class DMstepTol2:
 
         # Take list of trial boxcar sizes and
         # convert to a list of widths
-        trial_widths = np.asarray([trial_box_bin * tsamp for trial_box_bin in self.widths_list])
+        trial_widths = np.asarray(
+            [trial_box_bin * tsamp for trial_box_bin in self.widths_list]
+        )
 
         # Find the closest index in trial_widths to the test value wint
         nearest = np.absolute(trial_widths - wint).argmin()
@@ -969,20 +971,20 @@ class DMstepTol2:
         if nearest == 0:
             # Is our intrinsic width narrower than the narrowest?
             if wint < trial_widths[0]:
-                lower, upper = wint, trial_widths[nearest+1]
+                lower, upper = wint, trial_widths[nearest + 1]
             # Or is it wider than the narrowest?
             else:
-                lower, upper = trial_widths[nearest], trial_widths[nearest+1]
+                lower, upper = trial_widths[nearest], trial_widths[nearest + 1]
         # Is nearest width the widest?
         elif nearest == len(trial_widths) - 1:
             # Is our intrinsic width wider than the widest?
             if wint > trial_widths[-1]:
-                lower, upper = trial_widths[nearest-1], wint
+                lower, upper = trial_widths[nearest - 1], wint
             # Is our intrinsic width narrower than the widest?
             else:
-                lower, upper = trial_widths[nearest-1], trial_widths[nearest]
+                lower, upper = trial_widths[nearest - 1], trial_widths[nearest]
         else:
-            lower, upper = trial_widths[nearest-1], trial_widths[nearest+1] 
+            lower, upper = trial_widths[nearest - 1], trial_widths[nearest + 1]
 
         self.width_tol = [lower, upper]
 
