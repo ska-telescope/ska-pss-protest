@@ -496,6 +496,9 @@ class SpCcl:
             An object defining the tolerances for each of the
             parameters in the known signal.
         """
+        logging.info("DM tolerance {}".format(rules.dm_tol))
+        logging.info("Width tolerance {} ms".format(rules.width_tol / 1000))
+        logging.info("TOA tolerance {} d".format(rules.timestamp_tol))
         detected = False
         # For each candidate....
         for cand in cands:
@@ -796,6 +799,192 @@ class DMstepTol:
         # Set width tolerance in microseconds
         self.weffbox = float(closest_box) * 1e6
         self.width_tol = self.weffbox
+
+    def sig(self, sn_int: float, wint: float, period: float):
+        """
+        Sets the S/N tolerance by using the radiometer
+        equation for two pulses with different widths,
+        where wint is the injected pulse width and weffbox
+        is the closest box car width.
+        More information on the S/N tolerance is given in
+        documents connected to feature SP-2949.
+
+        Parameters
+        ----------
+        sn_int: float
+             The injected single pulse S/N
+
+        wint : float
+             The injected width of the pulse in us
+
+        period: float
+             Injected pulse period in us
+        """
+
+        sn_tol = sn_int * np.sqrt(
+            (wint * (period - self.weffbox)) / (self.weffbox * (period - wint))
+        )
+
+        self.min_sn = sn_tol
+
+
+class DMstepTol2:
+    """
+    Class to compute the tolerances on the single pulses using
+    DM and width steps from the config file as basic tolerances.
+    This is calculated as:
+    - DM tolerance = +/- 1 DM step from DM plan
+    - Width tolerance = +/- 1 convolution width used in SPDT
+    - S/N tolerance as calculated from the radiometer equation and
+      effective pulse width from closest convolution width
+    - time stamp tolerance from the effective pulse width
+
+    This class is only relevant for a single pulse search
+    and not a periodicity search.
+
+    The class takes a list of pulse metadata parameters that represent
+    the expected values, and computes a tolerance value for each of them.
+    This can then be compared to the detected candidate metadata parameters.
+
+    Parameters
+    ----------
+    expected : list
+        A list of known metadata parameters in the form
+        [Timestamp (MJD), DM (pc/cc), Width (ms), S/N]
+
+    pars : dict
+        A dictionary of parameters describing the properties
+        of the filterbank being searched and of the signal
+        injected into the filterbank.
+
+    dmplan : list
+        List of lists of DM start, DM end, and DM step
+        from DM plan in configuration file.
+        E.g.,
+        dmplan = [[start, end, step], [start, end, step],...]
+
+    max_width_index : int
+        Maximum number of widths as searched by the relevant
+        SPS algotrithm used. The searched widths are set to
+        1, 2, 4, 8, ..., 2^n bins, where n is set in
+        the Cheetah config file.
+    """
+
+    def __init__(
+        self, expected: list, pars: dict, dmplan: list, max_width_index=int
+    ):
+        self.expected = expected
+        self.pars = pars
+        self.dmplan = dmplan
+        self.max_width_index = max_width_index
+
+        self.width_tol = None
+        self.min_sn = None
+        self.dm_tol = None
+        self.timestamp_tol = None
+        self.weffbox = None
+
+        self.calc_tols()
+
+    def calc_tols(self):
+        """
+        Generates tolerance data for each
+        SpCcl metadata parameter.
+        """
+
+        # Compute period in microseconds
+        period = 1.0 / self.pars["freq"] * 1e6
+
+        self.dispersion(self.expected[1])
+        self.timestamp(self.expected[2] * 1000)
+        self.width(self.expected[2] * 1000)
+        self.sig(self.expected[3], self.expected[2] * 1000, period)
+
+    def dispersion(self, disp: float):
+        """
+        Gets the DM tolerance from the Cheetah config file
+        and sets it equal to one DM step
+
+        Parameters
+        ----------
+        disp : float
+             The "true" DM of the pulse
+
+        dmplan: list
+             List of lists of DM start, DM end, and DM step
+             from DM plan in configuration file.
+             E.g.,
+             dmplan = [[start, end, step], [start, end, step],...]
+        """
+
+        for dm in self.dmplan:
+            start = dm[0]
+            end = dm[1]
+            if start <= disp < end:
+                step = dm[2]
+
+        this_dm_tol = step
+        self.dm_tol = this_dm_tol
+
+    def timestamp(self, wint: float):
+        """
+        Returns a timestamp tolerance in days
+
+        Parameters
+        ----------
+        wint: float
+            The "true" width of the pulse in microseconds
+        """
+
+        wint_s = wint / 1e6
+        tol_s = wint_s / (2.0 * np.sqrt(2.0 * np.log(2.0)))
+        self.timestamp_tol = tol_s / 86400
+
+    def width(self, wint: float):
+        """
+        Gets the width tolerance by comparing
+        the closest width box car used in SPS
+        and sets it equal to one width box car
+        The searched widths are set to
+        1, 2, 4, 8, ..., 2^n bins, where n is
+        set in the Cheetah config file or default is n=10.
+
+        Parameters
+        ----------
+        wint : float
+             The injected width of the pulse in microseconds
+        """
+
+        tsamp = self.pars["tsamp"] * 1e6
+
+        # Take list of trial boxcar sizes and
+        # convert to a list of widths
+        trial_widths = np.asarray([trial_box_bin * tsamp for trial_box_bin in self.widths_list])
+
+        # Find the closest index in trial_widths to the test value wint
+        nearest = np.absolute(trial_widths - wint).argmin()
+
+        # Determine the lower and upper bounds of an acceptable candidate width.....
+        # Is nearest width the narrowest?
+        if nearest == 0:
+            # Is our intrinsic width narrower than the narrowest?
+            if wint < trial_widths[0]:
+                lower, upper = wint, trial_widths[nearest+1]
+            # Or is it wider than the narrowest?
+            else:
+                lower, upper = trial_widths[nearest], trial_widths[nearest+1]
+        # Is nearest width the widest?
+        elif nearest == len(trial_widths) - 1:
+            # Is our intrinsic width wider than the widest?
+            if wint > trial_widths[-1]:
+                lower, upper = trial_widths[nearest-1], wint
+            # Is our intrinsic width narrower than the widest?
+            else:
+                lower, upper = trial_widths[nearest-1], trial_widths[nearest]
+        else:
+            lower, upper = trial_widths[nearest-1], trial_widths[nearest+1] 
+
+        self.width_tol = [lower, upper]
 
     def sig(self, sn_int: float, wint: float, period: float):
         """
