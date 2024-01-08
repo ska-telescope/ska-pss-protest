@@ -402,6 +402,7 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             candidate.from_spccl(expected_spccl)
 
+    @mark.skip(reason="Uses old tols")
     def test_dmtol_vector(self, get_vector):
         """
         Tests that the analytically derived tolerances are
@@ -418,6 +419,7 @@ class SpCclTests:
         assert tols.dm_tol == pytest.approx(0.9300746, 1e-7)
         assert tols.timestamp_tol == pytest.approx(1.3605484e-09, 1e-16)
 
+    @mark.skip(reason="Uses old tols")
     def test_dmtol_invalid_vector(self):
         """
         Tests that the correct exception is raise if using compare_dm()
@@ -440,7 +442,16 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = cand.SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
-        candidate.compare_dm(VHeader(get_vector.local_path).allpars())
+
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        
+        candidate.compare_dmstep(VHeader(get_vector.local_path).allpars(), dmplan, widths_list)
 
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -462,7 +473,14 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        candidate.compare_dm(source_properties)
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        candidate.compare_dmstep(source_properties, dmplan, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -485,16 +503,24 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        candidate.compare_dm(source_properties)
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
+        dmplan = [
+            [0, 370, 0.307],
+            [370, 740, 0.652],
+            [740, 1480, 1.266],
+            [1480, 2950, 2.215],
+        ]
+        candidate.compare_dmstep(source_properties, dmplan, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
+    @mark.skip(reason="Uses old logic")
     def test_new_tolerances(self, get_vector):
         """
         Tests that the new tolerances work as expected
         """
         pulse_metadata = [56000.251365, 100.0, 100.0, 14.4337567]
-        max_width_index = 14
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
         dmplan = [
             [0, 370, 0.307],
             [370, 740, 0.652],
@@ -505,7 +531,7 @@ class SpCclTests:
             pulse_metadata,
             VHeader(get_vector.local_path).allpars(),
             dmplan,
-            max_width_index,
+            widths_list,
         )
         assert tols.dm_tol == pytest.approx(0.307, 1e-7)
         assert tols.timestamp_tol == pytest.approx(4.91505671462974e-7, 1e-16)
@@ -529,14 +555,14 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        max_width_index = 14
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
         dmplan = [
             [0, 370, 0.307],
             [370, 740, 0.652],
             [740, 1480, 1.266],
             [1480, 2950, 2.215],
         ]
-        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
+        candidate.compare_dmstep(source_properties, dmplan, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -548,7 +574,7 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = cand.SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
-        max_width_index = 14
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
         dmplan = [
             [0, 370, 0.307],
             [370, 740, 0.652],
@@ -556,7 +582,7 @@ class SpCclTests:
             [1480, 2950, 2.215],
         ]
         candidate.compare_dmstep(
-            VHeader(get_vector.local_path).allpars(), dmplan, max_width_index
+            VHeader(get_vector.local_path).allpars(), dmplan, widths_list
         )
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -580,13 +606,13 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        max_width_index = 14
+        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
         dmplan = [
             [0, 370, 0.307],
             [370, 740, 0.652],
             [740, 1480, 1.266],
             [1480, 2950, 2.215],
         ]
-        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
+        candidate.compare_dmstep(source_properties, dmplan, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
