@@ -448,7 +448,11 @@ class SpCcl:
             parameters in the known signal.
         """
         logging.info("DM tolerance {}".format(rules.dm_tol))
-        logging.info("Width range {}-{} ms".format(rules.width_tol[0]/1000, rules.width_tol[1]/1000))
+        logging.info(
+            "Width range {}-{} ms".format(
+                rules.width_tol[0] / 1000, rules.width_tol[1] / 1000
+            )
+        )
         logging.info("TOA tolerance {} d".format(rules.timestamp_tol))
         detected = False
         # For each candidate....
@@ -562,7 +566,7 @@ class DmTol:
             w_int * period / (self.sn_thresh**2.0 * (period - w_int) + w_int)
         )
         tol = np.abs(self.weff - w_int)
-        #self.width_tol = tol
+        # self.width_tol = tol
         self.width_tol = [w_int - tol, w_int + tol]
 
     def dispersion(self, disp: float, wint: float):
@@ -602,6 +606,7 @@ class DmTol:
         tol_us = self.weff / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         tol_s = tol_us * 1e-06
         self.timestamp_tol = tol_s / 86400
+
 
 class DMstepTol:
     """
@@ -666,12 +671,13 @@ class DMstepTol:
         # Compute period in microseconds
         period = 1.0 / self.pars["freq"] * 1e6
 
-        self.dispersion(self.expected[1])
+        self.dispersion(self.expected[2] * 1000)
         self.timestamp(self.expected[2] * 1000)
         self.width(self.expected[2] * 1000)
-        #self.sig(self.expected[3], self.expected[2] * 1000, period)
+        # TODO: Implement S/N tolerance
+        # self.sig(self.expected[3], self.expected[2] * 1000, period)
 
-    def dispersion(self, disp: float):
+    def dispersion(self, wint: float):
         """
         Gets the DM tolerance from the Cheetah config file
         and sets it equal to one DM step
@@ -687,15 +693,11 @@ class DMstepTol:
              E.g.,
              dmplan = [[start, end, step], [start, end, step],...]
         """
+        scaler = 2
 
-        for dm in self.dmplan:
-            start = dm[0]
-            end = dm[1]
-            if start <= disp < end:
-                step = dm[2]
-
-        this_dm_tol = step
-        self.dm_tol = this_dm_tol
+        fch_low = self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"]
+        sqdiff = ((1 / fch_low)*2.0) - (1 / self.pars["fch1"]**2.0)
+        self.dm_tol = (scaler * wint) / (8.3e6 * sqdiff)
 
     def timestamp(self, wint: float):
         """
@@ -726,6 +728,7 @@ class DMstepTol:
              The injected width of the pulse in microseconds
         """
 
+        # Get sample internal in us
         tsamp = self.pars["tsamp"] * 1e6
 
         # Take list of trial boxcar sizes and
