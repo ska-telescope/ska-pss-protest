@@ -185,7 +185,7 @@ def validate_candidate_metadata(context):
         8192,
         15000,
     ]
-    spccl.compare_dmstep(context["vector_header"].allpars(), widths_list)
+    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
