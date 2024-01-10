@@ -402,38 +402,6 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             candidate.from_spccl(expected_spccl)
 
-    @mark.skip(reason="Uses old tols")
-    def test_dmtol_vector(self, get_vector):
-        """
-        Tests that the analytically derived tolerances are
-        correctly computed by the DmTol class.
-        """
-        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-        tols = cand.DmTol(
-            pulse_metadata,
-            VHeader(get_vector.local_path).allpars(),
-            sn_thresh=0.85,
-        )
-        assert tols.min_sn == pytest.approx(12.2686932, 1e-7)
-        assert tols.width_tol == pytest.approx(76.812356, 1e-6)
-        assert tols.dm_tol == pytest.approx(0.9300746, 1e-7)
-        assert tols.timestamp_tol == pytest.approx(1.3605484e-09, 1e-16)
-
-    @mark.skip(reason="Uses old tols")
-    def test_dmtol_invalid_vector(self):
-        """
-        Tests that the correct exception is raise if using compare_dm()
-        on a filterbank that is not an official PSS test vector.
-        """
-        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-        invalid_vector = "tests/data/sigproc/56352_54818_B1929+10_test.fil"
-        with pytest.raises(KeyError):
-            cand.DmTol(
-                pulse_metadata,
-                VHeader(invalid_vector).allpars(),
-                sn_thresh=0.85,
-            )
-
     def test_compare_dm_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_dm() using
@@ -459,15 +427,8 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-
-        candidate.compare_dmstep(
-            VHeader(get_vector.local_path).allpars(), dmplan, widths_list
+        candidate.compare_widthstep(
+            VHeader(get_vector.local_path).allpars(), widths_list
         )
 
         assert len(candidate.detections) == len(candidate.expected)
@@ -506,13 +467,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        candidate.compare_dmstep(source_properties, dmplan, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -551,58 +506,13 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        candidate.compare_dmstep(source_properties, dmplan, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
-    @mark.skip(reason="Uses old logic")
-    def test_new_tolerances(self, get_vector):
+    def test_compare_widthstep_within_tol_no_vector(self):
         """
-        Tests that the new tolerances work as expected
-        """
-        pulse_metadata = [56000.251365, 100.0, 100.0, 14.4337567]
-        widths_list = [
-            1,
-            2,
-            4,
-            8,
-            16,
-            32,
-            64,
-            128,
-            512,
-            1024,
-            2048,
-            4096,
-            8192,
-            15000,
-        ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        tols = cand.DMstepTol(
-            pulse_metadata,
-            VHeader(get_vector.local_path).allpars(),
-            dmplan,
-            widths_list,
-        )
-        assert tols.dm_tol == pytest.approx(0.307, 1e-7)
-        assert tols.timestamp_tol == pytest.approx(4.91505671462974e-7, 1e-16)
-        assert tols.width_tol == pytest.approx(1048576.0, 1)
-        assert tols.min_sn == pytest.approx(12.567330991971536, 1e-7)
-
-    def test_compare_dmstep_within_tol_no_vector(self):
-        """
-        Tests that candidates are recovered by compare_dmstep() using
+        Tests that candidates are recovered by compare_widthstep() using
         manually specified source properties.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
@@ -633,19 +543,13 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        candidate.compare_dmstep(source_properties, dmplan, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
-    def test_compare_dmstep_within_tol_using_vector(self, get_vector):
+    def test_compare_widthstep_within_tol_using_vector(self, get_vector):
         """
-        Tests that candidates are recovered by compare_dmstep() using
+        Tests that candidates are recovered by compare_widthstep() using
         source properties computed using header reader VHeader().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
@@ -667,21 +571,15 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        candidate.compare_dmstep(
-            VHeader(get_vector.local_path).allpars(), dmplan, widths_list
+        candidate.compare_widthstep(
+            VHeader(get_vector.local_path).allpars(), widths_list
         )
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
-    def test_compare_dmstep_tol_exceeded_no_vector(self):
+    def test_compare_widthstep_tol_exceeded_no_vector(self):
         """
-        Tests that compare_dmstep() correctly identifies
+        Tests that compare_widthstep() correctly identifies
         missing candidates (i.e., signals present in the test
         vector that were not "detected" and written to the
         candidate metadata file).
@@ -714,13 +612,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        candidate.compare_dmstep(source_properties, dmplan, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
@@ -728,49 +620,93 @@ class SpCclTests:
         """
         Tests that the class responsible for providing
         SpCcl metadata tolerance ranges, based on the DM step
-        size, is returning the correct values. 
+        size, is returning the correct values.
         """
-        dmplan = [
-            [0, 100, 0.1],
-            [100, 300, 0.2],
-            [300, 700, 0.4],
-            [700, 1500, 0.8],
-            [1500, 3100, 1.6],
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
         ]
-        widths_list = [1,2,4,8,16,32,64,128,512,1024,2048,4096,8192,15000]
-        
+
         # Test a pulse width of 0.001 ms
         expected = [56000.00004631352, 1.0, 0.001, 18.257418583505537]
-        vector_pars = {'fch1': 1670.0, 'foff': -0.078125, 'nchans': 4096, 'tsamp': 6.4e-05, 'freq': 0.125, 'width': 1.25e-07, 'disp': 1.0, 'sig': 50.0} 
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-07,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
 
-        tols = cand.DMstepTol(expected, vector_pars, dmplan, widths_list)
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [1.0, 128.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-12, abs=1e-17)
         assert tols.dm_tol == pytest.approx(1.63e-04, abs=1e-06)
 
         # Test a pulse width of 0.1 ms
         expected = [56000.00004631352, 1.0, 0.1, 18.257418583505537]
-        vector_pars = {'fch1': 1670.0, 'foff': -0.078125, 'nchans': 4096, 'tsamp': 6.4e-05, 'freq': 0.125, 'width': 1.25e-05, 'disp': 1.0, 'sig': 50.0} 
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
 
-        tols = cand.DMstepTol(expected, vector_pars, dmplan, widths_list)
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [64.0, 256.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-10, abs=1e-15)
         assert tols.dm_tol == pytest.approx(1.63e-02, abs=1e-04)
 
         # Test a pulse width of 10 ms
         expected = [56000.00004631352, 1.0, 10.0, 18.257418583505537]
-        vector_pars = {'fch1': 1670.0, 'foff': -0.078125, 'nchans': 4096, 'tsamp': 6.4e-05, 'freq': 0.00125, 'width': 1.25e-05, 'disp': 1.0, 'sig': 50.0} 
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.00125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
 
-        tols = cand.DMstepTol(expected, vector_pars, dmplan, widths_list)
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [4096.0, 32768.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-8, abs=1e-13)
         assert tols.dm_tol == pytest.approx(1.63, abs=0.01)
 
         # Test a pulse width of 10 ms
         expected = [56000.00004631352, 1.0, 1000.0, 18.257418583505537]
-        vector_pars = {'fch1': 1670.0, 'foff': -0.078125, 'nchans': 4096, 'tsamp': 6.4e-05, 'freq': 0.125, 'width': 1.25e-05, 'disp': 1.0, 'sig': 50.0} 
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
 
-        tols = cand.DMstepTol(expected, vector_pars, dmplan, widths_list)
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [524288.0, 1000000.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
         assert tols.dm_tol == pytest.approx(163, abs=1)

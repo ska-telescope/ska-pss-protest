@@ -366,16 +366,16 @@ class SpCcl:
 
         self.expected = cand_metadata
 
-    def compare_dmstep(self, pars=None, dmplan=None, widths_list=None):
+    def compare_widthstep(self, pars=None, widths_list=None):
         """
         Function to search for each expected pulse from the
         list of candidate detections. A match is defined if
         a candidate signal matches an expected signal within
-        tolerances, as defined in the DMstepTol class. This
+        tolerances, as defined in the WidthTol class. This
         method requires information about the observing band and the
         frequency of the pulse in the test vector. These can be provided
         as a dictionary using the VHeader() method allpars().
-        Further info in DMstepTol() class below.
+        Further info in WidthTol() class below.
 
         Parameters
         ----------
@@ -392,20 +392,12 @@ class SpCcl:
                     "fch1 : 1670.0,
                     "foff" : -20.0,
                     "nchans" : 16}
-        dmplan : list
-            List of lists, containing DM plan from
-            Cheetah configuration file
-
-            E.g.
-            dmplan = [[start, end, step], [start, end, step],...]
 
         windex : int
-            Maximum number of widths as searched by the relevant
-            SPS algotrithm used. The searched widths are set to
-            1, 2, 4, 8, ..., 2^n bins, where n is set in
-            the Cheetah config file.
+            List pulse widths searched by the relevant
+            SPS algotrithm used.
         """
-        logging.info("Using ruleset: DMstep")
+        logging.info("Using ruleset: WidthStep")
 
         # For each known pulse in the test vector...
         for expected in self.expected:
@@ -413,7 +405,7 @@ class SpCcl:
 
             # Generate rules from the known pulse parameters and the
             # test vector parameters
-            rules = DMstepTol(expected, pars, dmplan, widths_list)
+            rules = WidthTol(expected, pars, widths_list)
 
             # If we find it..
             if self._compare(expected, self.cands, rules):
@@ -461,14 +453,20 @@ class SpCcl:
                 # Does the detected value of each parameter match that of
                 # the known signal, with the tolerances set by the rules?
                 # Note: We currently do not test on S/N.
-                if (
-                    cand[1] >= exp[1] - rules.dm_tol
-                    and cand[1] <= exp[1] + rules.dm_tol
-                    and cand[2] >= rules.width_tol[0] / 1000
-                    and cand[2] <= rules.width_tol[1] / 1000
-                    and cand[0] >= exp[0] - rules.timestamp_tol
-                    and cand[0] <= exp[0] + rules.timestamp_tol
-                ):
+                timestamp_check = (
+                    exp[0] - rules.timestamp_tol
+                    <= cand[0]
+                    <= exp[0] + rules.timestamp_tol
+                )
+                dm_check = (
+                    exp[1] - rules.dm_tol <= cand[1] <= exp[1] + rules.dm_tol
+                )
+                width_check = (
+                    rules.width_tol[0] / 1000
+                    <= cand[2]
+                    <= rules.width_tol[1] / 1000
+                )
+                if timestamp_check and dm_check and width_check:
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
                     detected = True
@@ -478,146 +476,11 @@ class SpCcl:
         return False
 
 
-class DmTol:
+class WidthTol:
     """
     Class to compute the tolerances on the single pulses using
-    analytically derived values assuming the only source of
-    variance is the signal being dedispersed at an
-    incorrect DM value.
-
-    This class is only relevant where the single pulse
-    search is being conducted on PSS test vectors, as in this case
-    the single pulses are injected periodically. As the pulse period
-    (the constant interval between each "independent" single pulse) is
-    fixed, the derivation of these tolerances would not be appropriate
-    to validate real single pulse data.
-
-    The class takes a list of pulse metadata parameters that represent
-    the expected values, and computes a tolerance value for each of them.
-    This can then be compared to the detected candidate metadata parameters.
-
-    Parameters
-    ----------
-    expected : list
-        A list of known metadata parameters in the form
-        [Timestamp (MJD), DM (pc/cc), Width (ms), S/N]
-
-    pars : dict
-        A dictionary of parameters describing the properties
-        of the filterbank being searched and of the signal
-        injected into the filterbank.
-    """
-
-    def __init__(self, expected: list, pars: dict, sn_thresh: float):
-        self.expected = expected
-        self.pars = pars
-        self.sn_thresh = sn_thresh
-
-        self.width_tol = None
-        self.min_sn = None
-        self.dm_tol = None
-        self.timestamp_tol = None
-        self.weff = None
-
-        # Check that the signal properties are
-        # provided by the pars dictionary
-        try:
-            self.pars["freq"]
-        except Exception as no_freq_error:
-            raise KeyError from no_freq_error
-
-        self.calc_tols()
-
-    def calc_tols(self):
-        """
-        Generates tolerance data for each
-        SpCcl metadata parameter.
-        """
-        # Compute period in us
-        period = (1.0 / self.pars["freq"]) * 1e6
-
-        self.sig(self.expected[3])
-        self.width(self.expected[2] * 1000, period)
-        self.dispersion(self.expected[1], self.expected[2] * 1000)
-        self.timestamp()
-
-    def sig(self, sn_int: float):
-        """
-        Sets threshold signal-to-noise ratio
-        using the tolerance level of 85%
-        """
-        sn_threshold = sn_int * self.sn_thresh
-        self.min_sn = sn_threshold
-
-    def width(self, w_int: float, period: float):
-        """
-        Generates a width tolerance in
-        microseconds
-
-        Parameters
-        ----------
-        w_int : float
-            Intrinsic width of the pulse being detected (us)
-
-        period : float
-            Period of the pulsar (us)
-        """
-        self.weff = (
-            w_int * period / (self.sn_thresh**2.0 * (period - w_int) + w_int)
-        )
-        tol = np.abs(self.weff - w_int)
-        # self.width_tol = tol
-        self.width_tol = [w_int - tol, w_int + tol]
-
-    def dispersion(self, disp: float, wint: float):
-        """
-        Computes the effect of a broadened pulse on the DM
-        in order to compute a DM tolerance (in pc/cc)
-
-        Parameters
-        ----------
-        DM : float
-            The "true" DM of the pulse
-
-        wint: float
-            The "true" width of the pulse in microseconds
-        """
-        # Compute frequency information
-        fch_low = self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"]
-        bandwidth = self.pars["fch1"] - fch_low
-        f_cent = (fch_low + (bandwidth / 2.0)) / 1000
-
-        # Convert sample interval to microseconds
-        tsamp = self.pars["tsamp"] / 1e-06
-
-        # Compute DM tolerance
-        term1 = 4 * f_cent**3.0 / (8.3 * bandwidth)
-        term2 = 8.3 * bandwidth * disp / (self.pars["nchans"] * f_cent**3.0)
-        this_dm_tol = term1 * np.sqrt(
-            self.weff**2.0 - tsamp**2.0 - wint**2.0 - term2**2.0
-        )
-
-        self.dm_tol = this_dm_tol
-
-    def timestamp(self):
-        """
-        Returns a timestamp tolerance in days
-        """
-        tol_us = self.weff / (2.0 * np.sqrt(2.0 * np.log(2.0)))
-        tol_s = tol_us * 1e-06
-        self.timestamp_tol = tol_s / 86400
-
-
-class DMstepTol:
-    """
-    Class to compute the tolerances on the single pulses using
-    DM and width steps from the config file as basic tolerances.
+    Boxcar width steps from the PSS config file.
     This is calculated as:
-    - DM tolerance = +/- 1 DM step from DM plan
-    - Width tolerance = +/- 1 convolution width used in SPDT
-    - S/N tolerance as calculated from the radiometer equation and
-      effective pulse width from closest convolution width
-    - time stamp tolerance from the effective pulse width
 
     This class is only relevant for a single pulse search
     and not a periodicity search.
@@ -637,28 +500,19 @@ class DMstepTol:
         of the filterbank being searched and of the signal
         injected into the filterbank.
 
-    dmplan : list
-        List of lists of DM start, DM end, and DM step
-        from DM plan in configuration file.
-        E.g.,
-        dmplan = [[start, end, step], [start, end, step],...]
-
     widths_list : list
+        A list of matched filter (boxcar) widths (in bins).
     """
 
-    def __init__(
-        self, expected: list, pars: dict, dmplan: list, widths_list: list
-    ):
+    def __init__(self, expected: list, pars: dict, widths_list: list):
         self.expected = expected
         self.pars = pars
-        self.dmplan = dmplan
         self.widths_list = widths_list
 
         self.width_tol = None
-        self.min_sn = None
         self.dm_tol = None
         self.timestamp_tol = None
-        self.weffbox = None
+        self.sntol = None
 
         self.calc_tols()
 
@@ -671,32 +525,30 @@ class DMstepTol:
         # Compute period in microseconds
         period = 1.0 / self.pars["freq"] * 1e6
 
-        self.dispersion(self.expected[2] * 1000)
-        self.timestamp(self.expected[2] * 1000)
-        self.width(self.expected[2] * 1000)
-        # TODO: Implement S/N tolerance
-        # self.sig(self.expected[3], self.expected[2] * 1000, period)
+        # Compute true pulse width in microseconds
+        wint = self.expected[2] * 1000
+
+        self.dispersion(wint)
+        self.timestamp(wint)
+        self.width(wint)
+        self.sig(self.expected[3], wint, period)
 
     def dispersion(self, wint: float):
         """
-        Gets the DM tolerance from the Cheetah config file
-        and sets it equal to one DM step
+        Sets the DM tolerance using the pulse width.
 
+        A "scaler" can be tuned to increase or decrease
+        the tolerance as required.
         Parameters
         ----------
-        disp : float
-             The "true" DM of the pulse
+        wint: float
+            The "true" width of the pulse in microseconds
 
-        dmplan: list
-             List of lists of DM start, DM end, and DM step
-             from DM plan in configuration file.
-             E.g.,
-             dmplan = [[start, end, step], [start, end, step],...]
         """
         scaler = 2
 
         fch_low = self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"]
-        sqdiff = ((1 / fch_low)*2.0) - (1 / self.pars["fch1"]**2.0)
+        sqdiff = ((1 / fch_low) * 2.0) - (1 / self.pars["fch1"] ** 2.0)
         self.dm_tol = (scaler * wint) / (8.3e6 * sqdiff)
 
     def timestamp(self, wint: float):
@@ -715,26 +567,38 @@ class DMstepTol:
 
     def width(self, wint: float):
         """
-        Gets the width tolerance by comparing
-        the closest width box car used in SPS
-        and sets it equal to one width box car
-        The searched widths are set to
-        1, 2, 4, 8, ..., 2^n bins, where n is
-        set in the Cheetah config file or default is n=10.
+        Sets the tolerance on the width by comparing the
+        true width of the test pulse to the nearest boxcar
+        width used in the SPS matched filtering process.
+
+        The range of permitted widths are set according
+        to the boxcar widths each size of the one that is
+        nearest to the intrinsic width.
+
+        For example, if we search for a 10,000 microeconds wide
+        pulse using matched filters with widths of
+        2048, 4096, 8192, 16384, 32768 microseconds, the nearest to
+        true pulse width is 8192 microseconds, so the range of
+        allowed widths is 4096 - 16384 microseconds.
+
+        Note: Unlike the other tolerances in this class which return
+        a delta (such that the range of allowed values is
+        <true value> +/- delta), this function sets an allowed
+        range explicitely - i.e, [lower_limit, upper_limit].
 
         Parameters
         ----------
         wint : float
-             The injected width of the pulse in microseconds
+            The "true" width of the pulse in microseconds
         """
-
-        # Get sample internal in us
-        tsamp = self.pars["tsamp"] * 1e6
 
         # Take list of trial boxcar sizes and
         # convert to a list of widths (us)
         trial_widths = np.asarray(
-            [trial_box_bin * tsamp for trial_box_bin in self.widths_list]
+            [
+                (trial_box_bin * self.pars["tsamp"]) * 1e6
+                for trial_box_bin in self.widths_list
+            ]
         )
 
         # Find the closest index in trial_widths to the test value wint
@@ -777,14 +641,22 @@ class DMstepTol:
              The injected single pulse S/N
 
         wint : float
-             The injected width of the pulse in us
+            The "true" width of the pulse in microseconds
 
         period: float
              Injected pulse period in us
-        """
 
-        sn_tol = sn_int * np.sqrt(
-            (wint * (period - self.weffbox)) / (self.weffbox * (period - wint))
+        TODO - Fully implement and add to unit tests
+        """
+        trial_widths = np.asarray(
+            [
+                (trial_box_bin * self.pars["tsamp"]) * 1e6
+                for trial_box_bin in self.widths_list
+            ]
         )
 
-        self.min_sn = sn_tol
+        weffbox = trial_widths[np.absolute(trial_widths - wint).argmin()]
+
+        self.sntol = sn_int * np.sqrt(
+            (wint * (period - weffbox)) / (weffbox * (period - wint))
+        )
