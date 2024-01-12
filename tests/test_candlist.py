@@ -402,36 +402,6 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             candidate.from_spccl(expected_spccl)
 
-    def test_dmtol_vector(self, get_vector):
-        """
-        Tests that the analytically derived tolerances are
-        correctly computed by the DmTol class.
-        """
-        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-        tols = cand.DmTol(
-            pulse_metadata,
-            VHeader(get_vector.local_path).allpars(),
-            sn_thresh=0.85,
-        )
-        assert tols.min_sn == pytest.approx(12.2686932, 1e-7)
-        assert tols.width_tol == pytest.approx(76.812356, 1e-6)
-        assert tols.dm_tol == pytest.approx(0.9300746, 1e-7)
-        assert tols.timestamp_tol == pytest.approx(1.3605484e-09, 1e-16)
-
-    def test_dmtol_invalid_vector(self):
-        """
-        Tests that the correct exception is raise if using compare_dm()
-        on a filterbank that is not an official PSS test vector.
-        """
-        pulse_metadata = [56000.251365, 100.0, 0.2, 14.4337567]
-        invalid_vector = "tests/data/sigproc/56352_54818_B1929+10_test.fil"
-        with pytest.raises(KeyError):
-            cand.DmTol(
-                pulse_metadata,
-                VHeader(invalid_vector).allpars(),
-                sn_thresh=0.85,
-            )
-
     def test_compare_dm_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_dm() using
@@ -440,7 +410,26 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = cand.SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
-        candidate.compare_dm(VHeader(get_vector.local_path).allpars())
+
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+        candidate.compare_widthstep(
+            VHeader(get_vector.local_path).allpars(), widths_list
+        )
 
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -462,7 +451,23 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        candidate.compare_dm(source_properties)
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -485,36 +490,29 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        candidate.compare_dm(source_properties)
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
-    def test_new_tolerances(self, get_vector):
+    def test_compare_widthstep_within_tol_no_vector(self):
         """
-        Tests that the new tolerances work as expected
-        """
-        pulse_metadata = [56000.251365, 100.0, 100.0, 14.4337567]
-        max_width_index = 14
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
-        ]
-        tols = cand.DMstepTol(
-            pulse_metadata,
-            VHeader(get_vector.local_path).allpars(),
-            dmplan,
-            max_width_index,
-        )
-        assert tols.dm_tol == pytest.approx(0.307, 1e-7)
-        assert tols.timestamp_tol == pytest.approx(4.91505671462974e-7, 1e-16)
-        assert tols.width_tol == pytest.approx(1048576.0, 1)
-        assert tols.min_sn == pytest.approx(12.567330991971536, 1e-7)
-
-    def test_compare_dmstep_within_tol_no_vector(self):
-        """
-        Tests that candidates are recovered by compare_dmstep() using
+        Tests that candidates are recovered by compare_widthstep() using
         manually specified source properties.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
@@ -529,41 +527,59 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        max_width_index = 14
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
         ]
-        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
-    def test_compare_dmstep_within_tol_using_vector(self, get_vector):
+    def test_compare_widthstep_within_tol_using_vector(self, get_vector):
         """
-        Tests that candidates are recovered by compare_dmstep() using
+        Tests that candidates are recovered by compare_widthstep() using
         source properties computed using header reader VHeader().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = cand.SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
-        max_width_index = 14
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
         ]
-        candidate.compare_dmstep(
-            VHeader(get_vector.local_path).allpars(), dmplan, max_width_index
+        candidate.compare_widthstep(
+            VHeader(get_vector.local_path).allpars(), widths_list
         )
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
-    def test_compare_dmstep_tol_exceeded_no_vector(self):
+    def test_compare_widthstep_tol_exceeded_no_vector(self):
         """
-        Tests that compare_dmstep() correctly identifies
+        Tests that compare_widthstep() correctly identifies
         missing candidates (i.e., signals present in the test
         vector that were not "detected" and written to the
         candidate metadata file).
@@ -580,13 +596,117 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
-        max_width_index = 14
-        dmplan = [
-            [0, 370, 0.307],
-            [370, 740, 0.652],
-            [740, 1480, 1.266],
-            [1480, 2950, 2.215],
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
         ]
-        candidate.compare_dmstep(source_properties, dmplan, max_width_index)
+        candidate.compare_widthstep(source_properties, widths_list)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
+
+    def test_widthsteptol(self):
+        """
+        Tests that the class responsible for providing
+        SpCcl metadata tolerance ranges, based on the DM step
+        size, is returning the correct values.
+        """
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+
+        # Test a pulse width of 0.001 ms
+        expected = [56000.00004631352, 1.0, 0.001, 18.257418583505537]
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-07,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
+
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        assert tols.width_tol == [1.0, 128.0]
+        assert tols.timestamp_tol == pytest.approx(4.91505e-12, abs=1e-17)
+        assert tols.dm_tol == pytest.approx(0.002534, abs=1e-6)
+
+        # Test a pulse width of 0.1 ms
+        expected = [56000.00004631352, 1.0, 0.1, 18.257418583505537]
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
+
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        assert tols.width_tol == [64.0, 256.0]
+        assert tols.timestamp_tol == pytest.approx(4.91505e-10, abs=1e-15)
+        assert tols.dm_tol == pytest.approx(0.2534, abs=1e-04)
+
+        # Test a pulse width of 10 ms
+        expected = [56000.00004631352, 1.0, 10.0, 18.257418583505537]
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.00125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
+
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        assert tols.width_tol == [4096.0, 32768.0]
+        assert tols.timestamp_tol == pytest.approx(4.91505e-8, abs=1e-13)
+        assert tols.dm_tol == pytest.approx(25.34, abs=0.01)
+
+        # Test a pulse width of 10 ms
+        expected = [56000.00004631352, 1.0, 1000.0, 18.257418583505537]
+        vector_pars = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.125,
+            "width": 1.25e-05,
+            "disp": 1.0,
+            "sig": 50.0,
+        }
+
+        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        assert tols.width_tol == [524288.0, 1000000.0]
+        assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
+        assert tols.dm_tol == pytest.approx(2534, abs=1)

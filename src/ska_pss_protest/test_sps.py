@@ -169,17 +169,23 @@ def validate_candidate_metadata(context):
 
     # Generate list of expected candidates
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    max_width_index = 14
-    dmplan = [
-        [0, 100, 0.1],
-        [100, 300, 0.2],
-        [300, 700, 0.4],
-        [700, 1500, 0.8],
-        [1500, 3100, 1.6],
+    widths_list = [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        15000,
     ]
-    spccl.compare_dmstep(
-        context["vector_header"].allpars(), dmplan, max_width_index
-    )
+    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
