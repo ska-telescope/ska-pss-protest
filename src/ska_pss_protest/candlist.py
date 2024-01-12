@@ -480,7 +480,6 @@ class WidthTol:
     """
     Class to compute the tolerances on the single pulses using
     Boxcar width steps from the PSS config file.
-    This is calculated as:
 
     This class is only relevant for a single pulse search
     and not a periodicity search.
@@ -576,7 +575,7 @@ class WidthTol:
         to the boxcar widths each size of the one that is
         nearest to the intrinsic width.
 
-        For example, if we search for a 10,000 microeconds wide
+        For example, if we search for a 10,000 microseconds wide
         pulse using matched filters with widths of
         2048, 4096, 8192, 16384, 32768 microseconds, the nearest to
         true pulse width is 8192 microseconds, so the range of
