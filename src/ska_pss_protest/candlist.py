@@ -546,7 +546,7 @@ class WidthTol:
         """
         scaler = 2
 
-        fch_low = (self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"])
+        fch_low = self.pars["fch1"] + self.pars["nchans"] * self.pars["foff"]
         sqdiff = ((1 / fch_low) ** 2.0) - (1 / self.pars["fch1"] ** 2.0)
 
         self.dm_tol = (scaler * wint) / (4.15e9 * sqdiff)
