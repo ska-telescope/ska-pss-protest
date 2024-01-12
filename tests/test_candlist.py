@@ -616,7 +616,7 @@ class SpCclTests:
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
-    def test_dmsteptol(self):
+    def test_widthsteptol(self):
         """
         Tests that the class responsible for providing
         SpCcl metadata tolerance ranges, based on the DM step
@@ -655,7 +655,7 @@ class SpCclTests:
         tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [1.0, 128.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-12, abs=1e-17)
-        assert tols.dm_tol == pytest.approx(1.63e-04, abs=1e-06)
+        assert tols.dm_tol == pytest.approx(0.002534, abs=1e-6)
 
         # Test a pulse width of 0.1 ms
         expected = [56000.00004631352, 1.0, 0.1, 18.257418583505537]
@@ -673,7 +673,7 @@ class SpCclTests:
         tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [64.0, 256.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-10, abs=1e-15)
-        assert tols.dm_tol == pytest.approx(1.63e-02, abs=1e-04)
+        assert tols.dm_tol == pytest.approx(0.2534, abs=1e-04)
 
         # Test a pulse width of 10 ms
         expected = [56000.00004631352, 1.0, 10.0, 18.257418583505537]
@@ -691,7 +691,7 @@ class SpCclTests:
         tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [4096.0, 32768.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-8, abs=1e-13)
-        assert tols.dm_tol == pytest.approx(1.63, abs=0.01)
+        assert tols.dm_tol == pytest.approx(25.34, abs=0.01)
 
         # Test a pulse width of 10 ms
         expected = [56000.00004631352, 1.0, 1000.0, 18.257418583505537]
@@ -709,4 +709,4 @@ class SpCclTests:
         tols = cand.WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [524288.0, 1000000.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
-        assert tols.dm_tol == pytest.approx(163, abs=1)
+        assert tols.dm_tol == pytest.approx(2534, abs=1)
