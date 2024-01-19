@@ -472,7 +472,6 @@ class VectorPull:
         response = query.text
 
         # Did the server fail to find an appropriate vector? Exit if so.
-        print(response, "<<<<<<")
         if response == "None":
             raise FileNotFoundError("No vector with requested properties")
 
