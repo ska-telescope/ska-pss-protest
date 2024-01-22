@@ -72,7 +72,7 @@ def get_vector():
     """
     vector = VectorPull()
     vector.from_name(
-        "FDAS-HSUM-MID_38d46df_500.0_0.4_1.0_0.0_Gaussian_50.0_123123123.fil"
+        "FDAS-HSUM-MID_38d46df_500.0_0.4_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
     )
     yield vector
 

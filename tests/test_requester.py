@@ -56,7 +56,7 @@ from ska_pss_protest import VectorPull
 
 # pylint: disable=R0201,E1123,C0114,W1514
 
-VECTOR = "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_1639476129.fil"
+VECTOR = "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_1639476129.fil"
 
 
 @mark.unit
@@ -77,7 +77,7 @@ class RequesterTests:
         module to launch two downloads in parallel.
         """
 
-        vector = "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil"
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_123123123.fil"
 
         def task(cache_dir):
             """

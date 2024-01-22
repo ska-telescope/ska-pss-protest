@@ -412,6 +412,7 @@ class VectorPull:
         acc=0.0,
         shape="Gaussian",
         sig=50.0,
+        rfi="0000",
         refresh=False,
     ):
         """
@@ -457,6 +458,7 @@ class VectorPull:
             "sn": sig,
             "seed": "None",
             "version": "None",
+            "rfi": rfi,
         }
 
         # Ask server to look for test vector with params
