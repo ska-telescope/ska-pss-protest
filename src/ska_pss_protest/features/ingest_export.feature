@@ -12,5 +12,5 @@ Feature: Ingest and export of test vector data
 
         Examples:
         | test_vector                                                       |
-        | FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_123123123.fil |
-        | FDAS-HSUM-MID_acf46ab_50.0_0.05_1.0_200.0_Gaussian_50.0_123123123.fil    |
+        | FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_123123123.fil |
+        | FDAS-HSUM-MID_acf46ab_50.0_0.05_1.0_200.0_Gaussian_50.0_0000_123123123.fil    |
