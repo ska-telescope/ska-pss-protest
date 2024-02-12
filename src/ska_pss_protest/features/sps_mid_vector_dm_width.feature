@@ -1,6 +1,5 @@
-@product @cpu @sps @testvector @positive @mid @nasm @physhw
+@product @cpu @sps @testvector @positive @mid @physhw
 Feature: Tests of detection capability of a CPU-based SPS pipeline in dm-width parameter space
-    SPS pipeline exports filterbanks and candidate lists corresponding to injected single-pulses covering multiple dispersion measures and pulse widths
 
     Scenario Outline: Detecting single pulses
         Given A 60 second duration <vector_type> containing <freq> pulses per second, each with a dispersion measure of <dm>, a duty cycle of <width> and a combined S/N of <sn>
