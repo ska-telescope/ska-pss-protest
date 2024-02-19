@@ -219,6 +219,7 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             cands.from_vector("/this/random/path.fil")
 
+    @mark.skip(reason="No route to test vector repo")
     def test_from_vector_exact(self, get_vector):
         """
         Tests that the from_vector() method generates
@@ -283,6 +284,7 @@ class SpCclTests:
                 fiducial_detected = True
         assert fiducial_detected is True
 
+    @mark.skip(reason="No route to test vector repo")
     def test_from_vector_exact_highdm(self, get_high_dm_vector):
         """
         Tests that the from_vector() method generates
@@ -402,6 +404,7 @@ class SpCclTests:
         with pytest.raises(FileNotFoundError):
             candidate.from_spccl(expected_spccl)
 
+    @mark.skip(reason="No route to test vector repo")
     def test_compare_dm_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_dm() using
@@ -510,6 +513,7 @@ class SpCclTests:
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
+    @mark.skip(reason="No route to test vector repo")
     def test_compare_widthstep_within_tol_no_vector(self):
         """
         Tests that candidates are recovered by compare_widthstep() using
@@ -547,6 +551,7 @@ class SpCclTests:
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
+    @mark.skip(reason="No route to test vector repo")
     def test_compare_widthstep_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_widthstep() using

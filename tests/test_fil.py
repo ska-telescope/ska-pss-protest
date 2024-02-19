@@ -85,6 +85,7 @@ class FilterbankTests:
     header parameters
     """
 
+    @mark.skip(reason="No route to test vector repo")
     def test_synthetic_header_read(self, get_vector):
         """
         Tests synthetic test vector header is
@@ -129,6 +130,7 @@ class FilterbankTests:
         assert header.decj() == 105931.84868432973
         assert header.tel() == 0
 
+    @mark.skip(reason="No route to test vector repo")
     def test_invalid_parameter(self, get_vector):
         """
         Tests the correct exception is raised when an
@@ -147,6 +149,7 @@ class FilterbankTests:
         with pytest.raises(FileNotFoundError):
             VHeader("jflsfjlsdkdfj.fil")
 
+    @mark.skip(reason="No route to test vector repo")
     def test_signal_par_extraction_synthetic_vector(self, get_vector):
         """
         Tests that the correct signal parameters
