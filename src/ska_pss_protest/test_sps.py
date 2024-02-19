@@ -129,9 +129,7 @@ def set_sink(config, context, pytestconfig):
     context["candidate_dir"] = outdir
 
 
-@given(
-    "A cheetah configuration to sift and cluster SPS candidate metadata"
-)
+@given("A cheetah configuration to sift and cluster SPS candidate metadata")
 def set_config(config, context, pytestconfig):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
