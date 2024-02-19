@@ -1,11 +1,14 @@
 """
-This product level test and verifies the single-pulse search
-(SPS) capability of the PSS pipeline. The test pulls 30 test vectors
+This product level test set and verifies the single-pulse search
+(SPS) capability of the PSS pipeline. The test pulls test vectors
 from the PSS test vector repository and prepares a config
 file which configures cheetah to read in time-frequency data
 from the test vector, search it for single pulses, and produce
 candidate filterbank files and a candidate metadata file for each
 of the 30 test vectors.
+
+In some of the tests we enable and configure sifting and clustering
+algorithms to reduce the number of candidates exported to SDP.
 """
 
 import os
