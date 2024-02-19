@@ -80,6 +80,28 @@ def pull_test_vector(context, pytestconfig, vector_type, freq, dm, width, sn):
     assert os.path.isfile(test_vector.local_path)
 
 
+@given(
+    parsers.parse(
+        "A 60 second duration {test_vector} containing single pulses"
+    )
+)
+def pull_test_vector_using_name(context, pytestconfig, test_vector):
+    """
+    Get test vector and add path to it to the config file
+    """
+    request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
+    request.from_name(test_vector, check_remote=False)
+
+    vector_header = VHeader(request.local_path)
+
+    # Pass parameter from vector to context
+    context["test_vector"] = request
+    context["vector_header"] = vector_header
+
+    # Verify that the test vector downloaded
+    assert os.path.isfile(request.local_path)
+
+
 @given("A cheetah configuration to ingest the test vector")
 def set_source(context, config):
     """
@@ -102,6 +124,23 @@ def set_sink(config, context, pytestconfig):
     # Set output location for candidate metadata files
     config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
     context["candidate_dir"] = outdir
+
+
+@given(
+    "A cheetah configuration to sift and cluster SPS candidate metadata"
+)
+def set_config(config, context, pytestconfig):
+    # Set SpCluster parameters
+    config("sps_clustering/active", "true")
+    config("sps_clustering/time_tolerance", "100.0")
+    config("sps_clustering/dm_thresh", "5.0")
+    config("sps_clustering/pulse_width_tolerance", "50.0")
+
+    # Set SpSift parameters
+    config("spsift/active", "true")
+    config("spsift/sigma_thresh", "6.0")
+    config("spsift/dm_thresh", "5.0")
+    config("spsift/pulse_width_threshold", "1000.0")
 
 
 @when("An SPS pipeline runs")
