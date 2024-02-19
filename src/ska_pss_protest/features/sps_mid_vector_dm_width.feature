@@ -42,6 +42,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
 	And A cheetah configuration to sift and cluster SPS candidate metadata
 
 	When An SPS pipeline runs
+	Then Candidate filterbanks are exported to disk and their header properties are consistent with the test vector
 	Then A candidate metadata file is produced which contains detections of the input signals
 
         Examples:
