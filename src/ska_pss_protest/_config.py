@@ -6,6 +6,7 @@ to run and that the required files
 exists and have permissions set
 correctly.
 """
+
 # pylint: disable=C0209
 
 import logging
@@ -48,7 +49,6 @@ requirements = {
 def setup_pipeline(
     executable, config, source=None, pipeline=None, cheetah_dir=None
 ) -> str:
-
     """
     Checks inputs provided by user make sense and
     are available
@@ -135,12 +135,12 @@ def search_build(cheetah_dir, launcher, launcher_dict):
     # Is a build tree found? If so, return a path to the launcher
     if isfile(build_path):
         isexec(build_path)
-        logging.info("Located cheetah executable: {}".format(build_path))
+        logging.info("Located binary: {}".format(build_path))
         return build_path
     # Is a bin/ directory found? If so, return a path to the launcher
     elif isfile(install_path):
         isexec(install_path)
-        logging.info("Located cheetah executable: {}".format(install_path))
+        logging.info("Located binary: {}".format(install_path))
         return install_path
     # Neither are found - raise Exception
     else:

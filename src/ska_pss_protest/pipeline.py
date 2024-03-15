@@ -14,9 +14,6 @@
     | Author: Benjamin Shaw                                                  |
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    **************************************************************************
     | License:                                                               |
     |                                                                        |
     | Copyright 2021 University of Manchester                                |
@@ -57,6 +54,8 @@ import json
 import logging
 import re
 import subprocess
+from multiprocessing import Process, Queue
+from time import sleep
 
 import numpy as np
 
@@ -80,10 +79,11 @@ class Cheetah:
         self, binary, config, source=None, pipeline=None, build_dir=None
     ):
 
+        self.binary = binary
         # Check all inputs make sense,
         # returning the path to the
         # executable if so.
-        self.exec = setup_pipeline(binary, config, source, pipeline, build_dir)
+        self.exec = setup_pipeline(self.binary, config, source, pipeline, build_dir)
 
         self.pipeline = pipeline
         self.config = config
@@ -136,6 +136,7 @@ class Cheetah:
         exit_code : int
             Return code from cheetah execution
         """
+        logging.info("Starting {}".format(self.binary))
         command = np.asarray(self.command)
 
         # Set debug policy
@@ -154,7 +155,7 @@ class Cheetah:
             # Indefinite process needs to be terminated by kernel.
             child.kill()
             out, err = child.communicate()
-            logging.info("cheetah exceeded {} s timeout".format(timeout))
+            logging.info("Stopping {} after {} s".format(self.binary, timeout))
 
         # Handle STDERR
         self.err = err.decode("utf-8")
@@ -213,3 +214,73 @@ class Cheetah:
 
         json_out = json.dumps(data_out, indent=4)
         return json_out
+
+
+class Connect:
+
+    def __init__(
+        self,
+        proc_a,
+        proc_b,
+        wait_a=0,
+        wait_b=0,
+        timeout_a=None,
+        timeout_b=None,
+    ):
+
+        self.proc_a = proc_a
+        self.proc_b = proc_b
+        self.wait_a = wait_a
+        self.wait_b = wait_b
+        self.timeout_a = timeout_a
+        self.timeout_b = timeout_b
+        self.queue_proc_a = None
+        self.queue_proc_b = None
+
+    @staticmethod
+    def _run_component(component, queue, wait=0, timeout=None):
+        """
+        TODO
+        """
+        sleep(wait)
+        component.run(timeout=timeout)
+        queue.put(component)
+
+    @staticmethod
+    def _create_process(target, args, daemon):
+        """
+        TODO
+        """
+        process = Process(target=target, args=args)
+        process.daemon = daemon
+        process.start()
+        return process
+
+    def run(self):
+        """
+        TODO
+        """
+        queue_proc_a = Queue()
+        queue_proc_b = Queue()
+
+        processes = [
+            self._create_process(
+                self._run_component,
+                (self.proc_a, queue_proc_a, self.wait_a, self.timeout_a), True
+            ),
+            self._create_process(
+                self._run_component,
+                (self.proc_b, queue_proc_b, self.wait_b, self.timeout_b), False
+            ),
+        ]
+
+        logging.info("About to join")
+        for this_process in processes:
+            logging.info("joining")
+            this_process.join()
+
+        logging.info("returning queues")
+        self.queue_proc_a = queue_proc_a
+        self.queue_proc_b = queue_proc_b
+
+        logging.info("Done")
