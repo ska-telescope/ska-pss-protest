@@ -35,6 +35,9 @@ If so, proceed as follows.
    poetry install --without dev
 
 
+Install from source (for developers)
+------------------------------------
+
 If you are planning to contribute to ProTest, run the git clone command above. If you have an existing clone, you can check whether you have the correct submodules (made available by --recursive) by running
 
 .. code-block:: bash
