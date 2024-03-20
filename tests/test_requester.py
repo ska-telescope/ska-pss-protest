@@ -69,7 +69,6 @@ class RequesterTests:
     testapps/requester.py.
     """
 
-    @mark.skip(reason="No route to test vector repo")
     def test_two_simultaneous_downloads(self):
         """
         Tests that two simulataneous downloads of the same vector
@@ -131,7 +130,6 @@ class RequesterTests:
         )
         shutil.rmtree(cache_dir)
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_name_with_cache_env(self):
         """
         Tests from_name() method with cache dir specified
@@ -147,7 +145,6 @@ class RequesterTests:
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_name_no_cache_env(self):
         """
         Tests from_name() method with cache dir not specified
@@ -167,7 +164,6 @@ class RequesterTests:
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_name_custom_cache(self):
         """
         Tests from_name() method using a user specified cache dir.
@@ -181,7 +177,6 @@ class RequesterTests:
         assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
         pull.flush_cache()
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_name_vector_in_cache(self):
         """
         Tests from_name() method with vector already in cache.
@@ -210,7 +205,6 @@ class RequesterTests:
         with pytest.raises(FileNotFoundError):
             VectorPull().from_name("fake_file.fil", refresh=True)
 
-    @mark.skip(reason="No route to test vector repo")
     def test_pull_from_properties(self):
         """
         Tests from_properties() method.
@@ -231,7 +225,6 @@ class RequesterTests:
         with pytest.raises(SyntaxError):
             pull.from_properties(duty=None, refresh=True)
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_properties_no_matching_vector(self):
         """
         Tests from_properties raises the correct exception
@@ -241,7 +234,6 @@ class RequesterTests:
         with pytest.raises(FileNotFoundError):
             pull.from_properties(duty=0.00000001)
 
-    @mark.skip(reason="No route to test vector repo")
     def test_from_name_local_changed_check_remote(self):
         """
         Test that a vector is pulled from the remote server
