@@ -4,7 +4,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 stages:
-#  - lint
+  - lint
   - test
   - scan
   - build
