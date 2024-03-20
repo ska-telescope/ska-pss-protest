@@ -34,7 +34,8 @@ If so, proceed as follows.
    export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
    poetry install --without dev
 
-If you have an existing clone, you can check whether you have the correct submodules (made available by --recursive) by running
+
+If you are planning to contribute to ProTest, run the git clone command above. If you have an existing clone, you can check whether you have the correct submodules (made available by --recursive) by running
 
 .. code-block:: bash
 
@@ -47,7 +48,7 @@ and if nothing is returned, use
    git submodule init
    git submodule update
 
-If you are planning to contribute to ProTest, clone as above and then run 
+To install a developer version of ProTest, run
 
 .. code-block:: bash
 
