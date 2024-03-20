@@ -1,7 +1,7 @@
 Installing ProTest
 ==================
 
-A python>=3.6 virtual environment is recommended
+A python>=3.10 virtual environment is recommended
 
 Install with pip
 ----------------
@@ -19,17 +19,30 @@ Verify that protest has successfully installed.
 Install from source
 -------------------
 
+Ensure poetry is installed first
+
+.. code-block:: bash
+   which poetry
+
+If so, proceed as follows
+
 .. code-block:: bash
 
    git clone --recursive https://gitlab.com/ska-telescope/pss/ska-pss-protest.git
    cd ska-pss-protest
-   pip install .
+   poetry install --without dev
 
-If you are planning to contribute to ProTest, install from source as above and then run 
+If you are planning to contribute to ProTest, clone as above and then run 
 
 .. code-block:: bash
 
-   pip install .[dev]
+   poetry install
+
+Start virtual environment
+
+.. code-block::  bash
+
+   poetry shell
 
 Verify that protest has successfully installed.
 
