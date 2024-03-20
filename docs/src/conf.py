@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'developer.skatelescope.org'
-copyright = '2023, SKA Organization'
+copyright = '2024, SKA Organization'
 author = 'SKA PSS Developers'
 
 # The version info for the project you're documenting, acts as replacement for
