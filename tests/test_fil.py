@@ -59,7 +59,7 @@ from pytest import mark
 
 from ska_pss_protest import VectorPull, VHeader
 
-# pylint: disable=R0201,E1101,W0621
+# pylint: disable=E1101,W0621,W0104
 
 
 @pytest.fixture(scope="session")

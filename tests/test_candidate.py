@@ -55,7 +55,7 @@ from pytest import mark
 import ska_pss_protest.candidate as cand
 from ska_pss_protest.fil import VHeader
 
-# pylint: disable=R0201,R1732,W1514,E1120,W0621
+# pylint: disable=R1732,W1514,E1120,W0621
 
 DATA_DIR = os.path.join(
     Path(os.path.abspath(__file__)).parents[1], "tests/data/sigproc"

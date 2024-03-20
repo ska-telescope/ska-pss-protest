@@ -89,7 +89,6 @@ class ProTest:
             ]
             sys.exit(pytest.main(pytest_args))
 
-
         # Set up markers
         self.markers = set_markers(self.mark, self.exclude)
 

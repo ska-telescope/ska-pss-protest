@@ -53,7 +53,6 @@
     **************************************************************************
 """
 
-
 import json
 import os
 import shutil
@@ -317,7 +316,7 @@ class RunnerTests:
 
         # Load parsed cheetah logs fixture
         dummy_parsed = json.load(
-            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"))
+            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"), "r")
         )
 
         # Test log parser returns content expected
