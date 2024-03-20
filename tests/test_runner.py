@@ -316,7 +316,7 @@ class RunnerTests:
 
         # Load parsed cheetah logs fixture
         dummy_parsed = json.load(
-            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"), "r")
+            open(os.path.join(DATA_DIR, "cheetah_pipeline_log.json"))
         )
 
         # Test log parser returns content expected
