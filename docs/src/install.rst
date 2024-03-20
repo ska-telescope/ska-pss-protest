@@ -19,7 +19,7 @@ Verify that protest has successfully installed.
 Install from source
 -------------------
 
-Ensure poetry is installed first
+Ensure `poetry is installed <https://python-poetry.org/docs/#installation>`_ first
 
 .. code-block:: bash
 
