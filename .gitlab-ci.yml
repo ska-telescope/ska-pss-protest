@@ -23,6 +23,9 @@ stages:
 #    - flake8 --max-line-length 200 --show-source --statistics src/ tests/
 
 include:
+  # Pyton lint jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
   # Python test jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
