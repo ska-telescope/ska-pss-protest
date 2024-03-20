@@ -25,12 +25,13 @@ Ensure poetry is installed first
 
    which poetry
 
-If so, proceed as follows
+If so, proceed as follows. 
 
 .. code-block:: bash
 
    git clone --recursive https://gitlab.com/ska-telescope/pss/ska-pss-protest.git
    cd ska-pss-protest
+   export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
    poetry install --without dev
 
 If you are planning to contribute to ProTest, clone as above and then run 
