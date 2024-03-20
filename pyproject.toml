@@ -8,15 +8,6 @@ repository = "https://gitlab.com/ska-telescope/pss/ska-pss-protest"
 documentation = "https://developer.skao.int/projects/ska-pss-protest"
 include = ["src/ska-pss-protest/features/*", "src/ska_pss_protest/data/config_templates/*", "src/ska_pss_protest/conftest.py", "src/ska_pss_protest/pytest.ini"]
 
-[[tool.poetry.source]]
-name = "PyPI"
-priority = "primary"
-
-[[tool.poetry.source]]
-name = "skao"
-url = "https://artefact.skao.int/repository/pypi-internal/simple"
-priority = "primary"
-
 [tool.poetry.scripts]
 protest = 'ska_pss_protest.protest:main'
 
