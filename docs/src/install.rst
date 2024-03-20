@@ -22,6 +22,7 @@ Install from source
 Ensure poetry is installed first
 
 .. code-block:: bash
+
    which poetry
 
 If so, proceed as follows
