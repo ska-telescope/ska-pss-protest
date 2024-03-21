@@ -174,7 +174,7 @@ def run_cheetah(context, config, pytestconfig):
     assert cheetah.exit_code == 0
 
     # Clean up
-    os.remove(context["config_path"])
+    # os.remove(context["config_path"])
 
 
 @then(
@@ -230,4 +230,4 @@ def validate_candidate_metadata(context):
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
 
-    shutil.rmtree(context["candidate_dir"])
+    # shutil.rmtree(context["candidate_dir"])
