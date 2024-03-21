@@ -93,7 +93,7 @@ def pull_test_vector_using_name(context, pytestconfig, test_vector):
     Get test vector and add path to it to the config file
     """
     request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
-    request.from_name(test_vector, check_remote=False)
+    request.from_name(test_vector)
 
     vector_header = VHeader(request.local_path)
 

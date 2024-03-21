@@ -6,6 +6,7 @@ to run and that the required files
 exists and have permissions set
 correctly.
 """
+
 # pylint: disable=C0209
 
 import logging
@@ -48,7 +49,6 @@ requirements = {
 def setup_pipeline(
     executable, config, source=None, pipeline=None, cheetah_dir=None
 ) -> str:
-
     """
     Checks inputs provided by user make sense and
     are available

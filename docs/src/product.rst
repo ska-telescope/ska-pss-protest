@@ -103,12 +103,12 @@ Tests can be executed as part of test development, assuming no default parameter
 
     pytest /path/to/test.py
 
-but to ensure that they run as part of ProTest, it's safest to update your local install of ProTest, using pip, to include your new tests.  From the package root directory, run
+but to ensure that they run as part of ProTest, it's safest to update your local install of ProTest, to include your new tests.  From the package root directory, run
 
 
 .. code-block:: bash
 
-    pip install . --upgrade
+    poetry install
 
 and then ProTest can be executed in the usual way
 

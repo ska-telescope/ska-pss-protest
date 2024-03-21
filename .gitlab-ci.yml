@@ -11,18 +11,10 @@ stages:
   - publish
   - pages
 
-lint:
-  stage: lint
-  image: python:3.6
-  before_script:
-    - pip install --upgrade pip
-    - pip install .[dev]
-  script:
-    - isort --check-only --profile black src/ tests/
-    - black --check --line-length 79 src/ tests/
-    - flake8 --max-line-length 200 --show-source --statistics src/ tests/
-
 include:
+  # Pyton lint jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python-lint.gitlab-ci.yml'
   # Python test jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-test.gitlab-ci.yml'
