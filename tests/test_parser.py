@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -23,7 +21,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2022 University of Manchester                                |
+    | Copyright 2024 University of Manchester                                |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -57,13 +55,12 @@
     **************************************************************************
 """
 
-
 import pytest
 from pytest import mark
 
 from ska_pss_protest import LogParse
 
-# pylint: disable=R0201,E1123,C0114
+# pylint: disable=E1123,C0114
 
 with open("tests/data/parser_log.json", encoding="utf8") as this_file:
     parser_file = this_file.read()

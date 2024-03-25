@@ -7,7 +7,7 @@ exists and have permissions set
 correctly.
 """
 
-# pylint: disable=C0209
+# pylint: disable=C0209,C0201,W1202
 
 import logging
 import os
@@ -92,6 +92,7 @@ def isfile(this_file):
     """
     if os.path.isfile(this_file):
         return True
+    return False
 
 
 def isexec(this_file):
@@ -114,8 +115,7 @@ def search_path(launcher):
     if this_launcher is not None:
         logging.info("Found cheetah launcher: {}".format(this_launcher))
         return this_launcher
-    else:
-        raise FileNotFoundError("No pipeline launcher in $PATH")
+    raise FileNotFoundError("No pipeline launcher in $PATH")
 
 
 def search_build(cheetah_dir, launcher, launcher_dict):
@@ -138,16 +138,19 @@ def search_build(cheetah_dir, launcher, launcher_dict):
         logging.info("Located cheetah executable: {}".format(build_path))
         return build_path
     # Is a bin/ directory found? If so, return a path to the launcher
-    elif isfile(install_path):
+    if isfile(install_path):
         isexec(install_path)
         logging.info("Located cheetah executable: {}".format(install_path))
         return install_path
     # Neither are found - raise Exception
-    else:
-        raise FileNotFoundError("Cannot find executable")
+    raise FileNotFoundError("Cannot find executable")
 
 
 def set_markers(mark=False, exclude=False):
+    """
+    Generates a string that is passed to pytest
+    to select the test types that should run
+    """
     marker_string = ""
     if mark:
         marker_string += mark[0]

@@ -66,7 +66,7 @@ from pytest import mark
 
 from ska_pss_protest import Cheetah, _config
 
-# pylint: disable=R0201,E1123,C0114,E1101,W0621,W0613,R0903
+# pylint: disable=E1123,C0114,E1101,W0621,W0613,R0903
 
 DATA_DIR = os.path.join(
     Path(os.path.abspath(__file__)).parents[1], "tests/data"
@@ -109,13 +109,10 @@ class RunnerTests:
         If the name of the build directory
         is not set, raise exception.
         """
-
-        """
         try:
             del os.environ["CHEETAH_BUILD"]
         except KeyError:
             pass
-        """
 
         with pytest.raises(EnvironmentError):
             Cheetah("cheetah_pipeline", SPS_CONFIG, "sigproc", "SinglePulse")
@@ -210,6 +207,10 @@ class RunnerTests:
         shutil.rmtree(build)
 
     def test_no_config_file(self, resource):
+        """
+        Tests that the correct exception is raise if
+        a non-existent config file is passed.
+        """
         build, _ = resource("pipelines/search_pipeline", "cheetah_pipeline")
         with pytest.raises(FileNotFoundError):
             Cheetah(

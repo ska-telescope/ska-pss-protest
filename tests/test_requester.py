@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -54,7 +52,7 @@ from pytest import mark
 
 from ska_pss_protest import VectorPull
 
-# pylint: disable=R0201,E1123,C0114,W1514
+# pylint: disable=E1123,C0114,W1514
 
 VECTOR = "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_1639476129.fil"
 

@@ -1,3 +1,7 @@
+"""
+__init__.py
+"""
+
 from ska_pss_protest.candidate import Filterbank  # noqa
 from ska_pss_protest.candlist import SpCcl  # noqa
 from ska_pss_protest.fil import VHeader  # noqa

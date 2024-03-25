@@ -80,6 +80,9 @@ def set_source(context, config):
 
 @given("A cheetah configuration to export filterbanked data")
 def set_sink(config, context):
+    """
+    Configure data sink
+    """
     spectra_per_file = str(VHeader(context["vector_path"]).nspectra())
     outdir = tempfile.mkdtemp()
     config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
@@ -116,6 +119,9 @@ def run_cheetah(context, pytestconfig):
     "The exported filterbank data is identical to the ingested filterbank data"
 )
 def validate_exported_data(context):
+    """
+    Validate the candidate filterbanks produced by SPS
+    """
     candidates = Filterbank(context["candidate_dir"])
 
     # Check header parameters correspond
