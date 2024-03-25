@@ -180,7 +180,7 @@ class VHeader:
         """
         nchar = np.fromfile(infile, dtype=np.int32, count=1)[0]
         if nchar < 1 or nchar > 80:
-            raise Exception(
+            raise RuntimeError(
                 "Cannot parse filterbank header (Nchar was {} when reading string).".format(  # noqa
                     nchar
                 )
@@ -208,7 +208,7 @@ class VHeader:
                 "sig": float(basename[7]),
             }
             return signal_pars
-        except Exception:
+        except ValueError:
             logging.info("Non-standard vector: skipping signal extraction")
             return {}
 
@@ -243,7 +243,7 @@ class VHeader:
                     header[key] = np.fromfile(fil, dtype=np.int8, count=1)[0]
                     bytes_read += 1
                 else:
-                    raise Exception(
+                    raise KeyError(
                         "Cannot parse filterbank header, key '{}' not understood".format(  # noqa
                             key
                         )

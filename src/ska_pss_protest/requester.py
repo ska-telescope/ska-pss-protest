@@ -244,7 +244,7 @@ class VectorPull:
             Full path to remote vector
 
         """
-        file_head = requests.head(url)
+        file_head = requests.head(url, timeout=20)
         if file_head.status_code != 200:
             raise FileNotFoundError("Vector not found on remote server")
 
@@ -298,7 +298,7 @@ class VectorPull:
         self.check_disk_space(remote_path, self.cache_dir)
 
         # Request vector from server.
-        stream = requests.get(remote_path, stream=True)
+        stream = requests.get(remote_path, stream=True, timeout=20)
         if stream.status_code != 200:
             raise FileNotFoundError("Vector not found")
         logging.info("Pulling {}".format(remote_path))
@@ -392,11 +392,10 @@ class VectorPull:
                                 )
                             )
                             return
-                        else:
-                            # If we're here, the file size has stablised, but is not the correct
-                            # size. Therefore we repull from the test vector server.
-                            logging.info("Repulling {}".format(this_path))
-                            break
+                        # If we're here, the file size has stablised, but is not the correct
+                        # size. Therefore we repull from the test vector server.
+                        logging.info("Repulling {}".format(this_path))
+                        break
             else:
                 self.local_path = this_path
                 return
@@ -462,7 +461,7 @@ class VectorPull:
         }
 
         # Ask server to look for test vector with params
-        query = requests.get(self.prefix + "/query", params=params)
+        query = requests.get(self.prefix + "/query", params=params, timeout=20)
 
         # Did the server accept the request? Exit if not.
         if query.status_code != 200:

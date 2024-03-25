@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -19,7 +17,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2022 University of Manchester                                |
+    | Copyright 2024 University of Manchester                                |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -167,8 +165,7 @@ class SpCcl:
             cand_file, unpack=False, skiprows=1, dtype=np.float64
         ).tolist()
         if len(cand_metadata) == 0:
-            raise Exception("Candidate list {} empty".format(cand_file))
-
+            raise EOFError("Candidate list {} empty".format(cand_file))
         logging.info("Located {} candidates".format(len(cand_metadata)))
         return cand_metadata
 

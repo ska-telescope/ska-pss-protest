@@ -130,7 +130,7 @@ def set_sink(config, context, pytestconfig):
 
 
 @given("A cheetah configuration to sift and cluster SPS candidate metadata")
-def set_config(config, context, pytestconfig):
+def set_config(config):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
     config("sps_clustering/time_tolerance", "100.0")
