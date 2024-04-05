@@ -195,13 +195,162 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
 
         Examples:
         | test_vector |
-	| SPS-MID_747e95f_0.125_1.25e-05_1.0_0.0_Gaussian_30.0_0000_123123123.fil |
-	| SPS-MID_747e95f_0.125_1.25e-05_1.0_0.0_Gaussian_50.0_0000_123123123.fil |
-        | SPS-MID_747e95f_0.125_1.25e-05_100.0_0.0_Gaussian_20.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_1.25e-05_1.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_1.25e-05_1.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_1.0_0.0_Gaussian_100.0_0000_1711637387.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_1.0_0.0_Gaussian_150.0_0000_1711637387.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_1.0_0.0_Gaussian_200.0_0000_1711637387.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_1.0_0.0_Gaussian_75.0_0000_1711637387.fil |
         | SPS-MID_747e95f_0.125_1.25e-05_100.0_0.0_Gaussian_30.0_0000_123123123.fil |
         | SPS-MID_747e95f_0.125_1.25e-05_100.0_0.0_Gaussian_50.0_0000_123123123.fil |
-        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_100.0_0000_1710770998.fil |
-        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_150.0_0000_1710770998.fil |
-        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_200.0_0000_1710770998.fil |
-        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_75.0_0000_1710770998.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_100.0_0000_1711637387.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_150.0_0000_1711637387.fil |
+        | SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_200.0_0000_1711637387.fil |
+	| SPS-MID_f7596dc_0.125_1.25e-05_100.0_0.0_Gaussian_75.0_0000_1711637387.fil |
 
+
+    @product @cpu @sps @testvector @positive @mid @physhw @sn100ms @nasm
+    Scenario Outline: Detecting 100ms single pulses using filters
+        Given A 60 second duration <test_vector> containing single pulses
+        And A cheetah configuration to ingest the test vector
+        And A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata
+
+        When An SPS pipeline runs
+        Then Candidate filterbanks are exported to disk and their header properties are consistent with the test vector
+        And A candidate metadata file is produced which contains detections of the input signals
+
+        Examples:
+        | test_vector |
+        | SPS-MID_747e95f_0.125_0.0125_1000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_1000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_100.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_100.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_1.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_1.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_1480.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_1480.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_2000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_2000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_2950.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_2950.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_3000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_3000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_370.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_370.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_500.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_500.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_740.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.0125_740.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1000.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1000.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1000.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1000.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_100.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_100.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_100.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_100.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1480.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1480.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1480.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_1480.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2000.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2000.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2000.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2000.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2950.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2950.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2950.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_2950.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_3000.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_3000.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_3000.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_3000.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_370.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_370.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_370.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_370.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_500.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_500.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_500.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_500.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_740.0_0.0_Gaussian_100.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_740.0_0.0_Gaussian_150.0_0000_1712066708.fil |
+        | SPS-MID_f7596dc_0.125_0.0125_740.0_0.0_Gaussian_200.0_0000_1712066708.fil |
+	| SPS-MID_f7596dc_0.125_0.0125_740.0_0.0_Gaussian_75.0_0000_1712066708.fil |
+
+    @product @cpu @sps @testvector @positive @mid @physhw @sn1ms @nasm
+    Scenario Outline: Detecting 1ms single pulses using filters
+        Given A 60 second duration <test_vector> containing single pulses
+        And A cheetah configuration to ingest the test vector
+        And A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata
+
+        When An SPS pipeline runs
+        Then Candidate filterbanks are exported to disk and their header properties are consistent with the test vector
+        And A candidate metadata file is produced which contains detections of the input signals
+
+        Examples:
+        | test_vector |
+        | SPS-MID_747e95f_0.125_0.000125_1000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_1000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_100.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_100.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_1.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_1.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_1480.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_1480.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_2000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_2000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_2950.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_2950.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_3000.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_3000.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_370.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_370.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_500.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_500.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_740.0_0.0_Gaussian_30.0_0000_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.000125_740.0_0.0_Gaussian_50.0_0000_123123123.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1000.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1000.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1000.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1000.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_100.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_100.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_100.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_100.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1480.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1480.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1480.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_1480.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2000.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2000.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2000.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2000.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2950.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2950.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2950.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_2950.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_3000.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_3000.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_3000.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_3000.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_370.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_370.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_370.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_370.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_500.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_500.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_500.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_500.0_0.0_Gaussian_75.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_740.0_0.0_Gaussian_100.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_740.0_0.0_Gaussian_150.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_740.0_0.0_Gaussian_200.0_0000_1712129332.fil |
+        | SPS-MID_f7596dc_0.125_0.000125_740.0_0.0_Gaussian_75.0_0000_1712129332.fil |
