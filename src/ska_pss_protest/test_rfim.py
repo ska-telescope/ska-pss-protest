@@ -1,9 +1,10 @@
 """
-This is a product level Single-pulse search test which is used to 
-test efficacy of already implemented RFIM algorithms in Cheetah. 
+This is a product level Single-pulse search test which is used to
+test efficacy of already implemented RFIM algorithms in Cheetah.
 It is carried out by passing RFI-injected test vectors through Cheetah
 SPS Pipeline with RFIM algorithms turned ON.
 """
+
 import os
 import tempfile
 from xml.etree import ElementTree as et
@@ -50,9 +51,7 @@ def config():
     return _edit
 
 
-@given(
-    parsers.parse("A 60 second {test_vector} containing single pulses")
-)
+@given(parsers.parse("A 60 second {test_vector} containing single pulses"))
 def pull_test_vector_using_name(context, pytestconfig, test_vector):
     """
     Get test vector and add path to it to the config file
@@ -73,7 +72,7 @@ def pull_test_vector_using_name(context, pytestconfig, test_vector):
 )
 def set_source_sink(context, config, pytestconfig):
     """
-    Sets up basic test vector source-sink as well as 
+    Sets up basic test vector source-sink as well as
     Clustering-sifting in cheetah config
     """
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
