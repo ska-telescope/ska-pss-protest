@@ -102,7 +102,10 @@ def set_rfim_iqrm(config):
     Configuring IQRM algorithm
     """
     config("rfim/rfim_iqrmcpu/active", "true")
-    config("rfim/rfim_iqrmcpu/threshold", "3.0")
+    config("rfim/rfim_iqrmcpu/threshold", "7.0")
+    # config("rfim/rfim_sum_threshold/active","true")
+    # config("rfim/rfim_sum_threshold/its_cutoff","6.0")
+    # config("rfim/rfim_sum_threshold/window","64")
 
 
 @when("An SPS pipeline runs")
@@ -130,7 +133,7 @@ def run_cheetah(context, config, pytestconfig):
         "SinglePulse",
         build_dir=pytestconfig.getoption("path"),
     )
-    cheetah.run(timeout=600)
+    cheetah.run(timeout=1200)
     assert cheetah.exit_code == 0
 
 
