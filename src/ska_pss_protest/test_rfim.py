@@ -5,6 +5,7 @@ It is carried out by passing RFI-injected test vectors through Cheetah
 SPS Pipeline with RFIM algorithms turned ON.
 """
 import os
+import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
@@ -50,7 +51,7 @@ def config():
 
 
 @given(
-    parsers.parse("Given A 60 second {test_vector} containing single pulses")
+    parsers.parse("A 60 second {test_vector} containing single pulses")
 )
 def pull_test_vector_using_name(context, pytestconfig, test_vector):
     """
@@ -76,7 +77,7 @@ def set_source_sink(context, config, pytestconfig):
     Clustering-sifting in cheetah config
     """
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
-    config_path = "tmp/"
+    config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
     context["config_path"] = config_path
 
     os.mkdir(pytestconfig.getoption("outdir"))
