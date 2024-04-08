@@ -134,6 +134,21 @@ def set_rfim_iqrm(config, threshold, radius):
     config("rfim/rfim_iqrmcpu/radius", str(radius))
 
 
+@given(
+    parsers.parse(
+        "Sum-Threshold RFIM turned on with cutoff equal to {cutoff} and window of {window}."
+    )
+)
+def set_rfim_sumthreshold(config, cutoff, window):
+    """
+    Configuring Sum-threshold algorithm using Cutoff value and
+    Window size from feature file
+    """
+    config("rfim/rfim_sum_threshold/active", "true")
+    config("rfim/rfim_sum_threshold/its_cutoff", str(cutoff))
+    config("rfim/rfim_sum_threshold/window", str(window))
+
+
 @when("An SPS pipeline runs")
 def run_cheetah(context, config, pytestconfig):
     """
