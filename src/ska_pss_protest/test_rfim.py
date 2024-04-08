@@ -52,6 +52,30 @@ def config():
     return _edit
 
 
+@given(
+    parsers.parse(
+        "A 60 second duration Test-vector containing single pulses {freq} pulses per second, each with a dispersion measure of {dm}, a duty cycle of {width}, a combined S/N of {sn} with RFI-ID - {rfi}"
+    )
+)
+def pull_test_vector(context, pytestconfig, freq, dm, width, sn, rfi):
+    """
+    Get test vector and add path to it to the config file
+    """
+    test_vector = VectorPull(cache_dir=pytestconfig.getoption("cache"))
+    test_vector.from_properties(
+        vectype="SPS-MID-RFI", freq=freq, duty=width, disp=dm, sig=sn, rfi=rfi
+    )
+
+    vector_header = VHeader(test_vector.local_path)
+
+    # Pass parameter from vector to context
+    context["test_vector"] = test_vector
+    context["vector_header"] = vector_header
+
+    # Verify that the test vector downloaded
+    assert os.path.isfile(test_vector.local_path)
+
+
 @given(parsers.parse("A 60 second {test_vector} containing single pulses"))
 def pull_test_vector_using_name(context, pytestconfig, test_vector):
     """
@@ -136,6 +160,9 @@ def run_cheetah(context, config, pytestconfig):
     )
     cheetah.run(timeout=1200)
     assert cheetah.exit_code == 0
+    
+    # Clean up
+    os.remove(context["config_path"])
 
 
 @then(
