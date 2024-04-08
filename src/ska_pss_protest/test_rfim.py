@@ -6,6 +6,7 @@ SPS Pipeline with RFIM algorithms turned ON.
 """
 
 import os
+import shutil
 import tempfile
 from xml.etree import ElementTree as et
 
@@ -146,6 +147,40 @@ def validate_candidate_metadate(context):
     """
     spccl = SpCcl(context["candidate_dir"])
 
+    # Get name of metadata file from spccl_dir
+    files = []
+    for this_file in os.listdir(context["candidate_dir"]):
+        if this_file.endswith(".spccl"):
+            files.append(this_file)
+    if len(files) > 1:
+        raise Warning("More than 1 candidate file found. Choosing the first")
+
+    cand_file = os.path.join(context["candidate_dir"], files[0])
+    if not os.path.isfile(cand_file):
+        raise FileNotFoundError("Could not locate the candidate file")
+
+    filename = context["test_vector"].local_path.split("_")
+    filename = (
+        filename[0]
+        + "_"
+        + filename[2]
+        + "_"
+        + filename[3]
+        + "_"
+        + filename[4]
+        + "_"
+        + filename[5]
+        + "_"
+        + filename[6]
+        + "_"
+        + filename[7]
+        + "_"
+        + filename[8]
+        + ".spccl"
+    )
+    filename = os.path.join(os.getcwd(), filename.split("/")[-1])
+    shutil.copyfile(cand_file, filename)
+
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     widths_list = [
         1,
@@ -169,3 +204,5 @@ def validate_candidate_metadate(context):
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
+
+    shutil.rmtree(context["candidate_dir"])
