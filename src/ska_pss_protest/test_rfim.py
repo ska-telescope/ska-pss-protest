@@ -104,8 +104,7 @@ def set_source_sink(context, config, pytestconfig):
     config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
     context["config_path"] = config_path
 
-    os.mkdir(pytestconfig.getoption("outdir"))
-    outdir = pytestconfig.getoption("outdir")
+    outdir = tempfile.mkdtemp(dir=pytestconfig.getoption("outdir"))
     config("beams/beam/sinks/channels/sps_events/active", "true")
     config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
     context["candidate_dir"] = outdir
@@ -133,9 +132,6 @@ def set_rfim_iqrm(config, threshold, radius):
     config("rfim/rfim_iqrmcpu/active", "true")
     config("rfim/rfim_iqrmcpu/threshold", str(threshold))
     config("rfim/rfim_iqrmcpu/radius", str(radius))
-    # config("rfim/rfim_sum_threshold/active","true")
-    # config("rfim/rfim_sum_threshold/its_cutoff","6.0")
-    # config("rfim/rfim_sum_threshold/window","64")
 
 
 @when("An SPS pipeline runs")
@@ -163,7 +159,7 @@ def run_cheetah(context, config, pytestconfig):
         "SinglePulse",
         build_dir=pytestconfig.getoption("path"),
     )
-    cheetah.run(timeout=1200)
+    cheetah.run(timeout=2000)
     assert cheetah.exit_code == 0
 
     # Clean up

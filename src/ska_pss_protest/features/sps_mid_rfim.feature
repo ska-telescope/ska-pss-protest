@@ -14,4 +14,6 @@ Feature: Tests of detection capability of CPU-based SPS pipeline with RFI Mitiga
         Examples:
         | freq  | dm    | width | sn    | rfi   |
         | 0.125 | 100   | 0.1   | 150   | 0000  |
-
+        | 0.125 | 100   | 0.1   | 150   | 7Lha  |
+        | 0.125 | 100   | 0.1   | 150   | GZ7P  |
+        | 0.125 | 100   | 0.1   | 150   | eezg  |
