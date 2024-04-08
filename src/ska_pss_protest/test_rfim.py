@@ -121,13 +121,18 @@ def set_source_sink(context, config, pytestconfig):
     config("spsift/pulse_width_threshold", "1000.0")
 
 
-@given("IQRM RFIM turned on with some threshold 3.0")
-def set_rfim_iqrm(config):
+@given(
+    parsers.parse(
+        "IQRM RFIM turned on with threshold equal to {threshold} and radius of {radius}."
+    )
+)
+def set_rfim_iqrm(config, threshold, radius):
     """
-    Configuring IQRM algorithm
+    Configuring IQRM algorithm using Threshold and Radius from feature file
     """
     config("rfim/rfim_iqrmcpu/active", "true")
-    config("rfim/rfim_iqrmcpu/threshold", "7.0")
+    config("rfim/rfim_iqrmcpu/threshold", str(threshold))
+    config("rfim/rfim_iqrmcpu/radius", str(radius))
     # config("rfim/rfim_sum_threshold/active","true")
     # config("rfim/rfim_sum_threshold/its_cutoff","6.0")
     # config("rfim/rfim_sum_threshold/window","64")
@@ -160,7 +165,7 @@ def run_cheetah(context, config, pytestconfig):
     )
     cheetah.run(timeout=1200)
     assert cheetah.exit_code == 0
-    
+
     # Clean up
     os.remove(context["config_path"])
 
