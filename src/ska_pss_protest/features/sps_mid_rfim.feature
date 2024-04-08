@@ -8,7 +8,8 @@ Feature: Tests of detection capability of CPU-based SPS pipeline with RFI Mitiga
         And IQRM RFIM turned on with threshold equal to 3.0 and radius of 100.
 
         When An SPS pipeline runs
-        Then Candidate metadata file is produced which contains detections of input signals
+        Then Save the candidate file which contains detections of input signals
+        And Validate the Candidate metadata file produced
 
         Examples:
         | freq  | dm    | width | sn    | rfi   |

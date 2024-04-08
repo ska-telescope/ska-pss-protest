@@ -170,15 +170,42 @@ def run_cheetah(context, config, pytestconfig):
     os.remove(context["config_path"])
 
 
-@then(
-    "Candidate metadata file is produced which contains detections of input signals"
-)
+@then("Validate the Candidate metadata file produced")
 def validate_candidate_metadate(context):
     """
     Validating SPS Candidates
     """
     spccl = SpCcl(context["candidate_dir"])
 
+    spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
+    widths_list = [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        15000,
+    ]
+
+    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
+
+    assert len(spccl.detections) == len(spccl.expected)
+    assert len(spccl.non_detections) == 0
+
+    shutil.rmtree(context["candidate_dir"])
+
+
+@then("Save the candidate file which contains detections of input signals")
+def save_cand_file(context):
     # Get name of metadata file from spccl_dir
     files = []
     for this_file in os.listdir(context["candidate_dir"]):
@@ -212,29 +239,3 @@ def validate_candidate_metadate(context):
     )
     filename = os.path.join(os.getcwd(), filename.split("/")[-1])
     shutil.copyfile(cand_file, filename)
-
-    spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    widths_list = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        15000,
-    ]
-
-    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
-
-    assert len(spccl.detections) == len(spccl.expected)
-    assert len(spccl.non_detections) == 0
-
-    shutil.rmtree(context["candidate_dir"])
