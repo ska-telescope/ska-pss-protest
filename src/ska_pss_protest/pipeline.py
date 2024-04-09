@@ -138,7 +138,7 @@ class Cheetah:
         if debug:
             command = np.append(command, "--log-level=debug")
         cmd_str = " ".join(command)
-        logging.info(f"Command is: {cmd_str}")
+        logging.info("Command is: {}".format(cmd_str))
 
         # Spawn cheetah as a child process
         child = subprocess.Popen(
@@ -151,14 +151,14 @@ class Cheetah:
             # Indefinite process needs to be terminated by kernel.
             child.kill()
             out, err = child.communicate()
-            logging.info(f"cheetah exceeded {timeout} s")
+            logging.info("cheetah exceeded {} s".format(timeout))
 
         # Handle STDERR
         self.err = err.decode("utf-8")
         if len(self.err) == 0:
             self.err = None
         else:
-            logging.warning(f"STDERR: {err}")
+            logging.warning("STDERR: {}".format(err))
 
         # Pass STDOUT to formatter and get back json string
         out = out.decode("utf-8")
@@ -166,7 +166,7 @@ class Cheetah:
 
         # Get exit code
         self.exit_code = child.returncode
-        logging.info(f"Return code is: {self.exit_code}")
+        logging.info("Return code is: {}".format(self.exit_code))
 
     def export_log(self, location: str):
         """
@@ -178,7 +178,7 @@ class Cheetah:
         ----------
         location : str
             The directory into which the log file
-            will be written. 
+            will be written.
         """
         filename = os.path.join(location, "cheetah_logs.json")
 
