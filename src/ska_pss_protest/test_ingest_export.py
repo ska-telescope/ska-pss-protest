@@ -12,7 +12,6 @@ test vectors.
 
 import os
 import shutil
-import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
@@ -108,13 +107,14 @@ def run_cheetah(context, pytestconfig):
         build_dir=pytestconfig.getoption("path"),
     )
     cheetah.run()
+    cheetah.export_log(context["result_dir"])
     assert cheetah.exit_code == 0
 
 
 @then(
     "The exported filterbank data is identical to the ingested filterbank data"
 )
-def validate_exported_data(context, teardown, pytestconfig):
+def validate_exported_data(context, pytestconfig):
     """
     Validate the candidate filterbanks produced by SPS
     """
