@@ -3,6 +3,7 @@ Fixtures defined here can be used by any test in the
 protest package without the need to import them.
 pytest will automatically discover them.
 """
+import logging
 import pytest
 import shutil
 import tempfile
@@ -48,10 +49,10 @@ def outdir():
         """
         Private fixture parameteriser
         """
-        if os.path.isdir(parent):
-            this_outdir = tempfile.mkdtemp(dir=parent)
-            return this_outdir
-        raise FileNotFoundError("Directory {} not found".format(parent))
+        if not os.path.isdir(parent):
+            os.mkdir(parent)
+        this_outdir = tempfile.mkdtemp(dir=parent)
+        return this_outdir
 
     return _outdir
         
@@ -80,8 +81,10 @@ def cleanup(pytestconfig):
     test sets. In a given run of ProTest, all of those
     data directorys are placed in a single parent directory. 
     This fixture removes the parent directory if the --keep
-    option of not passed to ProTest.
+    option is not passed to ProTest.
     """
     yield 
+    result_dir = pytestconfig.getoption("outdir")
     if not pytestconfig.getoption("keep"):
-        shutil.rmtree(pytestconfig.getoption("outdir"))
+        logging.info("Removing directory {}".format(result_dir))
+        shutil.rmtree(result_dir)
