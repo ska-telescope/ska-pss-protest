@@ -64,7 +64,6 @@ def pull_test_vector(context, test_vector, pytestconfig):
     Get test vector and add path to it to the config file
     """
     vector = VectorPull(cache_dir=pytestconfig.getoption("cache"))
-    # vector.from_name("SPS-MID_747e95f_0.2_0.0002_2950.0_0.0_Gaussian_50.0_123123123.fil")
     vector.from_name(test_vector)
     context["vector_path"] = vector.local_path
     assert os.path.isfile(vector.local_path)
@@ -79,20 +78,20 @@ def set_source(context, config):
 
 
 @given("A cheetah configuration to export filterbanked data")
-def set_sink(config, context):
+def set_sink(config, context, outdir, conf, pytestconfig):
     """
     Configure data sink
     """
     spectra_per_file = str(VHeader(context["vector_path"]).nspectra())
-    outdir = tempfile.mkdtemp()
-    config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
+    outdir = outdir(pytestconfig.getoption("outdir"))
+    config_path = conf(outdir)
     config("beams/beam/sinks/sink_configs/sigproc/dir", outdir)
     config(
         "beams/beam/sinks/sink_configs/sigproc/spectra_per_file",
         spectra_per_file,
     ).write(config_path)
     context["config_path"] = config_path
-    context["candidate_dir"] = outdir
+    context["result_dir"] = outdir
 
 
 @when("The cheetah pipeline runs")
@@ -111,18 +110,15 @@ def run_cheetah(context, pytestconfig):
     cheetah.run()
     assert cheetah.exit_code == 0
 
-    # Clean up
-    os.remove(context["config_path"])
-
 
 @then(
     "The exported filterbank data is identical to the ingested filterbank data"
 )
-def validate_exported_data(context):
+def validate_exported_data(context, teardown, pytestconfig):
     """
     Validate the candidate filterbanks produced by SPS
     """
-    candidates = Filterbank(context["candidate_dir"])
+    candidates = Filterbank(context["result_dir"])
 
     # Check header parameters correspond
     # to those in the test vector
@@ -145,4 +141,5 @@ def validate_exported_data(context):
     assert candidates.result is True
 
     # Clean up
-    shutil.rmtree(context["candidate_dir"])
+    if not pytestconfig.getoption("keep"):
+        shutil.rmtree(context["result_dir"])
