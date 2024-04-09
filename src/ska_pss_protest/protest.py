@@ -69,7 +69,14 @@ class ProTest:
     """
 
     def __init__(
-        self, path, cache, outdir, mark=None, exclude=None, keep=False, show_help=False
+        self,
+        path,
+        cache,
+        outdir,
+        mark=None,
+        exclude=None,
+        keep=False,
+        show_help=False,
     ):
 
         self.path = path
@@ -181,13 +188,13 @@ def main():
         "--keep",
         help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
         required=False,
-        action = 'store_true'
+        action="store_true",
     )
     parser.add_argument(
         "--header-only",
         help="Store only header information from candidate filterbanks [todo]",
         required=False,
-        action = 'store_true'
+        action="store_true",
     )
     args = parser.parse_args()
 
