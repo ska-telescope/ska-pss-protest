@@ -69,7 +69,7 @@ class ProTest:
     """
 
     def __init__(
-        self, path, cache, outdir, mark=None, exclude=None, show_help=False
+        self, path, cache, outdir, mark=None, exclude=None, keep=False, show_help=False
     ):
 
         self.path = path
@@ -77,6 +77,7 @@ class ProTest:
         self.exclude = exclude
         self.cache = cache
         self.outdir = outdir
+        self.keep = keep
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
@@ -122,6 +123,9 @@ class ProTest:
         if self.outdir:
             outdir_arg = ["--outdir=" + self.outdir]
             pytest_args = outdir_arg + pytest_args
+        if self.keep:
+            keep_arg = ["--keep"]
+            pytest_args = keep_arg + pytest_args
 
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
@@ -147,18 +151,6 @@ def main():
         default=None,
     )
     parser.add_argument(
-        "--cache",
-        help="Directory containing locally stored test vectors",
-        required=False,
-        default=None,
-    )
-    parser.add_argument(
-        "--outdir",
-        help="Directory to store candidate data products",
-        required=False,
-        default="/tmp",
-    )
-    parser.add_argument(
         "-i",
         "--include",
         nargs="+",
@@ -173,6 +165,30 @@ def main():
         help="Exclude the following test types",
         required=False,
     )
+    parser.add_argument(
+        "--cache",
+        help="Directory containing locally stored test vectors",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--outdir",
+        help="Directory to store candidate data products",
+        required=False,
+        default="/tmp",
+    )
+    parser.add_argument(
+        "--keep",
+        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
+        required=False,
+        action = 'store_true'
+    )
+    parser.add_argument(
+        "--header-only",
+        help="Store only header information from candidate filterbanks [todo]",
+        required=False,
+        action = 'store_true'
+    )
     args = parser.parse_args()
 
     protest = ProTest(
@@ -181,6 +197,7 @@ def main():
         args.outdir,
         args.include,
         args.exclude,
+        args.keep,
         args.show_help,
     )
     protest.run()
