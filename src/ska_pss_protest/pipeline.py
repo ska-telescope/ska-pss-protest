@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -14,12 +12,9 @@
     | Author: Benjamin Shaw                                                  |
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2021 University of Manchester                                |
+    | Copyright 2024 SKAO                                                    |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -55,6 +50,7 @@
 
 import json
 import logging
+import os
 import re
 import subprocess
 
@@ -141,7 +137,8 @@ class Cheetah:
         # Set debug policy
         if debug:
             command = np.append(command, "--log-level=debug")
-        logging.info("Command is: {}".format(" ".join(command)))
+        cmd_str = " ".join(command)
+        logging.info(f"Command is: {cmd_str}")
 
         # Spawn cheetah as a child process
         child = subprocess.Popen(
@@ -154,14 +151,14 @@ class Cheetah:
             # Indefinite process needs to be terminated by kernel.
             child.kill()
             out, err = child.communicate()
-            logging.info("cheetah exceeded {} s timeout".format(timeout))
+            logging.info(f"cheetah exceeded {timeout} s")
 
         # Handle STDERR
         self.err = err.decode("utf-8")
         if len(self.err) == 0:
             self.err = None
         else:
-            logging.warning("STDERR: {}".format(err))
+            logging.warning(f"STDERR: {err}")
 
         # Pass STDOUT to formatter and get back json string
         out = out.decode("utf-8")
@@ -169,7 +166,24 @@ class Cheetah:
 
         # Get exit code
         self.exit_code = child.returncode
-        logging.info("Return code is: {}".format(self.exit_code))
+        logging.info(f"Return code is: {self.exit_code}")
+
+    def export_log(self, location: str):
+        """
+        Writes cheetah log data to a file.
+        The file will be named cheetah_logs.json,
+        and will be written to the directory <location>.
+
+        Parameters
+        ----------
+        location : str
+            The directory into which the log file
+            will be written. 
+        """
+        filename = os.path.join(location, "cheetah_logs.json")
+
+        with open(filename, "w") as this_file:
+            this_file.write(self.logs)
 
     @staticmethod
     def _parse_stdout(logdata: str) -> str:
