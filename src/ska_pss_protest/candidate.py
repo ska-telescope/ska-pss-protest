@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -40,7 +38,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2023 SKA Organisation                                        |
+    | Copyright 2024 SKA Organisation                                        |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -61,6 +59,7 @@
     **************************************************************************
 """
 
+import json
 import logging
 import os
 
@@ -149,6 +148,30 @@ class Filterbank:
             this_header = VHeader(this_file)
             self.headers.append(this_header)
         return self.headers
+
+    def reduce_headers(self):
+        """
+        Exports header data from each of the candidate
+        filterbanks to a file. This provides the option to
+        keep the details of each candidate file without occupying
+        disk space with the data. This method might be useful if
+        running a large number of tests at once where disk space
+        limited (.e.g., in a product test CI pipeline).
+        """
+        headers = self.get_headers()
+        header_filename = os.path.join(self.cand_dir, "candidate_headers.json")
+        logging.info("Reducing candidate headers to {}".format(header_filename))
+
+        json_str = []
+        for header in headers:
+            json_str.append(header.allpars(conv=True))
+
+        with open(header_filename, 'w') as json_out:
+            json.dump(json_str, json_out, indent=4)
+        json_out.close()
+
+        for fil_file in self.files:
+            os.remove(fil_file)
 
     def compare_data(self, truth_vector, chunk_size=1024) -> bool:
         """
