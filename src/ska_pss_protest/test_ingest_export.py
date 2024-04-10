@@ -114,7 +114,7 @@ def run_cheetah(context, pytestconfig):
 @then(
     "The exported filterbank data is identical to the ingested filterbank data"
 )
-def validate_exported_data(context, pytestconfig):
+def validate_exported_data(context, pytestconfig, teardown):
     """
     Validate the candidate filterbanks produced by SPS
     """
@@ -140,6 +140,10 @@ def validate_exported_data(context, pytestconfig):
     candidates.compare_data(context["vector_path"], 4096)
     assert candidates.result is True
 
+    # Replace candidate files with header info only
+    if pytestconfig.getoption("reduce"):
+        candidates.reduce_headers()
+
     # Clean up
     if not pytestconfig.getoption("keep"):
-        shutil.rmtree(context["result_dir"])
+        teardown(context["result_dir"])
