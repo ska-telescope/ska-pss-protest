@@ -110,6 +110,7 @@ def set_source(context, config, pytestconfig, conf, outdir):
     """
     outdir = outdir(pytestconfig.getoption("outdir"))
     config_path = conf(outdir)
+
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
     context["config_path"] = config_path
     context["candidate_dir"] = outdir
@@ -118,7 +119,7 @@ def set_source(context, config, pytestconfig, conf, outdir):
 @given(
     "A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata"
 )
-def set_sink(config, context, pytestconfig):
+def set_sink(config, context):
     # Set output location for candidate filterbanks
     config("beams/beam/sinks/channels/sps_events/active", "true")
     config(
