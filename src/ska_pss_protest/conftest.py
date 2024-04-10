@@ -29,6 +29,7 @@ def pytest_addoption(parser):
     parser.addoption("--cache", action="store", default=None)
     parser.addoption("--outdir", action="store", default="/tmp")
     parser.addoption("--keep", action="store_true")
+    parser.addoption("--reduce", action="store_true")
 
 
 @pytest.fixture(scope="function")
@@ -101,4 +102,4 @@ def cleanup(pytestconfig):
     result_dir = pytestconfig.getoption("outdir")
     if not pytestconfig.getoption("keep"):
         logging.info("Removing directory {}".format(result_dir))
-        shutil.rmtree(result_dir)
+        # shutil.rmtree(result_dir)
