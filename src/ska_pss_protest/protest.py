@@ -76,6 +76,7 @@ class ProTest:
         mark=None,
         exclude=None,
         keep=False,
+        reduce = False,
         show_help=False,
     ):
 
@@ -84,6 +85,7 @@ class ProTest:
         self.exclude = exclude
         self.cache = cache
         self.outdir = outdir
+        self.reduce = reduce
         self.keep = keep
 
         # Obtain path of protest
@@ -133,6 +135,9 @@ class ProTest:
         if self.keep:
             keep_arg = ["--keep"]
             pytest_args = keep_arg + pytest_args
+        if self.reduce:
+            reduce_arg = ["--reduce"]
+            pytest_args = reduce_arg + pytest_args
 
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
@@ -191,8 +196,8 @@ def main():
         action="store_true",
     )
     parser.add_argument(
-        "--header-only",
-        help="Store only header information from candidate filterbanks [todo]",
+        "--reduce",
+        help="Store only header information from SPS candidate filterbanks",
         required=False,
         action="store_true",
     )
@@ -205,6 +210,7 @@ def main():
         args.include,
         args.exclude,
         args.keep,
+        args.reduce,
         args.show_help,
     )
     protest.run()
