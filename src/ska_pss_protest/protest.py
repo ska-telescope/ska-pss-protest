@@ -21,12 +21,15 @@
     |  -H --show_help Show list of available test markers                    |
     |  -p PATH, --path PATH  Path to cheetah build tree                      |
     |  -i  INCLUDE, --include INCLUDE  Test types to execute                 |
-            e.g., -i type_a type_b (def=product)                             |
+    |        e.g., -i type_a type_b (def=product)                            |
     |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
-            e.g., -e type_a type_b                                           |
+    |        e.g., -e type_a type_b                                          |
     |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
     |  --cache CACHE  Directory to read/write local test vector cache        |
     |        (def=/home/<user>/.cache/SKA)                                   |
+    |  --keep  Preserve the post-test data products                          |
+    |          (e.g, candidates, cheetah logs, configs, etc)                 |
+    |  --reduce Store only header information from SPS candidate filterbanks |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
