@@ -11,7 +11,6 @@ test vectors.
 """
 
 import os
-import shutil
 from xml.etree import ElementTree as et
 
 import pytest

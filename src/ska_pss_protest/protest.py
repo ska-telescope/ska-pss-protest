@@ -76,7 +76,7 @@ class ProTest:
         mark=None,
         exclude=None,
         keep=False,
-        reduce = False,
+        reduce=False,
         show_help=False,
     ):
 

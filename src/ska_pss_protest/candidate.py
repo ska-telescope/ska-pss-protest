@@ -160,13 +160,15 @@ class Filterbank:
         """
         headers = self.get_headers()
         header_filename = os.path.join(self.cand_dir, "candidate_headers.json")
-        logging.info("Reducing candidate headers to {}".format(header_filename))
+        logging.info(
+            "Reducing candidate headers to {}".format(header_filename)
+        )
 
         json_str = []
         for header in headers:
             json_str.append(header.allpars(conv=True))
 
-        with open(header_filename, 'w') as json_out:
+        with open(header_filename, "w") as json_out:
             json.dump(json_str, json_out, indent=4)
         json_out.close()
 
