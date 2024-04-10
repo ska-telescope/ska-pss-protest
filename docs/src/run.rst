@@ -50,7 +50,7 @@ The :code:`-e` EXCLUDE option tells ProTest which group(s) of tests should not b
 
 :code:`--keep` allows the output data products that are created by test runs (written to <outdir> to be preserved. By default ProTest completely cleans up after itself leaving no files behind. However, for diagnostic puporses, one may wish to keep configuration files, candidates, etc. 
 
-:code:`--reduce` is used to prevent candidate files (e.g., filterbanks) from occupying large amounts of disk space (i.e., in CI pipelines). If --reduce is enabled, SPS candidate filterbanks are removed, even if --keep is enabled, and are replaced by a json file (placed in <outdir>) that contains information from the header of each filterbank.
+:code:`--reduce` is used to prevent candidate files (e.g., filterbanks) from occupying large amounts of disk space (i.e., in CI pipelines). If :code:`--reduce` is enabled, SPS candidate filterbanks are removed, even if :code:`--keep` is enabled, and are replaced by a json file (placed in <outdir>) that contains information from the header of each filterbank.
 
 To demonstrate, let's run all of the available SPS (Single Pulse Search) tests. We'll use a build tree in this case, and we will leave --outdir and --cache empty.
 
