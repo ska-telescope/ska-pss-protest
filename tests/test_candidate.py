@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -23,7 +21,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2023 SKA Organisation                                        |
+    | Copyright 2024 SKA Organisation                                        |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -44,6 +42,7 @@
     **************************************************************************
 """
 
+import json
 import os
 import shutil
 import tempfile
@@ -190,3 +189,24 @@ class CandidateTests:
             1024,
         )
         assert parser.result is False
+
+    def test_json_dump(self):
+        """
+        Tests that a JSON dump containing candidate
+        header info is correctly executed
+        """
+        cand_dir = os.path.join(DATA_DIR, "candidate_1")
+        parser = cand.Filterbank(cand_dir)
+        parser.reduce_headers(remove_fils=False)
+
+        # We should now have a json file - check
+        json_path = os.path.join(cand_dir, "candidate_headers.json")
+        assert os.path.isfile(json_path)
+
+        # Is it valid json?
+        with open(json_path, "r") as jfile:
+            json.load(jfile)
+        jfile.close()
+
+        # Clean up
+        os.remove(json_path)

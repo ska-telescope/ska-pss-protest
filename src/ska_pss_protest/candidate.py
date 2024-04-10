@@ -149,7 +149,7 @@ class Filterbank:
             self.headers.append(this_header)
         return self.headers
 
-    def reduce_headers(self):
+    def reduce_headers(self, remove_fils=True):
         """
         Exports header data from each of the candidate
         filterbanks to a file. This provides the option to
@@ -172,8 +172,9 @@ class Filterbank:
             json.dump(json_str, json_out, indent=4)
         json_out.close()
 
-        for fil_file in self.files:
-            os.remove(fil_file)
+        if remove_fils:
+            for fil_file in self.files:
+                os.remove(fil_file)
 
     def compare_data(self, truth_vector, chunk_size=1024) -> bool:
         """
