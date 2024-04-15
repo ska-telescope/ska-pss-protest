@@ -209,7 +209,6 @@ class VHeader:
             }
             return signal_pars
         except ValueError:
-            logging.info("Non-standard vector: skipping signal extraction")
             return {}
 
     @staticmethod
@@ -253,15 +252,39 @@ class VHeader:
                 bytes_read += len(key) + 4
 
         header["header_size"] = fil.tell()
+        header["filename"] = path
         return header
 
-    def allpars(self) -> dict:
+    @staticmethod
+    def _json_conv(indict: dict) -> dict:
+        """
+        JSON cannot serialize int32 so we
+        convert int32 to int if we need to
+        write header parameters as json.
+        """
+        for key, value in indict.items():
+            if isinstance(value, np.int32):
+                indict[key] = int(value)
+        return indict
+
+    def allpars(self, conv=False) -> dict:
         """
         Returns all header parameters as dict
         """
         all_pars = {}
         all_pars.update(self.header_pars)
+
+        # Add some useful parameters that
+        # are not natively part of the header.
+        all_pars["duration"] = self.duration()
+        all_pars["nspectra"] = self.nspectra()
+        all_pars["data_size"] = self.data_size()
+        all_pars["total_size"] = self.total_size()
+
         all_pars.update(self.signal_pars)
+
+        if conv:
+            all_pars = self._json_conv(all_pars)
         return all_pars
 
     def machine_id(self) -> int:

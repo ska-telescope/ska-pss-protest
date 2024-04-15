@@ -132,7 +132,8 @@ class SpCclTests:
 
         # Load in "expected" candidate metadata file
         known_file = os.path.join(DATA_DIR, "spccl_1/candidates.txt")
-        known_cands = np.loadtxt(known_file, unpack=False, skiprows=1)
+        known_cands = np.loadtxt(known_file, unpack=False, skiprows=1).tolist()
+        known_cands.sort(key=lambda x: x[3], reverse=True)
 
         # Check that the two sets of candidates are the same
         assert np.all(known_cands == candidate.cands)

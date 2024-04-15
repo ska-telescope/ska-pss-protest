@@ -11,8 +11,6 @@ candidates are produced.
 """
 
 import os
-import shutil
-import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
@@ -49,17 +47,6 @@ def get_vector(pytestconfig):
     yield vector
 
 
-@pytest.fixture(scope="function")
-def outdir():
-    """
-    Generate a temp directory to store
-    SpCcl (candidate) files
-    """
-    spccl_dir = tempfile.mkdtemp()
-    yield spccl_dir
-    shutil.rmtree(spccl_dir)
-
-
 @pytest.fixture
 def config():
     """
@@ -94,7 +81,8 @@ def pull_test_vector(get_vector, config):
 @given("A candidate generation rate of 1 per second")
 def set_rate(context, config):
     """
-    Set candidate rate in cheetah config
+    Set candidate rate and other pipeline
+    properties in cheetah config
     """
     rate = "1"
     context["rate"] = rate
@@ -103,17 +91,21 @@ def set_rate(context, config):
 
 
 @when("The SPS pipeline runs")
-def run_cheetah(config, outdir, pytestconfig):
+def run_cheetah(config, outdir, pytestconfig, context, conf):
     """
     Add SpCcl output directory to config and
     run cheetah
     """
-    # Create directory for output files and add to config
-    config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
+    # Set path to output directory
+    outdir = outdir(pytestconfig.getoption("outdir"))
+    config_path = conf(outdir)
+
     config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
     config(
         "beams/beam/sinks/sink_configs/spccl_sigproc_files/dir", outdir
     ).write(config_path)
+
+    context["candidate_dir"] = outdir
 
     # Run cheetah pipeline
     cheetah = Cheetah(
@@ -126,17 +118,14 @@ def run_cheetah(config, outdir, pytestconfig):
     cheetah.run()
     assert cheetah.exit_code == 0
 
-    # Remove config file
-    os.remove(config_path)
-
 
 @then("60 candidates are written to SpCcl file")
-def count_cands(context, outdir, get_vector):
+def count_cands(context, get_vector):
     """
     Call candidate parser and check number of candidates
     """
     expected_ncands = (
         float(context["rate"]) * VHeader(get_vector.local_path).duration()
     )
-    candidate = cand.SpCcl(outdir)
+    candidate = cand.SpCcl(context["candidate_dir"])
     assert len(candidate.cands) == expected_ncands

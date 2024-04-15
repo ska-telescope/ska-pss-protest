@@ -12,6 +12,10 @@ include = ["src/ska-pss-protest/features/*", "src/ska_pss_protest/data/config_te
 name = "PyPI-public"
 url = 'https://pypi.org/simple'
 
+[[tool.poetry.source]]
+name = "PyPI-public"
+url = 'https://pypi.org/simple'
+
 [tool.poetry.scripts]
 protest = 'ska_pss_protest.protest:main'
 

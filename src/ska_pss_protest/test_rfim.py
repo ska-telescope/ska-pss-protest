@@ -6,8 +6,6 @@ SPS Pipeline with RFIM algorithms turned ON.
 """
 
 import os
-import shutil
-import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
@@ -79,19 +77,23 @@ def pull_test_vector(context, pytestconfig, vtype, freq, dm, width, sn, rfi):
 @given(
     "A basic cheetah configuration to ingest test vector and export single pulse candidate metadata to file"
 )
-def set_source_sink(context, config, pytestconfig):
+def set_source_sink(context, config, pytestconfig, conf, outdir):
     """
     Sets up basic test vector source-sink as well as
     Clustering-sifting in cheetah config
     """
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
-    config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
-    context["config_path"] = config_path
 
-    outdir = tempfile.mkdtemp(dir=pytestconfig.getoption("outdir"))
-    config("beams/beam/sinks/channels/sps_events/active", "true")
-    config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
+    outdir = outdir(pytestconfig.getoption("outdir"))
+    config_path = conf(outdir)
+    context["config_path"] = config_path
     context["candidate_dir"] = outdir
+
+    config("beams/beam/sinks/channels/sps_events/active", "true")
+    config(
+        "beams/beam/sinks/sink_configs/spccl_files/dir",
+        context["candidate_dir"],
+    )
 
     config("sps_clustering/active", "true")
     config("sps_clustering/time_tolerance", "100.0")
@@ -161,14 +163,11 @@ def run_cheetah(context, config, pytestconfig):
     cheetah.run(timeout=2000)
     assert cheetah.exit_code == 0
 
-    # Clean up
-    os.remove(context["config_path"])
-
 
 @then(
     "all injected pulses are recovered according the candidate metadata produced"
 )
-def validate_candidate_metadate(context):
+def validate_candidate_metadate(context, pytestconfig, teardown):
     """
     Validating SPS Candidates
     """
@@ -198,4 +197,6 @@ def validate_candidate_metadate(context):
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
 
-    shutil.rmtree(context["candidate_dir"])
+    # Clean up
+    if not pytestconfig.getoption("keep"):
+        teardown(context["candidate_dir"])

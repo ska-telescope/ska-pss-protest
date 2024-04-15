@@ -12,8 +12,6 @@ algorithms to reduce the number of candidates exported to SDP.
 """
 
 import os
-import shutil
-import tempfile
 from xml.etree import ElementTree as et
 
 import pytest
@@ -106,27 +104,34 @@ def pull_test_vector_using_name(context, pytestconfig, test_vector):
 
 
 @given("A cheetah configuration to ingest the test vector")
-def set_source(context, config):
+def set_source(context, config, pytestconfig, conf, outdir):
     """
     Set test vector source in cheetah config
     """
+    outdir = outdir(pytestconfig.getoption("outdir"))
+    config_path = conf(outdir)
+
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
-    config_path = os.path.join("/tmp", next(tempfile._get_candidate_names()))
     context["config_path"] = config_path
+    context["candidate_dir"] = outdir
 
 
 @given(
     "A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata"
 )
-def set_sink(config, context, pytestconfig):
+def set_sink(config, context):
     # Set output location for candidate filterbanks
-    outdir = tempfile.mkdtemp(dir=pytestconfig.getoption("outdir"))
     config("beams/beam/sinks/channels/sps_events/active", "true")
-    config("beams/beam/sinks/sink_configs/spccl_sigproc_files/dir", outdir)
+    config(
+        "beams/beam/sinks/sink_configs/spccl_sigproc_files/dir",
+        context["candidate_dir"],
+    )
 
     # Set output location for candidate metadata files
-    config("beams/beam/sinks/sink_configs/spccl_files/dir", outdir)
-    context["candidate_dir"] = outdir
+    config(
+        "beams/beam/sinks/sink_configs/spccl_files/dir",
+        context["candidate_dir"],
+    )
 
 
 @given("A cheetah configuration to sift and cluster SPS candidate metadata")
@@ -173,14 +178,11 @@ def run_cheetah(context, config, pytestconfig):
     cheetah.run(timeout=600)
     assert cheetah.exit_code == 0
 
-    # Clean up
-    os.remove(context["config_path"])
-
 
 @then(
     "Candidate filterbanks are exported to disk and their header properties are consistent with the test vector"
 )
-def validate_exported_candidates(context):
+def validate_exported_candidates(context, pytestconfig):
     # Load candidates
     candidates = Filterbank(context["candidate_dir"])
     candidates.get_headers()
@@ -200,11 +202,15 @@ def validate_exported_candidates(context):
         assert header.start_time() >= input_header.start_time()
         assert header.duration() <= input_header.duration()
 
+    # Replace candidate files with header info only
+    if pytestconfig.getoption("reduce"):
+        candidates.reduce_headers()
+
 
 @then(
     "A candidate metadata file is produced which contains detections of the input signals"
 )
-def validate_candidate_metadata(context):
+def validate_candidate_metadata(context, pytestconfig, teardown):
     spccl = SpCcl(context["candidate_dir"])
 
     # Generate list of expected candidates
@@ -231,4 +237,6 @@ def validate_candidate_metadata(context):
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
 
-    shutil.rmtree(context["candidate_dir"])
+    # Clean up
+    if not pytestconfig.getoption("keep"):
+        teardown(context["candidate_dir"])
