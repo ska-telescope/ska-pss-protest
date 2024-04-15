@@ -1,7 +1,7 @@
 """
 This is a product level Single-pulse search test which is used to
-test efficacy of already implemented RFIM algorithms in Cheetah.
-It is carried out by passing RFI-injected test vectors through Cheetah
+test efficacy of RFIM algorithms in Cheetah. It is carried out by
+passing RFI-injected test vectors through Cheetah
 SPS Pipeline with RFIM algorithms turned ON.
 """
 
@@ -54,16 +54,16 @@ def config():
 
 @given(
     parsers.parse(
-        "A 60 second duration Test-vector containing single pulses {freq} pulses per second, each with a dispersion measure of {dm}, a duty cycle of {width}, a combined S/N of {sn} with RFI-ID - {rfi}"
+        "A 60 second duration {vtype} Test-vector containing {freq} single pulses per second, each with a dispersion measure of {dm}, a duty cycle of {width} and folded S/N of {sn} with RFI configuration {rfi}"
     )
 )
-def pull_test_vector(context, pytestconfig, freq, dm, width, sn, rfi):
+def pull_test_vector(context, pytestconfig, vtype, freq, dm, width, sn, rfi):
     """
     Get test vector and add path to it to the config file
     """
     test_vector = VectorPull(cache_dir=pytestconfig.getoption("cache"))
     test_vector.from_properties(
-        vectype="SPS-MID-RFI", freq=freq, duty=width, disp=dm, sig=sn, rfi=rfi
+        vectype=vtype, freq=freq, duty=width, disp=dm, sig=sn, rfi=rfi
     )
 
     vector_header = VHeader(test_vector.local_path)
@@ -76,24 +76,8 @@ def pull_test_vector(context, pytestconfig, freq, dm, width, sn, rfi):
     assert os.path.isfile(test_vector.local_path)
 
 
-@given(parsers.parse("A 60 second {test_vector} containing single pulses"))
-def pull_test_vector_using_name(context, pytestconfig, test_vector):
-    """
-    Get test vector and add path to it to the config file
-    """
-    request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
-    request.from_name(test_vector)
-
-    vector_header = VHeader(request.local_path)
-
-    context["test_vector"] = request
-    context["vector_header"] = vector_header
-
-    assert os.path.isfile(request.local_path)
-
-
 @given(
-    "A basic cheetah configuration to ingest test vector and write single pulses candidate file"
+    "A basic cheetah configuration to ingest test vector and export single pulse candidate metadata to file"
 )
 def set_source_sink(context, config, pytestconfig):
     """
@@ -122,7 +106,7 @@ def set_source_sink(context, config, pytestconfig):
 
 @given(
     parsers.parse(
-        "IQRM RFIM turned on with threshold equal to {threshold} and radius of {radius}."
+        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius}."
     )
 )
 def set_rfim_iqrm(config, threshold, radius):
@@ -213,40 +197,3 @@ def validate_candidate_metadate(context):
     assert len(spccl.non_detections) == 0
 
     shutil.rmtree(context["candidate_dir"])
-
-
-@then("Save the candidate file which contains detections of input signals")
-def save_cand_file(context):
-    # Get name of metadata file from spccl_dir
-    files = []
-    for this_file in os.listdir(context["candidate_dir"]):
-        if this_file.endswith(".spccl"):
-            files.append(this_file)
-    if len(files) > 1:
-        raise Warning("More than 1 candidate file found. Choosing the first")
-
-    cand_file = os.path.join(context["candidate_dir"], files[0])
-    if not os.path.isfile(cand_file):
-        raise FileNotFoundError("Could not locate the candidate file")
-
-    filename = context["test_vector"].local_path.split("_")
-    filename = (
-        filename[0]
-        + "_"
-        + filename[2]
-        + "_"
-        + filename[3]
-        + "_"
-        + filename[4]
-        + "_"
-        + filename[5]
-        + "_"
-        + filename[6]
-        + "_"
-        + filename[7]
-        + "_"
-        + filename[8]
-        + ".spccl"
-    )
-    filename = os.path.join(os.getcwd(), filename.split("/")[-1])
-    shutil.copyfile(cand_file, filename)
