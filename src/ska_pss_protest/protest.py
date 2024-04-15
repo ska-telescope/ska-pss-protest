@@ -58,6 +58,7 @@
 import argparse
 import os
 import sys
+import time
 
 import pytest
 
@@ -87,12 +88,15 @@ class ProTest:
         self.mark = mark
         self.exclude = exclude
         self.cache = cache
-        self.outdir = outdir
         self.reduce = reduce
         self.keep = keep
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
+
+        # Set outputs directory
+        set_dir = "protest-{}".format(time.strftime("%Y%m%d-%H%M%S"))
+        self.outdir = os.path.join(outdir, set_dir)
 
         if show_help:
             pytest_args = [

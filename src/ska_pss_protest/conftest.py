@@ -62,6 +62,7 @@ def outdir():
         if not os.path.isdir(parent):
             os.mkdir(parent)
         this_outdir = tempfile.mkdtemp(dir=parent)
+        logging.info("Creating directory for results: {}".format(this_outdir))
         return this_outdir
 
     return _outdir
@@ -102,4 +103,6 @@ def cleanup(pytestconfig):
     result_dir = pytestconfig.getoption("outdir")
     if not pytestconfig.getoption("keep"):
         logging.info("Removing directory {}".format(result_dir))
-        # shutil.rmtree(result_dir)
+        shutil.rmtree(result_dir)
+    else:
+        logging.info("Test outcomes location: {}".format(result_dir))
