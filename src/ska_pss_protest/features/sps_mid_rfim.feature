@@ -5,10 +5,10 @@ Feature: Tests of detection capability of CPU-based SPS pipeline with RFI Mitiga
     Scenario Outline: Detecting single pulses with RFIM using IQRM
         Given A 60 second duration SPS-MID-RFI Test-vector containing <freq> single pulses per second, each with a dispersion measure of <dm>, a duty cycle of <width> and folded S/N of <sn> with RFI configuration <rfi>
         And A basic cheetah configuration to ingest test vector and export single pulse candidate metadata to file
-        And IQRM RFIM enabled with threshold of <threshold> and radius of <radius>.
+        And IQRM RFIM enabled with threshold of <threshold> and radius of <radius>
 
         When An SPS pipeline runs
-        Then Validate the Candidate metadata file produced
+        Then all injected pulses are recovered according the candidate metadata produced
 
         Examples:
         | freq  | dm    | width | sn    | rfi   | threshold | radius    |
@@ -18,10 +18,10 @@ Feature: Tests of detection capability of CPU-based SPS pipeline with RFI Mitiga
     Scenario Outline: Detecting single pulses with RFIM using Sum-Threshold
         Given A 60 second duration SPS-MID-RFI Test-vector containing <freq> single pulses per second, each with a dispersion measure of <dm>, a duty cycle of <width> and folded S/N of <sn> with RFI configuration <rfi>
         And A basic cheetah configuration to ingest test vector and export single pulse candidate metadata to file
-        And Sum-Threshold RFIM enabled with cutoff of <cutoff> and window size of <window>.
+        And Sum-Threshold RFIM enabled with cutoff of <cutoff> and window size of <window>
 
         When An SPS pipeline runs
-        Then Validate the Candidate metadata file produced
+        Then all injected pulses are recovered according the candidate metadata produced
 
         Examples:
         | freq  | dm    | width | sn    | rfi   | cutoff    | window    |

@@ -106,7 +106,7 @@ def set_source_sink(context, config, pytestconfig):
 
 @given(
     parsers.parse(
-        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius}."
+        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius}"
     )
 )
 def set_rfim_iqrm(config, threshold, radius):
@@ -120,7 +120,7 @@ def set_rfim_iqrm(config, threshold, radius):
 
 @given(
     parsers.parse(
-        "Sum-Threshold RFIM enabled with cutoff of {cutoff} and window size of {window}."
+        "Sum-Threshold RFIM enabled with cutoff of {cutoff} and window size of {window}"
     )
 )
 def set_rfim_sumthreshold(config, cutoff, window):
@@ -165,7 +165,9 @@ def run_cheetah(context, config, pytestconfig):
     os.remove(context["config_path"])
 
 
-@then("Validate the Candidate metadata file produced")
+@then(
+    "all injected pulses are recovered according the candidate metadata produced"
+)
 def validate_candidate_metadate(context):
     """
     Validating SPS Candidates
