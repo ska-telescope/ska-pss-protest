@@ -95,6 +95,8 @@ class ProTest:
         self.src = os.path.dirname(ska_pss_protest.__file__)
 
         # Set outputs directory
+        if not os.path.isdir(outdir):
+            raise FileNotFoundError("{} not found".format(outdir))
         set_dir = "protest-{}".format(time.strftime("%Y%m%d-%H%M%S"))
         self.outdir = os.path.join(outdir, set_dir)
 
