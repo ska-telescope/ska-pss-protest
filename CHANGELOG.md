@@ -1,5 +1,5 @@
 # Changelog
 
-## 4.0.3
+## 4.1.1
 
-- Update pyproject.toml to include Pypi source
+- Adding SPS-RFIM tests
