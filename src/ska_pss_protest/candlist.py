@@ -168,8 +168,10 @@ class SpCcl:
         ).tolist()
         if len(cand_metadata) == 0:
             raise Exception("Candidate list {} empty".format(cand_file))
-
         logging.info("Located {} candidates".format(len(cand_metadata)))
+
+        # Sort by S/N in descending order
+        cand_metadata.sort(key=lambda x: x[3], reverse=True)
         return cand_metadata
 
     @staticmethod
