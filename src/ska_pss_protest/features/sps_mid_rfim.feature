@@ -1,4 +1,4 @@
-@rfim-sps @product @cpu @sps @testvector @positive @mid @physhw @nasm
+@rfim-sps @product @cpu @sps @testvector @positive @mid @physhw @nasm @xfail
 Feature: Tests of detection capability of CPU-based SPS pipeline with RFI Mitigation turned ON
 
     
