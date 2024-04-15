@@ -11,21 +11,23 @@ This should produce the following output.
 
 .. code-block:: bash
 
-    usage: protest [-h] [-p PATH] [--cache CACHE] [--outdir OUTDIR]
-               [-m MARK [MARK ...]] [-e EXCLUDE [EXCLUDE ...]]
+   usage: protest [-h] [-H] [-p PATH] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]]
+                  [--cache CACHE] [--outdir OUTDIR] [--keep] [--reduce]
 
-    Run PSS Product Tests
+   Run PSS Product Tests
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      -H, --show_help       Show detailed help on test options
-      -p PATH, --path PATH  Path to cheetah build tree
-      --cache CACHE         Directory containing locally stored test vectors
-      --outdir OUTDIR       Directory to store candidate data products
-      -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
+   options:
+    -h, --help            show this help message and exit
+    -H, --show_help       Show detailed help on test options
+    -p PATH, --path PATH  Path to cheetah build tree
+    -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
                         Include the following test types (def=product)
-      -e EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
+    -e EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
                         Exclude the following test types
+    --cache CACHE         Directory containing locally stored test vectors
+    --outdir OUTDIR       Directory to store candidate data products
+    --keep                Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)
+    --reduce              Store only header information from SPS candidate filterbanks
 
 ProTest takes a number of optional arguments. The first (-p PATH) is the path to a cheetah build. This can be either of the following
 
@@ -34,17 +36,21 @@ ProTest takes a number of optional arguments. The first (-p PATH) is the path to
 
 ProTest will determine which of these options you are providing under the hood.
 
-If -p is not provided, ProTest will assume you have the cheetah executable(s) in your system $PATH and will look there for the relevant one for each of its tests. If it cannot find cheetah in your $PATH, then an exception will be raised and ProTest will exit.
+If :code:`-p` is not provided, ProTest will assume you have the cheetah executable(s) in your system $PATH and will look there for the relevant one for each of its tests. If it cannot find cheetah in your $PATH, then an exception will be raised and ProTest will exit.
 
-The -i INCLUDE option tells ProTest which group(s) of tests you wish to run according to how they are *marked*. ProTest tests PSS pipelines which rely on different processing resources that may not necessarily be available on all hardware that it runs on. For example, tests of PSS pipelines which requried GPUs will not execute sucessfully on a machine which only has CPUs available. Furthermore, as a tester, you may only wish to test one pipeline type (e.g., Single Pulse Search pipelines but not Acceleration Search pipelines). You may wish to run tests only associated with SKA-LOW but not SKA-MID. For this reason we utilise the marker functionality provided by pytest. Each test is *decorated* with a set of markers which classify tests into groups, thereby allowing the tester to run only the subset of tests that are of interest to them. The user can specify as many markers as required to enable a specific combination of test types. 
+The :code:`-i` INCLUDE option tells ProTest which group(s) of tests you wish to run according to how they are *marked*. ProTest tests PSS pipelines which rely on different processing resources that may not necessarily be available on all hardware that it runs on. For example, tests of PSS pipelines which required GPUs will not execute successfully on a machine which only has CPUs available. Furthermore, as a tester, you may only wish to test one pipeline type (e.g., Single Pulse Search pipelines but not Acceleration Search pipelines). You may wish to run tests only associated with SKA-LOW but not SKA-MID. For this reason we utilise the marker functionality provided by pytest. Each test is *decorated* with a set of markers which classify tests into groups, thereby allowing the tester to run only the subset of tests that are of interest to them. The user can specify as many markers as required to enable a specific combination of test types. 
 
-If -i is not provided, ProTest will execute all of the tests that it has (as specified by the *product* marker). Available markers can be found in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_ or by running *protest -H*
+If :code:`-i` is not provided, ProTest will execute all of the tests that it has (as specified by the *product* marker). Available markers can be found in `pytest.ini <https://gitlab.com/ska-telescope/pss/ska-pss-protest/-/blob/main/src/ska_pss_protest/pytest.ini>`_ or by running *protest -H*
 
-The -e EXCLUDE option tells ProTest which group(s) of tests should not be executed. The user can specify as many markers as required to exclude a specific combination of test types. 
+The :code:`-e` EXCLUDE option tells ProTest which group(s) of tests should not be executed. The user can specify as many markers as required to exclude a specific combination of test types. 
 
---cache is a path to a local repository of PSS test vectors. This may be an existing cache, or a new cache into which new vectors will be pulled and stored. If the vectors required by the tests are not found in the cache directory provided on the command line, then they will be downloaded from the PSS test vector server. --cache is an optional argument. If it is not provided, ProTest will create and use a directory in the user's $HOME area. ProTest will check there is sufficient space on the drive to download a test vector before doing so.
+:code:`--cache` is a path to a local repository of PSS test vectors. This may be an existing cache, or a new cache into which new vectors will be pulled and stored. If the vectors required by the tests are not found in the cache directory provided on the command line, then they will be downloaded from the PSS test vector server. --cache is an optional argument. If it is not provided, ProTest will create and use a directory in the user's $HOME area. ProTest will check there is sufficient space on the drive to download a test vector before doing so.
 
---outdir is the path to a directory into which data products which result from the execution of cheetah are written. This could include lists of candidate metadata, filterbank files, folded archives, etc. For each test, a directory with a randomly generated name is created under the directory specified by --outdir, and the results of that test are written to that directory. If --outdir is not provided, then ProTest will use "/tmp" to store cheetah data products.
+:code:`--outdir` is the path to a directory into which data products which result from the execution of cheetah are written. This could include lists of candidate metadata, filterbank files, folded archives, etc. For each test, a directory with a randomly generated name is created under the directory specified by --outdir, and the results of that test are written to that directory. If --outdir is not provided, then ProTest will use "/tmp" to store cheetah data products.
+
+:code:`--keep` allows the output data products that are created by test runs (written to <outdir>) to be preserved. By default ProTest completely cleans up after itself leaving no files behind. However, for diagnostic puporses, one may wish to keep configuration files, candidates, etc. 
+
+:code:`--reduce` is used to prevent candidate files (e.g., filterbanks) from occupying large amounts of disk space (i.e., in CI pipelines). If :code:`--reduce` is enabled, SPS candidate filterbanks are removed, even if :code:`--keep` is enabled, and are replaced by a json file (placed in <outdir>) that contains information from the header of each filterbank.
 
 To demonstrate, let's run all of the available SPS (Single Pulse Search) tests. We'll use a build tree in this case, and we will leave --outdir and --cache empty.
 

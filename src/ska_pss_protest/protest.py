@@ -21,17 +21,20 @@
     |  -H --show_help Show list of available test markers                    |
     |  -p PATH, --path PATH  Path to cheetah build tree                      |
     |  -i  INCLUDE, --include INCLUDE  Test types to execute                 |
-            e.g., -i type_a type_b (def=product)                             |
+    |        e.g., -i type_a type_b (def=product)                            |
     |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
-            e.g., -e type_a type_b                                           |
+    |        e.g., -e type_a type_b                                          |
     |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
     |  --cache CACHE  Directory to read/write local test vector cache        |
     |        (def=/home/<user>/.cache/SKA)                                   |
+    |  --keep  Preserve the post-test data products                          |
+    |          (e.g, candidates, cheetah logs, configs, etc)                 |
+    |  --reduce Store only header information from SPS candidate filterbanks |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2023 SKA Organisation                                        |
+    | Copyright 2024 SKA Organisation                                        |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -55,6 +58,7 @@
 import argparse
 import os
 import sys
+import time
 
 import pytest
 
@@ -69,17 +73,32 @@ class ProTest:
     """
 
     def __init__(
-        self, path, cache, outdir, mark=None, exclude=None, show_help=False
+        self,
+        path,
+        cache,
+        outdir,
+        mark=None,
+        exclude=None,
+        keep=False,
+        reduce=False,
+        show_help=False,
     ):
 
         self.path = path
         self.mark = mark
         self.exclude = exclude
         self.cache = cache
-        self.outdir = outdir
+        self.reduce = reduce
+        self.keep = keep
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
+
+        # Set outputs directory
+        if not os.path.isdir(outdir):
+            raise FileNotFoundError("{} not found".format(outdir))
+        set_dir = "protest-{}".format(time.strftime("%Y%m%d-%H%M%S"))
+        self.outdir = os.path.join(outdir, set_dir)
 
         if show_help:
             pytest_args = [
@@ -122,6 +141,12 @@ class ProTest:
         if self.outdir:
             outdir_arg = ["--outdir=" + self.outdir]
             pytest_args = outdir_arg + pytest_args
+        if self.keep:
+            keep_arg = ["--keep"]
+            pytest_args = keep_arg + pytest_args
+        if self.reduce:
+            reduce_arg = ["--reduce"]
+            pytest_args = reduce_arg + pytest_args
 
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
@@ -147,18 +172,6 @@ def main():
         default=None,
     )
     parser.add_argument(
-        "--cache",
-        help="Directory containing locally stored test vectors",
-        required=False,
-        default=None,
-    )
-    parser.add_argument(
-        "--outdir",
-        help="Directory to store candidate data products",
-        required=False,
-        default="/tmp",
-    )
-    parser.add_argument(
         "-i",
         "--include",
         nargs="+",
@@ -173,6 +186,30 @@ def main():
         help="Exclude the following test types",
         required=False,
     )
+    parser.add_argument(
+        "--cache",
+        help="Directory containing locally stored test vectors",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
+        "--outdir",
+        help="Directory to store candidate data products",
+        required=False,
+        default="/tmp",
+    )
+    parser.add_argument(
+        "--keep",
+        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
+        required=False,
+        action="store_true",
+    )
+    parser.add_argument(
+        "--reduce",
+        help="Store only header information from SPS candidate filterbanks",
+        required=False,
+        action="store_true",
+    )
     args = parser.parse_args()
 
     protest = ProTest(
@@ -181,6 +218,8 @@ def main():
         args.outdir,
         args.include,
         args.exclude,
+        args.keep,
+        args.reduce,
         args.show_help,
     )
     protest.run()
