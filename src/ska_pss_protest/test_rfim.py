@@ -37,7 +37,7 @@ def config():
     can be edited for this specific test
     """
     template_path = os.path.join(
-        DATA_DIR, "config_templates/mid_single_rfim.xml"
+        DATA_DIR, "config_templates/mid_single_beam.xml"
     )
     assert os.path.isfile(template_path)
     tree = et.parse(template_path)
