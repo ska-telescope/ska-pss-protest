@@ -120,7 +120,7 @@ def set_rfim_iqrm(config, threshold, radius):
 
 @given(
     parsers.parse(
-        "Sum-Threshold RFIM turned on with cutoff equal to {cutoff} and window of {window}."
+        "Sum-Threshold RFIM enabled with cutoff of {cutoff} and window size of {window}."
     )
 )
 def set_rfim_sumthreshold(config, cutoff, window):
