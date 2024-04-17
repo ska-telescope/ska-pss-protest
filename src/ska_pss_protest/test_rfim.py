@@ -194,6 +194,59 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
 
     spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
 
+    basename = os.path.splitext(
+        os.path.basename(context["test_vector"].local_path)
+    )[0].split("_")
+    file_mark = (
+        basename[2]
+        + ","
+        + basename[3]
+        + ","
+        + basename[4]
+        + ","
+        + basename[7]
+        + ","
+        + basename[8]
+    )
+    with open(
+        os.path.join(context["candidate_dir"], "summary.txt"), "a+"
+    ) as summary_file:
+        summary_file.write(
+            "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,detect_sn\n"
+        )
+        for i in spccl.detections:
+            info = (
+                "rfim_sps,"
+                + file_mark
+                + ",detection,"
+                + str(i[0])
+                + ","
+                + str(i[1])
+                + ","
+                + str(i[2])
+                + ","
+                + str(i[3])
+                + ""
+                + "\n"
+            )
+            summary_file.write(info)
+        for i in spccl.non_detections:
+            info = (
+                "rfim_sps,"
+                + file_mark
+                + ",non_detection,"
+                + str(i[0])
+                + ","
+                + str(i[1])
+                + ","
+                + str(i[2])
+                + ","
+                + str(i[3])
+                + ""
+                + "\n"
+            )
+            summary_file.write(info)
+
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
 
