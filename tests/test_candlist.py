@@ -712,7 +712,7 @@ class SpCclTests:
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
         assert tols.dm_tol == pytest.approx(2534, abs=1)
 
-    def test_summary_exporter_creates_detections(self, get_vector):
+    def test_summary_exporter_detections(self, get_vector):
         """
         This test is to make sure that summary_exporter()
         exports non-detection candidates to a summary.txt file
@@ -744,8 +744,16 @@ class SpCclTests:
             "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
         )
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
+        with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:
+            lines = len(fp.readlines())
+        assert (
+            len(candidate.detections) + len(candidate.non_detections)
+            == lines - 1
+        )
 
-    def test_summary_exporter_creates_non_detections(self):
+        os.remove(os.path.join(spccl_dir, "summary.txt"))
+
+    def test_summary_exporter_non_detections(self):
         """
         This test is to make sure that summary_exporter()
         exports non-detection candidates to a summary.txt file
@@ -784,3 +792,11 @@ class SpCclTests:
             "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
         )
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
+        with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:
+            lines = len(fp.readlines())
+        assert (
+            len(candidate.detections) + len(candidate.non_detections)
+            == lines - 1
+        )
+
+        os.remove(os.path.join(spccl_dir, "summary.txt"))
