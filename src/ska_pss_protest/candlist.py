@@ -475,6 +475,73 @@ class SpCcl:
         logging.info("No detection of pulse: {}\n".format(exp))
         return False
 
+    def summary_exporter(self, test_vector_name):
+        """
+        Exports a Summary file named - summary.txt in the candidate_dir
+        containing all the information about all the detections and non-detections.
+
+        Parameters
+        --------------
+        test_vector_name: str
+            Address of the test vector file, whose name
+            contains information of the injected pulsar.
+        """
+        logging.info("Writing Summary file")
+        basename = os.path.splitext(os.path.basename(test_vector_name))[
+            0
+        ].split("_")
+        file_mark = (
+            basename[2]
+            + ","
+            + basename[3]
+            + ","
+            + basename[4]
+            + ","
+            + basename[7]
+            + ","
+            + basename[8]
+        )
+        with open(
+            os.path.join(self.spccl_dir, "summary.txt"), "a+"
+        ) as summary_file:
+            summary_file.write(
+                "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,detect_sn\n"
+            )
+
+            for i in self.detections:
+                info = (
+                    "rfim_sps,"
+                    + file_mark
+                    + ",detection,"
+                    + str(i[0])
+                    + ","
+                    + str(i[1])
+                    + ","
+                    + str(i[2])
+                    + ","
+                    + str(i[3])
+                    + ""
+                    + "\n"
+                )
+                summary_file.write(info)
+
+            for i in self.non_detections:
+                info = (
+                    "rfim_sps,"
+                    + file_mark
+                    + ",non_detection,"
+                    + str(i[0])
+                    + ","
+                    + str(i[1])
+                    + ","
+                    + str(i[2])
+                    + ","
+                    + str(i[3])
+                    + ""
+                    + "\n"
+                )
+                summary_file.write(info)
+
 
 class WidthTol:
     """

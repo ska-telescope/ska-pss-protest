@@ -711,3 +711,76 @@ class SpCclTests:
         assert tols.width_tol == [524288.0, 1000000.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
         assert tols.dm_tol == pytest.approx(2534, abs=1)
+
+    def test_summary_exporter_creates_detections(self, get_vector):
+        """
+        This test is to make sure that summary_exporter()
+        exports non-detection candidates to a summary.txt file
+        by checking if it exists after the process has run
+        """
+        spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
+        candidate = cand.SpCcl(spccl_dir)
+        candidate.from_vector(get_vector.local_path)
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+        candidate.compare_widthstep(
+            VHeader(get_vector.local_path).allpars(), widths_list
+        )
+        candidate.summary_exporter(
+            "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        )
+        assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
+
+    def test_summary_exporter_creates_non_detections(self):
+        """
+        This test is to make sure that summary_exporter()
+        exports non-detection candidates to a summary.txt file
+        by checking if it exists after the process has run
+        """
+        spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm_incorrect")
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+        }
+        candidate = cand.SpCcl(spccl_dir)
+        candidate.from_spccl(
+            os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
+        )
+        widths_list = [
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            64,
+            128,
+            512,
+            1024,
+            2048,
+            4096,
+            8192,
+            15000,
+        ]
+        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.summary_exporter(
+            "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        )
+        assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
