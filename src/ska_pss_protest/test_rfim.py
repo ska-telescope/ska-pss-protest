@@ -198,8 +198,7 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
     ]
 
     spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
-    # vector_header = VHeader(context["test_vector"].local_path)
-    spccl.summary_export(context["test_vector"].local_path)
+    spccl.summary_export(context["vector_header"].allpars())
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0

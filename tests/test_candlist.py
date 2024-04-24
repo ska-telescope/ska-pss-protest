@@ -740,9 +740,7 @@ class SpCclTests:
         candidate.compare_widthstep(
             VHeader(get_vector.local_path).allpars(), widths_list
         )
-        candidate.summary_export(
-            "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
-        )
+        candidate.summary_export(VHeader(get_vector.local_path).allpars())
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
         with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:
             lines = len(fp.readlines())
@@ -766,6 +764,10 @@ class SpCclTests:
             "nchans": 4096,
             "tsamp": 6.4e-05,
             "freq": 0.2,
+            "rfi_id": "0000",
+            "width": 0.1,
+            "sig": 100,
+            "disp": 10,
         }
         candidate = cand.SpCcl(spccl_dir)
         candidate.from_spccl(
@@ -788,9 +790,7 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(source_properties, widths_list)
-        candidate.summary_export(
-            "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
-        )
+        candidate.summary_export(source_properties)
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
         with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:
             lines = len(fp.readlines())

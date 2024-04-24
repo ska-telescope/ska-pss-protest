@@ -475,31 +475,29 @@ class SpCcl:
         logging.info("No detection of pulse: {}\n".format(exp))
         return False
 
-    def summary_export(self, test_vector_name):
+    def summary_export(self, vector_header):
         """
         Exports a Summary file named - summary.txt in the candidate_dir
         containing all the information about all the detections and non-detections.
 
         Parameters
         --------------
-        test_vector_name: str
-            Address of the test vector file, whose name
-            contains information of the injected pulsar.
+        vector_header: dict
+            This is a dictionary containing information about
+            headers such as information about pulses injected into
+            test-vector, RFI-ID, Filterbank header etc..
         """
         logging.info("Writing Summary file")
-        basename = os.path.splitext(os.path.basename(test_vector_name))[
-            0
-        ].split("_")
         file_mark = (
-            basename[2]
+            str(vector_header["freq"])
             + ","
-            + basename[3]
+            + str(vector_header["width"])
             + ","
-            + basename[4]
+            + str(vector_header["disp"])
             + ","
-            + basename[7]
+            + str(vector_header["sig"])
             + ","
-            + basename[8]
+            + vector_header["rfi_id"]
         )
         with open(
             os.path.join(self.spccl_dir, "summary.txt"), "a+"
