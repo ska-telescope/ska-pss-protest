@@ -488,17 +488,7 @@ class SpCcl:
             test-vector, RFI-ID, Filterbank header etc..
         """
         logging.info("Writing Summary file")
-        file_mark = (
-            str(vector_header["freq"])
-            + ","
-            + str(vector_header["width"])
-            + ","
-            + str(vector_header["disp"])
-            + ","
-            + str(vector_header["sig"])
-            + ","
-            + vector_header["rfi_id"]
-        )
+        file_mark = f"{vector_header['freq']},{vector_header['width']},{vector_header['disp']},{vector_header['sig']},{vector_header['rfi_id']}"
         with open(
             os.path.join(self.spccl_dir, "summary.txt"), "a+"
         ) as summary_file:
