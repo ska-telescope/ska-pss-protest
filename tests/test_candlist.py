@@ -740,7 +740,7 @@ class SpCclTests:
         candidate.compare_widthstep(
             VHeader(get_vector.local_path).allpars(), widths_list
         )
-        candidate.summary_exporter(
+        candidate.summary_export(
             "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
         )
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
@@ -788,7 +788,7 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(source_properties, widths_list)
-        candidate.summary_exporter(
+        candidate.summary_export(
             "path/to/SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
         )
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
