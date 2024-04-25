@@ -158,6 +158,7 @@ class FilterbankTests:
         assert pars["width"] == 0.4
         assert pars["sig"] == 50.0
         assert pars["sig"] != 100.0
+        assert pars["rfi_id"] == "0000"
         with pytest.raises(KeyError):
             pars["bad_key"]
 

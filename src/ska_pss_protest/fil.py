@@ -206,6 +206,7 @@ class VHeader:
                 "width": float(basename[3]),
                 "disp": float(basename[4]),
                 "sig": float(basename[7]),
+                "rfi_id": basename[8],
             }
             return signal_pars
         except ValueError:

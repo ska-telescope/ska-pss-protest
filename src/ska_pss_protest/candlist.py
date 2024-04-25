@@ -475,6 +475,35 @@ class SpCcl:
         logging.info("No detection of pulse: {}\n".format(exp))
         return False
 
+    def summary_export(self, vector_header):
+        """
+        Exports a Summary file named - summary.txt in the candidate_dir
+        containing all the information about all the detections and non-detections.
+
+        Parameters
+        --------------
+        vector_header: dict
+            This is a dictionary containing information about
+            headers such as information about pulses injected into
+            test-vector, RFI-ID, Filterbank header etc..
+        """
+        logging.info("Writing Summary file")
+        file_mark = f"{vector_header['freq']},{vector_header['width']},{vector_header['disp']},{vector_header['sig']},{vector_header['rfi_id']}"
+        with open(
+            os.path.join(self.spccl_dir, "summary.txt"), "a+"
+        ) as summary_file:
+            summary_file.write(
+                "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,detect_sn\n"
+            )
+
+            for detection in self.detections:
+                info = f"rfim_sps,{file_mark},detection,{','.join(map(str, detection))}\n"
+                summary_file.write(info)
+
+            for non_detection in self.non_detections:
+                info = f"rfim_sps,{file_mark},non_detection,{','.join(map(str, non_detection))}\n"
+                summary_file.write(info)
+
 
 class WidthTol:
     """

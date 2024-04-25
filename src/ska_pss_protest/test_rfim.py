@@ -39,6 +39,11 @@ def config():
     )
     assert os.path.isfile(template_path)
     tree = et.parse(template_path)
+    root = tree.getroot()
+    for sink in root.findall("beams/beam/sinks/channels/sps_events/"):
+        if sink.tag == "sink":
+            if sink.find("id").text == "candidate_files":
+                root.find("beams/beam/sinks/channels/sps_events").remove(sink)
 
     def _edit(tag, value):
         """
@@ -193,6 +198,8 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
     ]
 
     spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
+    if pytestconfig.getoption("keep"):
+        spccl.summary_export(context["vector_header"].allpars())
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0
