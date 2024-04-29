@@ -55,6 +55,7 @@ import logging
 import os
 
 import numpy as np
+import pandas as pd
 
 from ska_pss_protest.fil import VHeader
 
@@ -689,3 +690,87 @@ class WidthTol:
         self.sntol = sn_int * np.sqrt(
             (wint * (period - weffbox)) / (weffbox * (period - wint))
         )
+
+
+class FdasScl:
+    """
+    Parses metadata products from the frequency domain
+    acceleration search (FDAS) pipeline.
+
+    Parameters
+    ----------
+    scl_dir: str
+        Path to directory containing FDAS candidate metdata
+        file (SCL=sifted candidate list)
+    extention: str
+        Expected file extention of scl file
+    """
+
+    def __init__(self, scl_dir=None, extension=".scl"):
+        self.scl_dir = scl_dir
+        self.extension = extension
+
+        # Have we set a scl dir?
+        if not self.scl_dir:
+            raise OSError("No candidate directory specified")
+        # Does the scl dir exist on the filesystem?
+        if not os.path.isdir(self.scl_dir):
+            raise OSError("No such directory: {}".format(self.scl_dir))
+
+        self.detections = []
+        self.non_detections = []
+
+        # Get list of cands from file in scl directory
+        self.cands = self._get_cands(self.scl_dir, self.extension)
+        self.expected = None
+
+    @staticmethod
+    def _get_cands(scl_dir: str, ext: str) -> list:
+        """
+        Look up cands file in scl directory,
+        and process each line as a candidate, return
+        candidates as an array comprising period, pdot,
+        DM, width and S/N values. One row for each candidate.
+
+        Parameters
+        ----------
+        scl_dir: str
+            Directory expected to contain
+            candidate metadata file
+
+        ext: str
+            Extension of candidate metadata file
+
+        Returns
+        -------
+        cand_metadata: numpy.ndarray
+           MxN array containing M candidates
+           each with N properties (nominally 5)
+        """
+        # Get name of metadata file from spccl_dir
+        files = []
+        for this_file in os.listdir(scl_dir):
+            if this_file.endswith(ext):
+                files.append(this_file)
+        # Do we only have one candidate metadata file?
+        if len(files) == 1:
+            cand_file = os.path.join(scl_dir, files[0])
+            logging.info("Detected candidates found at: {}".format(cand_file))
+        else:
+            raise IOError(
+                "Expected 1 file in {} \
+                    with extension {}. Found {}".format(
+                    scl_dir, ext, len(files)
+                )
+            )
+        # If one file is found, load as pandas dataframe and return
+        scl_header = ["period", "pdot", "dm", "width", "sn"]
+        cand_metadata = pd.read_csv(cand_file, sep=" ")
+        cand_metadata.columns = scl_header
+        if cand_metadata.empty:
+            raise EOFError("Candidate list {} empty".format(cand_file))
+        logging.info("Located {} candidates".format(cand_metadata.shape[0]))
+
+        # Sort by S/N in descending order
+        cand_metadata = cand_metadata.sort_values("sn", ascending=False)
+        return cand_metadata
