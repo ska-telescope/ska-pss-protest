@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -800,3 +798,90 @@ class SpCclTests:
         )
 
         os.remove(os.path.join(spccl_dir, "summary.txt"))
+
+
+@mark.candlisttests
+@mark.scltests
+@mark.unit
+class SclTests:
+    """
+    Tests of the FDAS candidate metadata file parser(s)
+    """
+
+    def test_non_existent_spccl_dir(self):
+        """
+        Test exception is raised when non-existent
+        scl directory is passed to constructor
+        """
+        scl_dir = "/tmp/random_test_dir/ajd994jfma29"
+        with pytest.raises(OSError):
+            cand.FdasScl(scl_dir)
+
+    def test_load_detected_candidates(self):
+        """
+        Test that detected candidates files are loaded correctly.
+        A directory containing the detected metadata file is provided
+        and the candidate metadata file (.scl) is parsed and the
+        contents returned as a Nx4 array, where N is the number of
+        candidates and 5 is the number of parameters per candidate.
+        """
+        # Set up directory containing "detected" candidates file
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+
+        # Instantiate candidate parser, passing directory as args
+        # The directory contains a "detected" candidates file which will
+        # be loaded into memory and the contents compared to
+        # a list of expected candidates (next step)
+        candidate = cand.FdasScl(scl_dir)
+
+        # Load in "expected" candidate metadata file
+        known_file = os.path.join(DATA_DIR, "scl_1/test_candlist.scl")
+        known_cands = np.loadtxt(known_file, unpack=False, skiprows=1).tolist()
+        known_cands.sort(key=lambda x: x[4], reverse=True)
+
+        # Check that the two sets of candidates are the same
+        assert np.all(known_cands == candidate.cands)
+
+    def test_no_candidate_dir(self):
+        """
+        Tests that the correct exception is
+        raised when no candidate directory is
+        passed to the constructor.
+        """
+        with pytest.raises(OSError):
+            cand.FdasScl()
+
+    def test_no_cand_file_extension_in_valid_dir(self):
+        """
+        Tests that the correct exception is raised if
+        a valid directory is passed to the contructor
+        but files of a custom extension are not found
+        there
+        """
+        # Create new directory with random name under /tmp
+        scl_dir = tempfile.mkdtemp()
+        with pytest.raises(IOError):
+            # Pass real dir but with random non-existent extension
+            cand.FdasScl(scl_dir, "sdfhjs")
+        shutil.rmtree(scl_dir)
+
+    def test_wrong_number_of_cand_files(self):
+        """
+        We expect one candidate file per scan and therefore
+        only one metadata file in each directory. This tests
+        that the correct exception is raised if more than one
+        candidate file is found.
+        """
+        # Create new directory with random name under /tmp
+        scl_dir = tempfile.mkdtemp()
+
+        # Define two candidate metadata file paths
+        file1 = os.path.join(scl_dir, "cand1.scl")
+        file2 = os.path.join(scl_dir, "cand2.scl")
+
+        with pytest.raises(IOError):
+            # Generate empty files in directory
+            open(file1, "a").close()
+            open(file2, "a").close()
+            cand.FdasScl(scl_dir)
+        shutil.rmtree(scl_dir)
