@@ -51,6 +51,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 from pytest import mark
 
@@ -836,11 +837,11 @@ class SclTests:
 
         # Load in "expected" candidate metadata file
         known_file = os.path.join(DATA_DIR, "scl_1/test_candlist.scl")
-        known_cands = np.loadtxt(known_file, unpack=False, skiprows=1).tolist()
-        known_cands.sort(key=lambda x: x[4], reverse=True)
+        known_cands = pd.read_csv(known_file, sep=r"\s+")
+        known_cands.columns = ["period", "pdot", "dm", "width", "sn"]
+        known_cands = known_cands.sort_values("sn", ascending=False)
 
-        # Check that the two sets of candidates are the same
-        assert np.all(known_cands == candidate.cands)
+        assert np.all(candidate.cands == known_cands)
 
     def test_no_candidate_dir(self):
         """
@@ -885,3 +886,24 @@ class SclTests:
             open(file2, "a").close()
             cand.FdasScl(scl_dir)
         shutil.rmtree(scl_dir)
+
+    def test_from_vector(self):
+        """
+        Tests that we can extract the correct pulsar
+        parameters from a FDAS test vector
+        """
+        vector_a = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        vector_b = "FDAS-HSUM-MID_38d46df_500.00115818617536_0.05_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+
+        period = 1.0 / 500.0
+        width = 0.2 * period * 1000
+        candidate.from_vector(vector_a)
+        assert candidate.expected == [period, 1.0, width, 50.0]
+
+        period = 1.0 / 500.00115818617536
+        width = 0.05 * period * 1000
+        candidate.from_vector(vector_b)
+        assert candidate.expected == [period, 1.0, width, 50.0]
+        assert candidate.expected != [period, 2.0, width, 500.0]

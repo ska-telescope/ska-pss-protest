@@ -765,7 +765,7 @@ class FdasScl:
             )
         # If one file is found, load as pandas dataframe and return
         scl_header = ["period", "pdot", "dm", "width", "sn"]
-        cand_metadata = pd.read_csv(cand_file, sep=" ")
+        cand_metadata = pd.read_csv(cand_file, sep=r"\s+")
         cand_metadata.columns = scl_header
         if cand_metadata.empty:
             raise EOFError("Candidate list {} empty".format(cand_file))
@@ -774,3 +774,40 @@ class FdasScl:
         # Sort by S/N in descending order
         cand_metadata = cand_metadata.sort_values("sn", ascending=False)
         return cand_metadata
+
+    def from_vector(self, vector: str) -> list:
+        """
+        Extract parameters of the pulsar using a test
+        vector filename. These will be used to validate
+        an acceleration search.
+
+        Parameters
+        ----------
+        vector: str
+            Path to test vector
+
+        Returns
+        -------
+        list
+            List of pulsar parameters. The list is an
+            1xN list, where N is the number of parameters
+            used to validate each candidate.
+        """
+        logging.info("Extracting pulsar parameters from {}".format(vector))
+
+        # Split path and extension from vector filename
+        basename = os.path.splitext(os.path.basename(vector))[0].split("_")
+
+        # Determine signal properties from name of vector
+        period = 1.0 / float(basename[2])
+        width = float(basename[3]) * period * 1000  # milliseconds
+        disp = float(basename[4])
+        sig_fold = float(basename[7])
+
+        self.expected = [period, disp, width, sig_fold]
+
+class FdasTolDummy():
+    def __init__(self, expected: list):
+        pass
+
+    def period
