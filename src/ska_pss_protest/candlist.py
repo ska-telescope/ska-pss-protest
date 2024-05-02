@@ -68,7 +68,7 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-# pylint: disable=C0301,W1202,C0209,W0703,W0631,C0103
+# pylint: disable=C0301,W1202,C0209,W0703,W0631,C0103,W0613
 
 
 class SpCcl:
@@ -717,12 +717,12 @@ class FdasScl:
         if not os.path.isdir(self.scl_dir):
             raise OSError("No such directory: {}".format(self.scl_dir))
 
-        self.detections = []
-        self.non_detections = []
-
         # Get list of cands from file in scl directory
         self.cands = self._get_cands(self.scl_dir, self.extension)
+
         self.expected = None
+        self.detected = None
+        self.recovered = None
 
     @staticmethod
     def _get_cands(scl_dir: str, ext: str) -> list:
@@ -806,8 +806,145 @@ class FdasScl:
 
         self.expected = [period, disp, width, sig_fold]
 
-class FdasTolDummy():
-    def __init__(self, expected: list):
-        pass
+    def search_dummy(self):
+        """
+        Method to search for an injected pulsar from the
+        list of candidate detections. A match is defined if
+        a candidate signal matches an expected signal within
+        tolerances, as defined in the FdasDummyTol class.
 
-    def period
+        This is placeholder method until format FDAS tolerances
+        are defined.
+        """
+        logging.info("Using ruleset: Dummy")
+        logging.info(
+            "Searching pulsar candidates for {}".format(self.expected)
+        )
+
+        # Get a tolerance for each metadata parameter
+        rules = FdasTolDummy(self.expected)
+
+        # Apply tolerance rules to each candidate
+        sifted, best = self._compare(self.cands, rules)
+
+        # Are there ANY candidates within our tolerances?
+        if best is None:
+            # If no, our pulsar was not recovered. Exit
+            self.detected = False
+            return
+
+        # One or more candidates have survived our tolerance rules.
+        logging.info(
+            "Reduced candidate list to {} candidates".format(sifted.shape[0])
+        )
+        logging.info("Candidates within tolerances:\n{}".format(sifted))
+
+        # Find the highest S/N candidate in our list of survivors.
+        self.recovered = sifted.loc[[best]]
+        logging.info("Best candidate is \n{}".format(self.recovered))
+        self.detected = True
+
+    @staticmethod
+    def _compare(cands: object, rules: object):
+        """
+        Compares metadata for a known pulsar signal to the metadata for each
+        detected candidate. If a candidate that is consistent with the known
+        signal is found, within the tolerances set by the ruleset used,
+        its metadata is returned, else, None.
+
+        Parameters
+        ----------
+        cands : object
+           A pandas dataframe comprising 5 columns describing the
+           period, period derivatives, dm, width, and S/N for each
+           candidate
+
+        rules : object
+            An object defining the tolerances for each of the
+            parameters in the known signal.
+
+        Returns
+        -------
+        sifted cands : object
+            pandas dataframe containing only candidates which
+            satisfy tolerances defined in the ruleset used.
+
+        detection : int
+            The index of the surviving candidate that has the
+            highest S/N.
+        """
+        # Take our pandas dataframe and reduce it to only those
+        # candididates that fall within the tolerances set by the
+        # rule set chosen
+        sifted_cands = cands.query(
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
+        )
+        if not sifted_cands.empty:
+            # If we have any candidates left, sort them by S/N
+            sifted_cands = sifted_cands.sort_values(by="sn", ascending=False)
+            detection = sifted_cands["sn"].idxmax()
+            return sifted_cands, detection
+        return None, None
+
+
+class FdasTolDummy:
+    """
+    Class to compute the tolerances on the FDAS candidates
+
+    This is a placeholder class until a format set of FDAS
+    tolerances are defined.
+    """
+
+    def __init__(self, expected: list):
+
+        self.expected = expected
+        self.period_tol = None
+
+        self.calc_tols()
+
+    def calc_tols(self):
+        """
+        Set tolerances for each of the parameters
+        we are testing candidates against. We set
+        only period, DM, width and S/N. Period
+        derivate also appears in the candidate list
+        but we do not extract this parameter from
+        the test vector so this remains unconstrained.
+        """
+        self.period_tol = self.period(self.expected[0])
+        self.dm_tol = self.dm(self.expected[1])
+        self.width_tol = self.width(self.expected[2])
+        self.sn_tol = self.sn(self.expected[3])
+        logging.info("EXPECTED: {}".format(self.expected))
+
+    @staticmethod
+    def period(this_period):
+        """
+        Dummy method to set period tolerance
+        """
+        ptol = 0.1 * this_period
+        return [this_period - ptol, this_period + ptol]
+
+    @staticmethod
+    def dm(this_dm):
+        """
+        Dummy method to set DM tolerance
+        """
+        dmtol = 0.1 * this_dm
+        return [this_dm - dmtol, this_dm + dmtol]
+
+    @staticmethod
+    def width(this_width):
+        """
+        Dummy method to set width tolerance
+        """
+        widthtol = 0.1 * this_width
+        return [this_width - widthtol, this_width + widthtol]
+
+    @staticmethod
+    def sn(this_sn):
+        """
+        Dummy method to set S/N tolerance
+        """
+        sntol = 0.85 * this_sn
+        return sntol

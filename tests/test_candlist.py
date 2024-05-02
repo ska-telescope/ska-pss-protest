@@ -907,3 +907,43 @@ class SclTests:
         candidate.from_vector(vector_b)
         assert candidate.expected == [period, 1.0, width, 50.0]
         assert candidate.expected != [period, 2.0, width, 500.0]
+
+    def test_search_using_dummy_ruleset(self):
+        """
+        Test the dummy search method recovers the one
+        candidate that falls within a set of tolerances.
+        """
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_dummy()
+        assert candidate.detected is True
+        assert candidate.recovered.shape[0] == 1
+        true_candidate = [0.002, 1e-15, 0.999, 0.4, 49.999]
+        true = pd.DataFrame([true_candidate], index=[500])
+        true.columns = ["period", "pdot", "dm", "width", "sn"]
+        assert np.all(true == candidate.recovered)
+
+    def test_search_using_dummy_ruleset_no_detection(self):
+        """
+        Test the dummy search method filters all candidates
+        """
+        vector = "F_1_100000.0_0.2_1.0_0.0_G_500.0_0000_1.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_dummy()
+        assert candidate.detected is False
+        assert candidate.recovered is None
+
+    def test_dummy_fdas_rules(self):
+        """
+        Test the dummy tolerance generator
+        returns to expected ranges/limits
+        """
+        tols = cand.FdasTolDummy([1, 100, 100, 100])
+        assert tols.period_tol == [0.9, 1.1]
+        assert tols.dm_tol == [90, 110]
+        assert tols.width_tol == [90, 110]
+        assert tols.sn_tol == 85
