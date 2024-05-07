@@ -4,16 +4,13 @@
     |                       PSS Candidate parser                             |
     |                                                                        |
     **************************************************************************
-    | Description:                                                           |
+    | Description: Candidate metadata sifter for FDAS and SPS                |
     |                                                                        |
     **************************************************************************
     | Author: Benjamin Shaw                                                  |
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     | Author: Lina Levin Preston                                             |
     | Email : lina.preston@manchester.ac.uk                                  |
-    **************************************************************************
-    | Usage: TBC                                                             |
-    |                                                                        |
     **************************************************************************
     | License:                                                               |
     |                                                                        |
@@ -80,8 +77,8 @@ class SpCcl:
     ----------
     spccl_dir: str
         Path to directory containing SPS metadata file
-    extention: str
-        Expected file extention of SPS metadata file
+    extension: str
+        Expected file extension of SPS metadata file
     """
 
     def __init__(self, spccl_dir=None, extension=".spccl"):
@@ -701,9 +698,9 @@ class FdasScl:
     ----------
     scl_dir: str
         Path to directory containing FDAS candidate metdata
-        file (SCL=sifted candidate list)
-    extention: str
-        Expected file extention of scl file
+        file (scl=sifted candidate list)
+    extension: str
+        Expected file extension of scl file
     """
 
     def __init__(self, scl_dir=None, extension=".scl"):
@@ -813,7 +810,7 @@ class FdasScl:
         a candidate signal matches an expected signal within
         tolerances, as defined in the FdasDummyTol class.
 
-        This is placeholder method until format FDAS tolerances
+        This is placeholder method until formal FDAS tolerances
         are defined.
         """
         logging.info("Using ruleset: Dummy")
