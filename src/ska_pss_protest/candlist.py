@@ -799,9 +799,13 @@ class FdasScl:
         period = 1.0 / float(basename[2])
         width = float(basename[3]) * period * 1000  # milliseconds
         disp = float(basename[4])
+        accel = float(basename[5])
         sig_fold = float(basename[7])
 
-        self.expected = [period, disp, width, sig_fold]
+        # Set expected period derivative from acceleration parameter
+        pdot = -accel / (period * 3e8)
+
+        self.expected = [period, pdot, disp, width, sig_fold]
 
     def search_dummy(self):
         """
@@ -874,7 +878,7 @@ class FdasScl:
         # candididates that fall within the tolerances set by the
         # rule set chosen
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N
@@ -909,9 +913,10 @@ class FdasTolDummy:
         the test vector so this remains unconstrained.
         """
         self.period_tol = self.period(self.expected[0])
-        self.dm_tol = self.dm(self.expected[1])
-        self.width_tol = self.width(self.expected[2])
-        self.sn_tol = self.sn(self.expected[3])
+        self.pdot_tol = self.pdot(self.expected[1])
+        self.dm_tol = self.dm(self.expected[2])
+        self.width_tol = self.width(self.expected[3])
+        self.sn_tol = self.sn(self.expected[4])
         logging.info("EXPECTED: {}".format(self.expected))
 
     @staticmethod
@@ -921,6 +926,13 @@ class FdasTolDummy:
         """
         ptol = 0.1 * this_period
         return [this_period - ptol, this_period + ptol]
+
+    @staticmethod
+    def pdot(this_pdot):
+        """
+        Dummy method to set period derivative tolerance
+        """
+        return [0.1 * this_pdot, 10 * this_pdot]
 
     @staticmethod
     def dm(this_dm):

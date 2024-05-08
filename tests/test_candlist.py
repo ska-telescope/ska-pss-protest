@@ -900,13 +900,13 @@ class SclTests:
         period = 1.0 / 500.0
         width = 0.2 * period * 1000
         candidate.from_vector(vector_a)
-        assert candidate.expected == [period, 1.0, width, 50.0]
+        assert candidate.expected == [period, 0, 1.0, width, 50.0]
 
         period = 1.0 / 500.00115818617536
         width = 0.05 * period * 1000
         candidate.from_vector(vector_b)
-        assert candidate.expected == [period, 1.0, width, 50.0]
-        assert candidate.expected != [period, 2.0, width, 500.0]
+        assert candidate.expected == [period, 0, 1.0, width, 50.0]
+        assert candidate.expected != [period, 0, 2.0, width, 500.0]
 
     def test_search_using_dummy_ruleset(self):
         """
@@ -920,7 +920,7 @@ class SclTests:
         candidate.search_dummy()
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
-        true_candidate = [0.002, 1e-15, 0.999, 0.4, 49.999]
+        true_candidate = [0.002, 0, 0.999, 0.4, 49.999]
         true = pd.DataFrame([true_candidate], index=[500])
         true.columns = ["period", "pdot", "dm", "width", "sn"]
         assert np.all(true == candidate.recovered)
@@ -942,8 +942,9 @@ class SclTests:
         Test the dummy tolerance generator
         returns to expected ranges/limits
         """
-        tols = cand.FdasTolDummy([1, 100, 100, 100])
+        tols = cand.FdasTolDummy([1, 1e-15, 100, 100, 100])
         assert tols.period_tol == [0.9, 1.1]
         assert tols.dm_tol == [90, 110]
         assert tols.width_tol == [90, 110]
         assert tols.sn_tol == 85
+        assert tols.pdot_tol == [pytest.approx(1e-16), pytest.approx(1e-14)]
