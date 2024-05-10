@@ -823,7 +823,7 @@ class SclTests:
         Test that detected candidates files are loaded correctly.
         A directory containing the detected metadata file is provided
         and the candidate metadata file (.scl) is parsed and the
-        contents returned as a Nx4 array, where N is the number of
+        contents returned as a Nx5 array, where N is the number of
         candidates and 5 is the number of parameters per candidate.
         """
         # Set up directory containing "detected" candidates file
@@ -855,7 +855,7 @@ class SclTests:
     def test_no_cand_file_extension_in_valid_dir(self):
         """
         Tests that the correct exception is raised if
-        a valid directory is passed to the contructor
+        a valid directory is passed to the constructor
         but files of a custom extension are not found
         there
         """

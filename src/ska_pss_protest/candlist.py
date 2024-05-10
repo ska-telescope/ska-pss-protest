@@ -697,7 +697,7 @@ class FdasScl:
     Parameters
     ----------
     scl_dir: str
-        Path to directory containing FDAS candidate metdata
+        Path to directory containing FDAS candidate metadata
         file (scl=sifted candidate list)
     extension: str
         Expected file extension of scl file
@@ -906,11 +906,7 @@ class FdasTolDummy:
     def calc_tols(self):
         """
         Set tolerances for each of the parameters
-        we are testing candidates against. We set
-        only period, DM, width and S/N. Period
-        derivate also appears in the candidate list
-        but we do not extract this parameter from
-        the test vector so this remains unconstrained.
+        we are testing candidates against.
         """
         self.period_tol = self.period(self.expected[0])
         self.pdot_tol = self.pdot(self.expected[1])
