@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -53,6 +51,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 from pytest import mark
 
@@ -800,3 +799,152 @@ class SpCclTests:
         )
 
         os.remove(os.path.join(spccl_dir, "summary.txt"))
+
+
+@mark.candlisttests
+@mark.scltests
+@mark.unit
+class SclTests:
+    """
+    Tests of the FDAS candidate metadata file parser(s)
+    """
+
+    def test_non_existent_spccl_dir(self):
+        """
+        Test exception is raised when non-existent
+        scl directory is passed to constructor
+        """
+        scl_dir = "/tmp/random_test_dir/ajd994jfma29"
+        with pytest.raises(OSError):
+            cand.FdasScl(scl_dir)
+
+    def test_load_detected_candidates(self):
+        """
+        Test that detected candidates files are loaded correctly.
+        A directory containing the detected metadata file is provided
+        and the candidate metadata file (.scl) is parsed and the
+        contents returned as a Nx5 array, where N is the number of
+        candidates and 5 is the number of parameters per candidate.
+        """
+        # Set up directory containing "detected" candidates file
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+
+        # Instantiate candidate parser, passing directory as args
+        # The directory contains a "detected" candidates file which will
+        # be loaded into memory and the contents compared to
+        # a list of expected candidates (next step)
+        candidate = cand.FdasScl(scl_dir)
+
+        # Load in "expected" candidate metadata file
+        known_file = os.path.join(DATA_DIR, "scl_1/test_candlist.scl")
+        known_cands = pd.read_csv(known_file, sep=r"\s+")
+        known_cands.columns = ["period", "pdot", "dm", "width", "sn"]
+        known_cands = known_cands.sort_values("sn", ascending=False)
+
+        assert np.all(candidate.cands == known_cands)
+
+    def test_no_candidate_dir(self):
+        """
+        Tests that the correct exception is
+        raised when no candidate directory is
+        passed to the constructor.
+        """
+        with pytest.raises(OSError):
+            cand.FdasScl()
+
+    def test_no_cand_file_extension_in_valid_dir(self):
+        """
+        Tests that the correct exception is raised if
+        a valid directory is passed to the constructor
+        but files of a custom extension are not found
+        there
+        """
+        # Create new directory with random name under /tmp
+        scl_dir = tempfile.mkdtemp()
+        with pytest.raises(IOError):
+            # Pass real dir but with random non-existent extension
+            cand.FdasScl(scl_dir, "sdfhjs")
+        shutil.rmtree(scl_dir)
+
+    def test_wrong_number_of_cand_files(self):
+        """
+        We expect one candidate file per scan and therefore
+        only one metadata file in each directory. This tests
+        that the correct exception is raised if more than one
+        candidate file is found.
+        """
+        # Create new directory with random name under /tmp
+        scl_dir = tempfile.mkdtemp()
+
+        # Define two candidate metadata file paths
+        file1 = os.path.join(scl_dir, "cand1.scl")
+        file2 = os.path.join(scl_dir, "cand2.scl")
+
+        with pytest.raises(IOError):
+            # Generate empty files in directory
+            open(file1, "a").close()
+            open(file2, "a").close()
+            cand.FdasScl(scl_dir)
+        shutil.rmtree(scl_dir)
+
+    def test_from_vector(self):
+        """
+        Tests that we can extract the correct pulsar
+        parameters from a FDAS test vector
+        """
+        vector_a = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        vector_b = "FDAS-HSUM-MID_38d46df_500.00115818617536_0.05_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+
+        period = 1.0 / 500.0
+        width = 0.2 * period * 1000
+        candidate.from_vector(vector_a)
+        assert candidate.expected == [period, 0, 1.0, width, 50.0]
+
+        period = 1.0 / 500.00115818617536
+        width = 0.05 * period * 1000
+        candidate.from_vector(vector_b)
+        assert candidate.expected == [period, 0, 1.0, width, 50.0]
+        assert candidate.expected != [period, 0, 2.0, width, 500.0]
+
+    def test_search_using_dummy_ruleset(self):
+        """
+        Test the dummy search method recovers the one
+        candidate that falls within a set of tolerances.
+        """
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_dummy()
+        assert candidate.detected is True
+        assert candidate.recovered.shape[0] == 1
+        true_candidate = [0.002, 0, 0.999, 0.4, 49.999]
+        true = pd.DataFrame([true_candidate], index=[500])
+        true.columns = ["period", "pdot", "dm", "width", "sn"]
+        assert np.all(true == candidate.recovered)
+
+    def test_search_using_dummy_ruleset_no_detection(self):
+        """
+        Test the dummy search method filters all candidates
+        """
+        vector = "F_1_100000.0_0.2_1.0_0.0_G_500.0_0000_1.fil"
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = cand.FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_dummy()
+        assert candidate.detected is False
+        assert candidate.recovered is None
+
+    def test_dummy_fdas_rules(self):
+        """
+        Test the dummy tolerance generator
+        returns to expected ranges/limits
+        """
+        tols = cand.FdasTolDummy([1, 1e-15, 100, 100, 100])
+        assert tols.period_tol == [0.9, 1.1]
+        assert tols.dm_tol == [90, 110]
+        assert tols.width_tol == [90, 110]
+        assert tols.sn_tol == 85
+        assert tols.pdot_tol == [pytest.approx(1e-16), pytest.approx(1e-14)]
