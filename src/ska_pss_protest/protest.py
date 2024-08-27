@@ -156,60 +156,70 @@ def main():
     """
     Entrypoint method
     """
-    parser = argparse.ArgumentParser(description="Run PSS Product Tests")
-    parser.add_argument(
-        "-H",
-        "--show_help",
-        help="Show detailed help on test options",
-        required=False,
-        action="store_true",
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
+
+    group = parser.add_argument_group("General test settings")
+    group.add_argument(
         "-p",
         "--path",
         help="Path to cheetah build tree",
         required=False,
         default=None,
     )
-    parser.add_argument(
+    group.add_argument(
+        "--cache",
+        help="Directory containing locally stored test vectors",
+        required=False,
+        default=None,
+    )
+    group.add_argument(
+        "--outdir",
+        help="Directory to store output data products and test results",
+        required=False,
+        default="/tmp",
+    )
+    group.add_argument(
+        "--keep",
+        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
+        required=False,
+        action="store_true",
+    )
+    group = parser.add_argument_group("Test selection settings")
+    group.add_argument(
         "-i",
         "--include",
         nargs="+",
         help="Include the following test types (def=product)",
         required=False,
     )
-
-    parser.add_argument(
+    group.add_argument(
         "-e",
         "--exclude",
         nargs="+",
         help="Exclude the following test types",
         required=False,
     )
-    parser.add_argument(
-        "--cache",
-        help="Directory containing locally stored test vectors",
-        required=False,
-        default=None,
+    group = parser.add_argument_group(
+        "Single-pulse search specific test settings"
     )
-    parser.add_argument(
-        "--outdir",
-        help="Directory to store candidate data products",
-        required=False,
-        default="/tmp",
-    )
-    parser.add_argument(
-        "--keep",
-        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
-        required=False,
-        action="store_true",
-    )
-    parser.add_argument(
+    group.add_argument(
         "--reduce",
         help="Store only header information from SPS candidate filterbanks",
         required=False,
         action="store_true",
     )
+    group = parser.add_argument_group("Help and version info")
+    group.add_argument(
+        "-H",
+        "--show_help",
+        help="Show detailed help on test options",
+        required=False,
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     protest = ProTest(
