@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -75,7 +73,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2022 University of Manchester                                |
+    | Copyright 2024 University of Manchester                                |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
