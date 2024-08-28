@@ -54,7 +54,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from ska_pss_protest.fil import VHeader
+from ska_pss_protest import VHeader
 
 np.set_printoptions(precision=17)
 

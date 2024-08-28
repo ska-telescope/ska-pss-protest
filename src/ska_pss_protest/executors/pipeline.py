@@ -56,7 +56,7 @@ import subprocess
 
 import numpy as np
 
-from ska_pss_protest._config import setup_pipeline
+from ._config import setup_pipeline
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\

@@ -63,7 +63,7 @@ import time
 import pytest
 
 import ska_pss_protest
-from ska_pss_protest._config import set_markers
+from ska_pss_protest.executors._config import set_markers
 
 
 class ProTest:

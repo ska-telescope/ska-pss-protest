@@ -65,7 +65,7 @@ import os
 
 import numpy as np
 
-from ska_pss_protest.fil import VHeader
+from ska_pss_protest import VHeader
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\

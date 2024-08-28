@@ -51,7 +51,7 @@
 
 from pytest import mark
 
-from ska_pss_protest._config import set_markers
+from ska_pss_protest.executors._config import set_markers
 
 # pylint: disable=R0903
 
