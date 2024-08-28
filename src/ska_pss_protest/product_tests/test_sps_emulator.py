@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Behavioural test of the SPS emulator class.
 
