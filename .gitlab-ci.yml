@@ -24,9 +24,15 @@ include:
   # Python build jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-build.gitlab-ci.yml'
-  # Python release jobs
+  # Python publish jobs
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/python-publish.gitlab-ci.yml'
+  # Python jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/python.gitlab-ci.yml'
+  # Python release jobs
+  - project: 'ska-telescope/templates-repository'
+    file: 'gitlab-ci/includes/release.gitlab-ci.yml'
   # Badges from CI metrics
   - project: 'ska-telescope/templates-repository'
     file: 'gitlab-ci/includes/finaliser.gitlab-ci.yml'
