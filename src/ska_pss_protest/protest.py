@@ -171,13 +171,13 @@ def main():
     )
     group.add_argument(
         "--cache",
-        help="Directory containing locally stored test vectors",
+        help="Directory containing locally stored test vectors (def=~/.cache/SKA/test_vectors)",
         required=False,
         default=None,
     )
     group.add_argument(
         "--outdir",
-        help="Directory to store output data products and test results",
+        help="Directory to store output data products and test results (def=/tmp)",
         required=False,
         default="/tmp",
     )
