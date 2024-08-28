@@ -11,23 +11,26 @@ This should produce the following output.
 
 .. code-block:: bash
 
-   usage: protest [-h] [-H] [-p PATH] [-i INCLUDE [INCLUDE ...]] [-e EXCLUDE [EXCLUDE ...]]
-                  [--cache CACHE] [--outdir OUTDIR] [--keep] [--reduce]
-
-   Run PSS Product Tests
-
    options:
-    -h, --help            show this help message and exit
-    -H, --show_help       Show detailed help on test options
-    -p PATH, --path PATH  Path to cheetah build tree
-    -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
+      -h, --help            show this help message and exit
+
+   General test settings:
+      -p PATH, --path PATH  Path to cheetah build tree
+      --cache CACHE         Directory containing locally stored test vectors (def=~/.cache/SKA/test_vectors)
+      --outdir OUTDIR       Directory to store output data products and test results (def=/tmp)
+      --keep                Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)
+
+   Test selection settings:
+      -i INCLUDE [INCLUDE ...], --include INCLUDE [INCLUDE ...]
                         Include the following test types (def=product)
-    -e EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
+      -e EXCLUDE [EXCLUDE ...], --exclude EXCLUDE [EXCLUDE ...]
                         Exclude the following test types
-    --cache CACHE         Directory containing locally stored test vectors
-    --outdir OUTDIR       Directory to store candidate data products
-    --keep                Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)
-    --reduce              Store only header information from SPS candidate filterbanks
+
+   Single-pulse search specific test settings:
+      --reduce              Store only header information from SPS candidate filterbanks
+
+   Help and version info:
+      -H, --show_help       Show detailed help on test options
 
 ProTest takes a number of optional arguments. The first (-p PATH) is the path to a cheetah build. This can be either of the following
 
