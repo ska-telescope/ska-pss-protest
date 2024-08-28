@@ -149,7 +149,7 @@ class Filterbank:
             self.headers.append(this_header)
         return self.headers
 
-    def reduce_headers(self, remove_fils=True):
+    def reduce_headers(self, remove_fils=True) -> None:
         """
         Exports header data from each of the candidate
         filterbanks to a file. This provides the option to
