@@ -55,7 +55,14 @@ import pandas as pd
 import pytest
 from pytest import mark
 
-from ska_pss_protest import VectorPull, VHeader, SpCcl, FdasScl, WidthTol, FdasTolDummy
+from ska_pss_protest import (
+    FdasScl,
+    FdasTolDummy,
+    SpCcl,
+    VectorPull,
+    VHeader,
+    WidthTol,
+)
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
