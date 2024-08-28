@@ -16,7 +16,7 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, scenarios, then, when
 
-from ska_pss_protest import Cheetah, VectorPull, VHeader, SpCcl
+from ska_pss_protest import Cheetah, SpCcl, VectorPull, VHeader
 
 # pylint: disable=W0621,W0212
 

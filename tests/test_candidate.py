@@ -51,7 +51,7 @@ from pathlib import Path
 import pytest
 from pytest import mark
 
-from ska_pss_protest import VHeader, SpCcl, Filterbank
+from ska_pss_protest import Filterbank, VHeader
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
