@@ -846,7 +846,9 @@ class FdasScl:
         self.detected = True
 
     @staticmethod
-    def _compare(cands: pd.DataFrame, rules: object) -> tuple[pd.DataFrame, int]:
+    def _compare(
+        cands: pd.DataFrame, rules: object
+    ) -> tuple[pd.DataFrame, int]:
         """
         Compares metadata for a known pulsar signal to the metadata for each
         detected candidate. If a candidate that is consistent with the known

@@ -48,9 +48,11 @@
     |DAMAGE.                                                                 |
     **************************************************************************
 """
+
 import os
-import pytest
+
 import numpy as np
+import pytest
 from pytest import mark
 
 from ska_pss_protest import VectorPull, VHeader
@@ -182,7 +184,7 @@ class FilterbankTests:
         """
         file_string = "1 2 3 4 5 6 7 8 9 10 11"
         file_loc = "/tmp/test_invalid_nchar.fil"
-        with open(file_loc, 'a') as test_file:
+        with open(file_loc, "a") as test_file:
             test_file.write(file_string)
 
         with pytest.raises(RuntimeError):
@@ -197,10 +199,10 @@ class FilterbankTests:
         """
         file_string = "1 2 3 4 5 6 7 8 9 10 11"
         file_loc = "/tmp/test_file_size.fil"
-        with open(file_loc, 'a') as test_file:
+        with open(file_loc, "a") as test_file:
             test_file.write(file_string)
 
-        size_getter = __import__('ska_pss_protest.utils.fil').VHeader._get_size
+        size_getter = __import__("ska_pss_protest.utils.fil").VHeader._get_size
         assert size_getter(file_loc) == 23
 
         os.remove(file_loc)
@@ -210,7 +212,7 @@ class FilterbankTests:
         Tests that json converter can
         sucessfully update integer types
         """
-        test_dict = {'key': np.int32(10)}
-        converter = __import__('ska_pss_protest.utils.fil').VHeader._json_conv
+        test_dict = {"key": np.int32(10)}
+        converter = __import__("ska_pss_protest.utils.fil").VHeader._json_conv
         return_dict = converter(test_dict)
-        assert isinstance(return_dict['key'], int)
+        assert isinstance(return_dict["key"], int)

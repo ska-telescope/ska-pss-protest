@@ -113,7 +113,7 @@ class ProTest:
 
         self.run()
 
-    def run(self):
+    def run(self) -> None:
         """
         Main method
         """
@@ -152,7 +152,7 @@ class ProTest:
         sys.exit(pytest.main(pytest_args))
 
 
-def main():
+def main() -> None:
     """
     Entrypoint method
     """

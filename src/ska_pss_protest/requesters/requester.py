@@ -308,7 +308,9 @@ class VectorPull:
         logging.info("Data written to {}".format(local_path))
         return local_path
 
-    def from_name(self, vector_name: str, refresh=False, check_remote=True) -> None:
+    def from_name(
+        self, vector_name: str, refresh=False, check_remote=True
+    ) -> None:
         """
         Gets vector from vector name.
         This method is used if the name of the vector is
