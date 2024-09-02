@@ -12,24 +12,7 @@
     | Author: Benjamin Shaw                                                  |
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     **************************************************************************
-    | usage: protest [-h] -p PATH [-m MARK]                                  |
-    |                                                                        |
-    | Run PSS Product Tests                                                  |
-    |                                                                        |
-    | optional arguments:                                                    |
-    |  -h, --help show this help message and exit                            |
-    |  -H --show_help Show list of available test markers                    |
-    |  -p PATH, --path PATH  Path to cheetah build tree                      |
-    |  -i  INCLUDE, --include INCLUDE  Test types to execute                 |
-    |        e.g., -i type_a type_b (def=product)                            |
-    |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
-    |        e.g., -e type_a type_b                                          |
-    |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
-    |  --cache CACHE  Directory to read/write local test vector cache        |
-    |        (def=/home/<user>/.cache/SKA)                                   |
-    |  --keep  Preserve the post-test data products                          |
-    |          (e.g, candidates, cheetah logs, configs, etc)                 |
-    |  --reduce Store only header information from SPS candidate filterbanks |
+    | usage: protest -h                                                      |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
@@ -59,6 +42,7 @@ import argparse
 import os
 import sys
 import time
+from importlib.metadata import version
 
 import pytest
 
@@ -157,7 +141,7 @@ def main() -> None:
     Entrypoint method
     """
     parser = argparse.ArgumentParser(
-        description=__doc__,
+        description=f"ProTest - the PSS Product Testing Framework. version: {version('ska_pss_protest')}",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
