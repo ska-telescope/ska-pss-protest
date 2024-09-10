@@ -2,10 +2,13 @@
 __init__.py
 """
 
-from ska_pss_protest.candidate import Filterbank  # noqa
-from ska_pss_protest.candlist import FdasScl  # noqa
-from ska_pss_protest.candlist import SpCcl  # noqa
-from ska_pss_protest.fil import VHeader  # noqa
-from ska_pss_protest.logparser import LogParse  # noqa
-from ska_pss_protest.pipeline import Cheetah  # noqa
-from ska_pss_protest.requester import VectorPull  # noqa
+from .executors import Cheetah, LogParse  # noqa
+from .requesters import VectorPull  # noqa
+from .utils import VHeader  # noqa
+from .validators import (  # noqa
+    FdasScl,
+    FdasTolDummy,
+    Filterbank,
+    SpCcl,
+    WidthTol,
+)

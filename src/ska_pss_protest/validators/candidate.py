@@ -38,7 +38,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKA Organisation                                        |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -65,7 +65,7 @@ import os
 
 import numpy as np
 
-from ska_pss_protest.fil import VHeader
+from ska_pss_protest import VHeader
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
@@ -149,7 +149,7 @@ class Filterbank:
             self.headers.append(this_header)
         return self.headers
 
-    def reduce_headers(self, remove_fils=True):
+    def reduce_headers(self, remove_fils=True) -> None:
         """
         Exports header data from each of the candidate
         filterbanks to a file. This provides the option to

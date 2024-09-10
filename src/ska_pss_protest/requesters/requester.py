@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
@@ -49,7 +47,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2022 SKA Organisation                                        |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -108,7 +106,7 @@ class VectorPull:
 
         self._setup_cache()
 
-    def _setup_cache(self):
+    def _setup_cache(self) -> None:
         """
         Sets up cacheing. If no cache directory is
         passed into constructor then the CACHE_DIR
@@ -141,7 +139,7 @@ class VectorPull:
         self._dir_exists(self.cache_dir)
 
     @staticmethod
-    def _dir_exists(this_dir: str):
+    def _dir_exists(this_dir: str) -> None:
         """
         Checks if a directory exists. Creates it if not.
 
@@ -205,7 +203,7 @@ class VectorPull:
         logging.info("{} not in local cache".format(filename))
         return None
 
-    def check_disk_space(self, vector_url: str, cache: str):
+    def check_disk_space(self, vector_url: str, cache: str) -> None:
         """
         Checks the size of the requested vector
         from the remote directory and compares to
@@ -233,7 +231,7 @@ class VectorPull:
             raise OSError("Unsufficient disk space")
 
     @staticmethod
-    def _remote_header(url: str):
+    def _remote_header(url: str) -> dict:
         """
         Makes a HEAD request to a remote test vector
         and returns the HTTP header information
@@ -310,7 +308,9 @@ class VectorPull:
         logging.info("Data written to {}".format(local_path))
         return local_path
 
-    def from_name(self, vector_name: str, refresh=False, check_remote=True):
+    def from_name(
+        self, vector_name: str, refresh=False, check_remote=True
+    ) -> None:
         """
         Gets vector from vector name.
         This method is used if the name of the vector is
@@ -413,7 +413,7 @@ class VectorPull:
         sig=50.0,
         rfi="0000",
         refresh=False,
-    ):
+    ) -> None:
         """
         Queries the server for a test vector for which
         we don't know the file name or if it exists but for which
@@ -479,7 +479,7 @@ class VectorPull:
         logging.info("Found vector: {}".format(response))
         self.from_name(response, refresh=refresh)
 
-    def flush_cache(self):
+    def flush_cache(self) -> None:
         """
         Removes contents of cache directory.
         """

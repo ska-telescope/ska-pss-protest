@@ -85,7 +85,7 @@ def setup_pipeline(
     return path
 
 
-def isfile(this_file):
+def isfile(this_file) -> bool:
     """
     Checks a file exists,
     raises exception if not.
@@ -95,7 +95,7 @@ def isfile(this_file):
     return False
 
 
-def isexec(this_file):
+def isexec(this_file) -> None:
     """
     Checks a file is executable,
     raises exception if not.
@@ -104,7 +104,7 @@ def isexec(this_file):
         raise PermissionError("{} not executable".format(this_file))
 
 
-def search_path(launcher):
+def search_path(launcher) -> str:
     """
     Checks the user's system path to the executable they
     intend to run. If found, the full path is returned,
@@ -118,7 +118,7 @@ def search_path(launcher):
     raise FileNotFoundError("No pipeline launcher in $PATH")
 
 
-def search_build(cheetah_dir, launcher, launcher_dict):
+def search_build(cheetah_dir, launcher, launcher_dict) -> str:
     """
     If the user has supplied a build/install directory, this
     function will search these paths for the executable they
@@ -146,7 +146,7 @@ def search_build(cheetah_dir, launcher, launcher_dict):
     raise FileNotFoundError("Cannot find executable")
 
 
-def set_markers(mark=False, exclude=False):
+def set_markers(mark=False, exclude=False) -> str:
     """
     Generates a string that is passed to pytest
     to select the test types that should run

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Behavioural test of the SPS emulator class.
 
@@ -16,8 +14,7 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, scenarios, then, when
 
-import ska_pss_protest.candlist as cand
-from ska_pss_protest import Cheetah, VectorPull, VHeader
+from ska_pss_protest import Cheetah, SpCcl, VectorPull, VHeader
 
 # pylint: disable=W0621,W0212
 
@@ -127,5 +124,5 @@ def count_cands(context, get_vector):
     expected_ncands = (
         float(context["rate"]) * VHeader(get_vector.local_path).duration()
     )
-    candidate = cand.SpCcl(context["candidate_dir"])
+    candidate = SpCcl(context["candidate_dir"])
     assert len(candidate.cands) == expected_ncands

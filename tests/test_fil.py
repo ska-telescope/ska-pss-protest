@@ -1,12 +1,7 @@
-#!/usr/bin/env python
-
 """
     **************************************************************************
     |                                                                        |
     |                  Unit tests for filterbank reader                      |
-    |                                                                        |
-    **************************************************************************
-    | Description:                                                           |
     |                                                                        |
     **************************************************************************
     | Author: Benjamin Shaw                                                  |
@@ -20,7 +15,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2022 University of Manchester                                |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -54,6 +49,9 @@
     **************************************************************************
 """
 
+import os
+
+import numpy as np
 import pytest
 from pytest import mark
 
@@ -161,6 +159,13 @@ class FilterbankTests:
         assert pars["rfi_id"] == "0000"
         with pytest.raises(KeyError):
             pars["bad_key"]
+        pars = VHeader(get_vector.local_path).allpars(conv=True)
+        assert pars["freq"] == 500.0
+        assert pars["disp"] == 1.0
+        assert pars["width"] == 0.4
+        assert pars["sig"] == 50.0
+        assert pars["sig"] != 100.0
+        assert pars["rfi_id"] == "0000"
 
     def test_signal_par_extraction_real_vector(self):
         """
@@ -171,3 +176,43 @@ class FilterbankTests:
         pars = VHeader(vector_path).allpars()
         with pytest.raises(KeyError):
             assert pars["freq"] == 500.0
+
+    def test_invalid_nchar(self):
+        """
+        Tests that the correct exception is raised
+        when nchar is outside a valid range
+        """
+        file_string = "1 2 3 4 5 6 7 8 9 10 11"
+        file_loc = "/tmp/test_invalid_nchar.fil"
+        with open(file_loc, "a") as test_file:
+            test_file.write(file_string)
+
+        with pytest.raises(RuntimeError):
+            VHeader(file_loc)
+
+        os.remove(file_loc)
+
+    def test_file_size_calculation(self):
+        """
+        Tests that private _get_size() method
+        returns the file correct file size
+        """
+        file_string = "1 2 3 4 5 6 7 8 9 10 11"
+        file_loc = "/tmp/test_file_size.fil"
+        with open(file_loc, "a") as test_file:
+            test_file.write(file_string)
+
+        size_getter = __import__("ska_pss_protest.utils.fil").VHeader._get_size
+        assert size_getter(file_loc) == 23
+
+        os.remove(file_loc)
+
+    def test_json_conv(self):
+        """
+        Tests that json converter can
+        sucessfully update integer types
+        """
+        test_dict = {"key": np.int32(10)}
+        converter = __import__("ska_pss_protest.utils.fil").VHeader._json_conv
+        return_dict = converter(test_dict)
+        assert isinstance(return_dict["key"], int)

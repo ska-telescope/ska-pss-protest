@@ -24,7 +24,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2023 SKA Organisation                                        |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -55,8 +55,14 @@ import pandas as pd
 import pytest
 from pytest import mark
 
-import ska_pss_protest.candlist as cand
-from ska_pss_protest import VectorPull, VHeader
+from ska_pss_protest import (
+    FdasScl,
+    FdasTolDummy,
+    SpCcl,
+    VectorPull,
+    VHeader,
+    WidthTol,
+)
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -110,7 +116,7 @@ class SpCclTests:
         """
         spccl_dir = "/tmp/random_test_dir/ajd994jfma29"
         with pytest.raises(OSError):
-            cand.SpCcl(spccl_dir)
+            SpCcl(spccl_dir)
 
     def test_load_detected_candidates(self):
         """
@@ -127,7 +133,7 @@ class SpCclTests:
         # The directory contains a "detected" candidates file which will
         # be loaded into memory and the contents compared to
         # a list of expected candidates (next step)
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
 
         # Load in "expected" candidate metadata file
         known_file = os.path.join(DATA_DIR, "spccl_1/candidates.txt")
@@ -144,7 +150,7 @@ class SpCclTests:
         passed to the constructor.
         """
         with pytest.raises(OSError):
-            cand.SpCcl()
+            SpCcl()
 
     def test_no_cand_file_extension_in_valid_dir(self):
         """
@@ -157,7 +163,7 @@ class SpCclTests:
         spccl_dir = tempfile.mkdtemp()
         with pytest.raises(IOError):
             # Pass real dir but with random non-existent extension
-            cand.SpCcl(spccl_dir, "sdfhjs")
+            SpCcl(spccl_dir, "sdfhjs")
         shutil.rmtree(spccl_dir)
 
     def test_no_cand_files_in_valid_dir(self):
@@ -171,7 +177,7 @@ class SpCclTests:
         spccl_dir = tempfile.mkdtemp()
         with pytest.raises(IOError):
             # Pass real (but empty) directory
-            cand.SpCcl(spccl_dir)
+            SpCcl(spccl_dir)
         shutil.rmtree(spccl_dir)
 
     def test_wrong_number_of_cand_files(self):
@@ -192,7 +198,7 @@ class SpCclTests:
             # Generate empty files in directory
             open(file1, "a").close()
             open(file2, "a").close()
-            cand.SpCcl(spccl_dir)
+            SpCcl(spccl_dir)
         shutil.rmtree(spccl_dir)
 
     def test_candidate_list_empty(self):
@@ -202,7 +208,7 @@ class SpCclTests:
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_5")
         with pytest.raises(Exception):
-            cand.SpCcl(spccl_dir)
+            SpCcl(spccl_dir)
 
     def test_from_vector_no_vector_provided(self):
         """
@@ -211,7 +217,7 @@ class SpCclTests:
         from_vector()
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2", "lowdm")
-        cands = cand.SpCcl(spccl_dir)
+        cands = SpCcl(spccl_dir)
         # Generate exception if no vector provided
         with pytest.raises(TypeError):
             cands.from_vector()
@@ -233,7 +239,7 @@ class SpCclTests:
         """
         # Load candidate list
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         # Generate list of expected candidates
         candidate.from_vector(get_vector.local_path)
         exp = candidate.expected
@@ -297,7 +303,7 @@ class SpCclTests:
         """
         # Load candidate list
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/highdm")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         # Generate list of expected candidates
         candidate.from_vector(get_high_dm_vector.local_path)
         exp = candidate.expected
@@ -353,7 +359,7 @@ class SpCclTests:
         file that does not contain header/column information
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
 
         expected_spccl = os.path.join(
             DATA_DIR, "spccl_3/candidates_noheader.txt"
@@ -368,7 +374,7 @@ class SpCclTests:
         file that contains header/column information.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
 
         expected_spccl = os.path.join(
             DATA_DIR, "spccl_3/candidates_header.txt"
@@ -383,7 +389,7 @@ class SpCclTests:
         file cannot be read correctly/is corrupted.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
 
         expected_spccl = os.path.join(
             DATA_DIR, "spccl_3/candidates_header2.txt"
@@ -397,7 +403,7 @@ class SpCclTests:
         is provided to the function call.
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_3")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         expected_spccl = "/this/random/path.spccl"
         with pytest.raises(FileNotFoundError):
             candidate.from_spccl(expected_spccl)
@@ -408,7 +414,7 @@ class SpCclTests:
         source properties computed using header reader VHeader().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
 
         widths_list = [
@@ -447,7 +453,7 @@ class SpCclTests:
             "tsamp": 6.4e-05,
             "freq": 0.2,
         }
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
@@ -486,7 +492,7 @@ class SpCclTests:
             "tsamp": 6.4e-05,
             "freq": 0.2,
         }
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
@@ -523,7 +529,7 @@ class SpCclTests:
             "tsamp": 6.4e-05,
             "freq": 0.2,
         }
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
@@ -553,7 +559,7 @@ class SpCclTests:
         source properties computed using header reader VHeader().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
         widths_list = [
             1,
@@ -592,7 +598,7 @@ class SpCclTests:
             "tsamp": 6.4e-05,
             "freq": 0.2,
         }
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
@@ -652,7 +658,7 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [1.0, 128.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-12, abs=1e-17)
         assert tols.dm_tol == pytest.approx(0.002534, abs=1e-6)
@@ -670,7 +676,7 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [64.0, 256.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-10, abs=1e-15)
         assert tols.dm_tol == pytest.approx(0.2534, abs=1e-04)
@@ -688,7 +694,7 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [4096.0, 32768.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-8, abs=1e-13)
         assert tols.dm_tol == pytest.approx(25.34, abs=0.01)
@@ -706,7 +712,7 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = cand.WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list)
         assert tols.width_tol == [524288.0, 1000000.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
         assert tols.dm_tol == pytest.approx(2534, abs=1)
@@ -718,7 +724,7 @@ class SpCclTests:
         by checking if it exists after the process has run
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
         widths_list = [
             1,
@@ -768,7 +774,7 @@ class SpCclTests:
             "sig": 100,
             "disp": 10,
         }
-        candidate = cand.SpCcl(spccl_dir)
+        candidate = SpCcl(spccl_dir)
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
@@ -816,7 +822,7 @@ class SclTests:
         """
         scl_dir = "/tmp/random_test_dir/ajd994jfma29"
         with pytest.raises(OSError):
-            cand.FdasScl(scl_dir)
+            FdasScl(scl_dir)
 
     def test_load_detected_candidates(self):
         """
@@ -833,7 +839,7 @@ class SclTests:
         # The directory contains a "detected" candidates file which will
         # be loaded into memory and the contents compared to
         # a list of expected candidates (next step)
-        candidate = cand.FdasScl(scl_dir)
+        candidate = FdasScl(scl_dir)
 
         # Load in "expected" candidate metadata file
         known_file = os.path.join(DATA_DIR, "scl_1/test_candlist.scl")
@@ -850,7 +856,7 @@ class SclTests:
         passed to the constructor.
         """
         with pytest.raises(OSError):
-            cand.FdasScl()
+            FdasScl()
 
     def test_no_cand_file_extension_in_valid_dir(self):
         """
@@ -863,7 +869,7 @@ class SclTests:
         scl_dir = tempfile.mkdtemp()
         with pytest.raises(IOError):
             # Pass real dir but with random non-existent extension
-            cand.FdasScl(scl_dir, "sdfhjs")
+            FdasScl(scl_dir, "sdfhjs")
         shutil.rmtree(scl_dir)
 
     def test_wrong_number_of_cand_files(self):
@@ -884,7 +890,7 @@ class SclTests:
             # Generate empty files in directory
             open(file1, "a").close()
             open(file2, "a").close()
-            cand.FdasScl(scl_dir)
+            FdasScl(scl_dir)
         shutil.rmtree(scl_dir)
 
     def test_from_vector(self):
@@ -895,7 +901,7 @@ class SclTests:
         vector_a = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
         vector_b = "FDAS-HSUM-MID_38d46df_500.00115818617536_0.05_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
         scl_dir = os.path.join(DATA_DIR, "scl_1")
-        candidate = cand.FdasScl(scl_dir)
+        candidate = FdasScl(scl_dir)
 
         period = 1.0 / 500.0
         width = 0.2 * period * 1000
@@ -915,7 +921,7 @@ class SclTests:
         """
         vector = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
         scl_dir = os.path.join(DATA_DIR, "scl_1")
-        candidate = cand.FdasScl(scl_dir)
+        candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
         candidate.search_dummy()
         assert candidate.detected is True
@@ -931,7 +937,7 @@ class SclTests:
         """
         vector = "F_1_100000.0_0.2_1.0_0.0_G_500.0_0000_1.fil"
         scl_dir = os.path.join(DATA_DIR, "scl_1")
-        candidate = cand.FdasScl(scl_dir)
+        candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
         candidate.search_dummy()
         assert candidate.detected is False
@@ -942,7 +948,7 @@ class SclTests:
         Test the dummy tolerance generator
         returns to expected ranges/limits
         """
-        tols = cand.FdasTolDummy([1, 1e-15, 100, 100, 100])
+        tols = FdasTolDummy([1, 1e-15, 100, 100, 100])
         assert tols.period_tol == [0.9, 1.1]
         assert tols.dm_tol == [90, 110]
         assert tols.width_tol == [90, 110]

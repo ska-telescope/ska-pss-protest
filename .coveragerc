@@ -1,0 +1,5 @@
+[run]
+omit = ./src/ska_pss_protest/test*.py
+       ./src/ska_pss_protest/protest.py
+       ./src/ska_pss_protest/conftest.py
+       

@@ -21,7 +21,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKA Organisation                                        |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -51,8 +51,7 @@ from pathlib import Path
 import pytest
 from pytest import mark
 
-import ska_pss_protest.candidate as cand
-from ska_pss_protest.fil import VHeader
+from ska_pss_protest import Filterbank, VHeader
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -76,7 +75,7 @@ class CandidateTests:
         """
         cand_dir = "/tmp/random_test_dir/ajd994jfma29"
         with pytest.raises(OSError):
-            cand.Filterbank(cand_dir)
+            Filterbank(cand_dir)
 
     def test_no_candidate_dir(self):
         """
@@ -85,7 +84,7 @@ class CandidateTests:
         passed to the constructor.
         """
         with pytest.raises(OSError):
-            cand.Filterbank()
+            Filterbank()
 
     def test_no_cand_file_extension_in_valid_dir(self):
         """
@@ -98,7 +97,7 @@ class CandidateTests:
         cand_dir = tempfile.mkdtemp()
         with pytest.raises(IOError):
             # Pass real dir but with random non-existent extension
-            cand.Filterbank(cand_dir, "sdfhjs")
+            Filterbank(cand_dir, "sdfhjs")
         shutil.rmtree(cand_dir)
 
     def test_no_cand_files_in_valid_dir(self):
@@ -112,7 +111,7 @@ class CandidateTests:
         cand_dir = tempfile.mkdtemp()
         with pytest.raises(IOError):
             # Pass real (but empty) directory
-            cand.Filterbank(cand_dir)
+            Filterbank(cand_dir)
         shutil.rmtree(cand_dir)
 
     def test_get_header(self):
@@ -127,7 +126,7 @@ class CandidateTests:
         pipeline when it exports the candidate filterbanks.
         """
         cand_dir = os.path.join(DATA_DIR, "multiple_candidates")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         parser.get_headers()
         assert len(parser.headers) == 2
         for header in parser.headers:
@@ -144,7 +143,7 @@ class CandidateTests:
         the chunk_size value is invalid.
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         with pytest.raises(ValueError):
             parser.compare_data(os.path.join(cand_dir, "candidate_1.fil"), 0)
         with pytest.raises(TypeError):
@@ -159,7 +158,7 @@ class CandidateTests:
         for comparison to a single test vector.
         """
         cand_dir = os.path.join(DATA_DIR, "multiple_candidates")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         with pytest.raises(IOError):
             parser.compare_data(os.path.join(cand_dir, "candidate_1.fil"))
 
@@ -169,7 +168,7 @@ class CandidateTests:
         filterbank files returns a match=True result.
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         parser.compare_data(
             os.path.join(cand_dir, "2012_03_14_00:00:00.fil"), 1024
         )
@@ -181,7 +180,7 @@ class CandidateTests:
         filterbank files returns a match=False result.
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         parser.compare_data(
             os.path.join(
                 DATA_DIR, "multiple_candidates/2012_03_14_00:00:00_1.fil"
@@ -196,7 +195,7 @@ class CandidateTests:
         header info is correctly executed
         """
         cand_dir = os.path.join(DATA_DIR, "candidate_1")
-        parser = cand.Filterbank(cand_dir)
+        parser = Filterbank(cand_dir)
         parser.reduce_headers(remove_fils=False)
 
         # We should now have a json file - check

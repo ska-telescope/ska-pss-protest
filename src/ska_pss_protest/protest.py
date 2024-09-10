@@ -12,24 +12,7 @@
     | Author: Benjamin Shaw                                                  |
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     **************************************************************************
-    | usage: protest [-h] -p PATH [-m MARK]                                  |
-    |                                                                        |
-    | Run PSS Product Tests                                                  |
-    |                                                                        |
-    | optional arguments:                                                    |
-    |  -h, --help show this help message and exit                            |
-    |  -H --show_help Show list of available test markers                    |
-    |  -p PATH, --path PATH  Path to cheetah build tree                      |
-    |  -i  INCLUDE, --include INCLUDE  Test types to execute                 |
-    |        e.g., -i type_a type_b (def=product)                            |
-    |  -e EXCLUDE --exclude EXCLUDE  Test types to ignore                    |
-    |        e.g., -e type_a type_b                                          |
-    |  --outdir OUTDIR  Directory to store candidate data products (def=/tmp)|
-    |  --cache CACHE  Directory to read/write local test vector cache        |
-    |        (def=/home/<user>/.cache/SKA)                                   |
-    |  --keep  Preserve the post-test data products                          |
-    |          (e.g, candidates, cheetah logs, configs, etc)                 |
-    |  --reduce Store only header information from SPS candidate filterbanks |
+    | usage: protest -h                                                      |
     |                                                                        |
     **************************************************************************
     | License:                                                               |
@@ -59,11 +42,12 @@ import argparse
 import os
 import sys
 import time
+from importlib.metadata import version
 
 import pytest
 
 import ska_pss_protest
-from ska_pss_protest._config import set_markers
+from ska_pss_protest.executors._config import set_markers
 
 
 class ProTest:
@@ -113,7 +97,7 @@ class ProTest:
 
         self.run()
 
-    def run(self):
+    def run(self) -> None:
         """
         Main method
         """
@@ -152,64 +136,74 @@ class ProTest:
         sys.exit(pytest.main(pytest_args))
 
 
-def main():
+def main() -> None:
     """
     Entrypoint method
     """
-    parser = argparse.ArgumentParser(description="Run PSS Product Tests")
-    parser.add_argument(
-        "-H",
-        "--show_help",
-        help="Show detailed help on test options",
-        required=False,
-        action="store_true",
+    parser = argparse.ArgumentParser(
+        description=f"ProTest - the PSS Product Testing Framework. version: {version('ska_pss_protest')}",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
+
+    group = parser.add_argument_group("General test settings")
+    group.add_argument(
         "-p",
         "--path",
         help="Path to cheetah build tree",
         required=False,
         default=None,
     )
-    parser.add_argument(
+    group.add_argument(
+        "--cache",
+        help="Directory containing locally stored test vectors (def=~/.cache/SKA/test_vectors)",
+        required=False,
+        default=None,
+    )
+    group.add_argument(
+        "--outdir",
+        help="Directory to store output data products and test results (def=/tmp)",
+        required=False,
+        default="/tmp",
+    )
+    group.add_argument(
+        "--keep",
+        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
+        required=False,
+        action="store_true",
+    )
+    group = parser.add_argument_group("Test selection settings")
+    group.add_argument(
         "-i",
         "--include",
         nargs="+",
         help="Include the following test types (def=product)",
         required=False,
     )
-
-    parser.add_argument(
+    group.add_argument(
         "-e",
         "--exclude",
         nargs="+",
         help="Exclude the following test types",
         required=False,
     )
-    parser.add_argument(
-        "--cache",
-        help="Directory containing locally stored test vectors",
-        required=False,
-        default=None,
+    group = parser.add_argument_group(
+        "Single-pulse search specific test settings"
     )
-    parser.add_argument(
-        "--outdir",
-        help="Directory to store candidate data products",
-        required=False,
-        default="/tmp",
-    )
-    parser.add_argument(
-        "--keep",
-        help="Preserve the post-test data products (e.g, candidates, cheetah logs, configs, etc)",
-        required=False,
-        action="store_true",
-    )
-    parser.add_argument(
+    group.add_argument(
         "--reduce",
         help="Store only header information from SPS candidate filterbanks",
         required=False,
         action="store_true",
     )
+    group = parser.add_argument_group("Help and version info")
+    group.add_argument(
+        "-H",
+        "--show_help",
+        help="Show detailed help on test options",
+        required=False,
+        action="store_true",
+    )
+
     args = parser.parse_args()
 
     protest = ProTest(

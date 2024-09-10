@@ -15,7 +15,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 University of Manchester                                |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -51,7 +51,7 @@
 
 from pytest import mark
 
-from ska_pss_protest._config import set_markers
+from ska_pss_protest.executors._config import set_markers
 
 # pylint: disable=R0903
 

@@ -14,7 +14,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKAO                                                    |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -56,7 +56,7 @@ import subprocess
 
 import numpy as np
 
-from ska_pss_protest._config import setup_pipeline
+from ._config import setup_pipeline
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
@@ -119,7 +119,7 @@ class Cheetah:
 
         return command
 
-    def run(self, timeout=None, debug=False):
+    def run(self, timeout=None, debug=False) -> None:
         """
         Runs required cheetah pipeline with arguments as a child process
 
@@ -168,7 +168,7 @@ class Cheetah:
         self.exit_code = child.returncode
         logging.info("Return code is: {}".format(self.exit_code))
 
-    def export_log(self, location: str):
+    def export_log(self, location: str) -> None:
         """
         Writes cheetah log data to a file.
         The file will be named cheetah_logs.json,

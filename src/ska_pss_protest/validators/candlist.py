@@ -14,7 +14,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 University of Manchester                                |
+    | Copyright 2024 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -54,7 +54,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from ska_pss_protest.fil import VHeader
+from ska_pss_protest import VHeader
 
 np.set_printoptions(precision=17)
 
@@ -364,7 +364,7 @@ class SpCcl:
 
         self.expected = cand_metadata
 
-    def compare_widthstep(self, pars=None, widths_list=None):
+    def compare_widthstep(self, pars=None, widths_list=None) -> None:
         """
         Function to search for each expected pulse from the
         list of candidate detections. A match is defined if
@@ -473,7 +473,7 @@ class SpCcl:
         logging.info("No detection of pulse: {}\n".format(exp))
         return False
 
-    def summary_export(self, vector_header):
+    def summary_export(self, vector_header) -> None:
         """
         Exports a Summary file named - summary.txt in the candidate_dir
         containing all the information about all the detections and non-detections.
@@ -542,7 +542,7 @@ class WidthTol:
 
         self.calc_tols()
 
-    def calc_tols(self):
+    def calc_tols(self) -> None:
         """
         Generates tolerance data for each
         SpCcl metadata parameter.
@@ -559,7 +559,7 @@ class WidthTol:
         self.width(wint)
         self.sig(self.expected[3], wint, period)
 
-    def dispersion(self, wint: float):
+    def dispersion(self, wint: float) -> None:
         """
         Sets the DM tolerance using the pulse width.
 
@@ -578,7 +578,7 @@ class WidthTol:
 
         self.dm_tol = (scaler * wint) / (4.15e9 * sqdiff)
 
-    def timestamp(self, wint: float):
+    def timestamp(self, wint: float) -> None:
         """
         Returns a timestamp tolerance in days
 
@@ -592,7 +592,7 @@ class WidthTol:
         tol_s = wint_s / (2.0 * np.sqrt(2.0 * np.log(2.0)))
         self.timestamp_tol = tol_s / 86400
 
-    def width(self, wint: float):
+    def width(self, wint: float) -> None:
         """
         Sets the tolerance on the width by comparing the
         true width of the test pulse to the nearest boxcar
@@ -653,7 +653,7 @@ class WidthTol:
 
         self.width_tol = [lower, upper]
 
-    def sig(self, sn_int: float, wint: float, period: float):
+    def sig(self, sn_int: float, wint: float, period: float) -> None:
         """
         Sets the S/N tolerance by using the radiometer
         equation for two pulses with different widths,
@@ -807,7 +807,7 @@ class FdasScl:
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
-    def search_dummy(self):
+    def search_dummy(self) -> None:
         """
         Method to search for an injected pulsar from the
         list of candidate detections. A match is defined if
@@ -846,7 +846,9 @@ class FdasScl:
         self.detected = True
 
     @staticmethod
-    def _compare(cands: object, rules: object):
+    def _compare(
+        cands: pd.DataFrame, rules: object
+    ) -> tuple[pd.DataFrame, int]:
         """
         Compares metadata for a known pulsar signal to the metadata for each
         detected candidate. If a candidate that is consistent with the known
@@ -903,7 +905,7 @@ class FdasTolDummy:
 
         self.calc_tols()
 
-    def calc_tols(self):
+    def calc_tols(self) -> None:
         """
         Set tolerances for each of the parameters
         we are testing candidates against.
@@ -916,7 +918,7 @@ class FdasTolDummy:
         logging.info("EXPECTED: {}".format(self.expected))
 
     @staticmethod
-    def period(this_period):
+    def period(this_period: float) -> float:
         """
         Dummy method to set period tolerance
         """
@@ -924,14 +926,14 @@ class FdasTolDummy:
         return [this_period - ptol, this_period + ptol]
 
     @staticmethod
-    def pdot(this_pdot):
+    def pdot(this_pdot: float) -> float:
         """
         Dummy method to set period derivative tolerance
         """
         return [0.1 * this_pdot, 10 * this_pdot]
 
     @staticmethod
-    def dm(this_dm):
+    def dm(this_dm: float) -> float:
         """
         Dummy method to set DM tolerance
         """
@@ -939,7 +941,7 @@ class FdasTolDummy:
         return [this_dm - dmtol, this_dm + dmtol]
 
     @staticmethod
-    def width(this_width):
+    def width(this_width: float) -> float:
         """
         Dummy method to set width tolerance
         """
@@ -947,7 +949,7 @@ class FdasTolDummy:
         return [this_width - widthtol, this_width + widthtol]
 
     @staticmethod
-    def sn(this_sn):
+    def sn(this_sn: float) -> float:
         """
         Dummy method to set S/N tolerance
         """
