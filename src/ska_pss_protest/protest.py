@@ -225,7 +225,7 @@ def main() -> None:
     # and set the rest as a list to pass directly to the
     # class
     parsed, unknown = parser.parse_known_args()
-    extra_args = [this_arg for this_arg in unknown]
+    extra_args = list(unknown)
 
     protest = ProTest(
         parsed.path,
