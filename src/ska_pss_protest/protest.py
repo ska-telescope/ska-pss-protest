@@ -142,7 +142,7 @@ class ProTest:
             pytest_args = reduce_arg + pytest_args
         if self.pytest_options:
             pytest_args = self.pytest_options + pytest_args
-        
+
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
 
