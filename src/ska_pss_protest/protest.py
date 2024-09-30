@@ -66,6 +66,8 @@ class ProTest:
         keep=False,
         reduce=False,
         show_help=False,
+        show_pytest=False,
+        pytest_options=None,
     ):
 
         self.path = path
@@ -74,16 +76,12 @@ class ProTest:
         self.cache = cache
         self.reduce = reduce
         self.keep = keep
+        self.pytest_options = pytest_options
 
         # Obtain path of protest
         self.src = os.path.dirname(ska_pss_protest.__file__)
 
-        # Set outputs directory
-        if not os.path.isdir(outdir):
-            raise FileNotFoundError("{} not found".format(outdir))
-        set_dir = "protest-{}".format(time.strftime("%Y%m%d-%H%M%S"))
-        self.outdir = os.path.join(outdir, set_dir)
-
+        # Show all available markers
         if show_help:
             pytest_args = [
                 "-c",
@@ -91,6 +89,17 @@ class ProTest:
                 "--markers",
             ]
             sys.exit(pytest.main(pytest_args))
+
+        # Show all pytest options (runs pytest -h)
+        if show_pytest:
+            pytest_args = ["-h"]
+            sys.exit(pytest.main(pytest_args))
+
+        # Set outputs directory
+        if not os.path.isdir(outdir):
+            raise FileNotFoundError("{} not found".format(outdir))
+        set_dir = "protest-{}".format(time.strftime("%Y%m%d-%H%M%S"))
+        self.outdir = os.path.join(outdir, set_dir)
 
         # Set up markers
         self.markers = set_markers(self.mark, self.exclude)
@@ -131,6 +140,8 @@ class ProTest:
         if self.reduce:
             reduce_arg = ["--reduce"]
             pytest_args = reduce_arg + pytest_args
+        if self.pytest_options:
+            pytest_args = self.pytest_options + pytest_args
 
         print("Running pytest", " ".join(pytest_args))
         sys.exit(pytest.main(pytest_args))
@@ -147,7 +158,6 @@ def main() -> None:
 
     group = parser.add_argument_group("General test settings")
     group.add_argument(
-        "-p",
         "--path",
         help="Path to cheetah build tree",
         required=False,
@@ -203,18 +213,31 @@ def main() -> None:
         required=False,
         action="store_true",
     )
+    group.add_argument(
+        "-P",
+        "--show_pytest",
+        help="Show help on pytest options (prints output of pytest -h). User can pass any pytest option to protest (use with care!).",
+        required=False,
+        action="store_true",
+    )
 
-    args = parser.parse_args()
+    # Allow argparse to handle all the known arguments
+    # and set the rest as a list to pass directly to the
+    # class
+    parsed, unknown = parser.parse_known_args()
+    extra_args = list(unknown)
 
     protest = ProTest(
-        args.path,
-        args.cache,
-        args.outdir,
-        args.include,
-        args.exclude,
-        args.keep,
-        args.reduce,
-        args.show_help,
+        parsed.path,
+        parsed.cache,
+        parsed.outdir,
+        parsed.include,
+        parsed.exclude,
+        parsed.keep,
+        parsed.reduce,
+        parsed.show_help,
+        parsed.show_pytest,
+        extra_args,
     )
     protest.run()
 

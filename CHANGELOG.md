@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1
+
+- Expose all pytest options to ProTest executable
+
 ## 5.0.0
 
 - Source code restructure
