@@ -27,3 +27,13 @@ or to run all tests
 .. code-block:: bash
 
     make python-test
+
+Adding/changing command line options
+------------------------------------
+
+ProTest is pytest with specific functionality for testing cheetah pipelines. As such, it is possible to pass any pytest command line options to the ProTest executable protest.py. To ensure that ProTest behaves as the user intends, it is important when adding new command line arguments to ProTest that they do not also correspond to command line arguments that pytest will accept. If ProTest and pytest were to share common command line arguments, pytest will override what is otherwise intended to be an instruction to ProTest. The list of available command line arguments for pytest can be inspected by running
+
+
+.. code-block:: bash
+
+    protest -P
