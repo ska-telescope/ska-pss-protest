@@ -156,6 +156,14 @@ def set_markers(mark=False, exclude=False) -> str:
         marker_string += mark[0]
         for i in range(1, len(mark)):
             marker_string += " and " + mark[i]
+
+        # Ensure tests are not repeated by
+        # disabling test subsets by default
+        if "subset" not in mark and (not exclude or "subset" not in exclude):
+            try:
+                exclude.append("subset")
+            except AttributeError:
+                exclude = ["subset"]
     if exclude:
         if mark:
             marker_string += " and not " + exclude[0]
@@ -165,6 +173,8 @@ def set_markers(mark=False, exclude=False) -> str:
             marker_string += "not " + exclude[0]
             for i in range(1, len(exclude)):
                 marker_string += " and not " + exclude[i]
+            if "subset" not in marker_string:
+                marker_string += " and not subset"
     if not marker_string:
-        return "product"
+        return "product and not subset"
     return marker_string
