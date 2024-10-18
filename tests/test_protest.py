@@ -72,19 +72,26 @@ class ProtestTests:
         # Do we correctly set test types?
         # Note that argparse passes in lists of requested test types to a variable
         # that is initialised as False
-        assert set_markers() == "product"
-        assert set_markers(["product"]) == "product"
-        assert set_markers(False, ["product"]) == "not product"
-        assert set_markers(["nasm"], ["container"]) == "nasm and not container"
-        assert set_markers(False, ["sps"]) == "not sps"
-        assert set_markers(False, ["sps", "mid"]) == "not sps and not mid"
-        assert set_markers(["sps", "low"]) == "sps and low"
-        assert set_markers(["sps", "low"], False) == "sps and low"
-
+        assert set_markers() == "product and not subset"
+        assert set_markers(["product"]) == "product and not subset"
+        assert set_markers(False, ["product"]) == "not product and not subset"
+        assert (
+            set_markers(["nasm"], ["container"])
+            == "nasm and not container and not subset"
+        )
+        assert set_markers(False, ["sps"]) == "not sps and not subset"
+        assert (
+            set_markers(False, ["sps", "mid"])
+            == "not sps and not mid and not subset"
+        )
+        assert set_markers(["sps", "low"]) == "sps and low and not subset"
+        assert (
+            set_markers(["sps", "low"], False) == "sps and low and not subset"
+        )
         # In the following scenario, pytest will execute no tests
         assert (
             set_markers(["sps", "low"], ["sps", "low"])
-            == "sps and low and not sps and not low"
+            == "sps and low and not sps and not low and not subset"
         )
 
         # ProTest doesn't care if the tests requested/excluded do not represent valid markers.
@@ -92,15 +99,34 @@ class ProtestTests:
         # marker as there won't be any!
         assert (
             set_markers(["foo", "bar"], ["sdfgh"])
-            == "foo and bar and not sdfgh"
+            == "foo and bar and not sdfgh and not subset"
         )
 
         # For sanity, test a negative scenario
         assert (
             set_markers(["physhw"], ["container"])
-            != "container and not physhw"
+            != "container and not subset and not physhw"
         )
         assert (
             set_markers(["physhw"], ["container"])
-            == "physhw and not container"
+            == "physhw and not container and not subset"
         )
+
+        # Test cases where subsets are enabled
+        assert set_markers(["subset"], False) == "subset"
+        assert (
+            set_markers(["subset"], ["partial", "container"])
+            == "subset and not partial and not container"
+        )
+        assert set_markers(["nasm", "subset"], False) == "nasm and subset"
+        assert (
+            set_markers(["nasm", "sps", "subset"]) == "nasm and sps and subset"
+        )
+        assert (
+            set_markers(["nasm", "sps", "subset"], ["nasm", "sps", "subset"])
+            == "nasm and sps and subset and not nasm and not sps and not subset"
+        )
+
+        # Test cases where subsets are explicitely disabled
+        assert set_markers(False, ["subset"]) == "not subset"
+        assert set_markers(["nasm"], ["subset"]) == "nasm and not subset"

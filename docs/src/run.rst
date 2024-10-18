@@ -107,3 +107,13 @@ In protest, taking the example above, we can simpy do
 
     protest -i sps --path <path/to/cheetah/build_dir>/cheetah/ -o cache_dir=</path/to/new/cache/dir
 
+Test subsets
+------------
+
+In some cases it may be useful to run a subset of a particular test type instead of the full suite. In this case, one can pass the "subset" marker to the :code:`--include` argument. For example, 
+
+.. code-block:: bash
+
+   protest --include nasm subset <other args>
+
+To see or edit the tests that are included in a subset, the tester can refer to the relevant feature file.

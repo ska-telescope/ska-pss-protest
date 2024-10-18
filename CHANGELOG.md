@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.2
+
+- Added capability to run a subset of test (e.g., for MRs or quick tests)
+
 ## 5.0.1
 
 - Expose all pytest options to ProTest executable
