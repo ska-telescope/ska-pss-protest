@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.3
+
+- Added functionality to export S/N of detected candidate to summary file
+- Increased the SIGPROC buffer size for RFIM-SPS tests
+
 ## 5.0.2
 
 - Added capability to run a subset of test (e.g., for MRs or quick tests)
