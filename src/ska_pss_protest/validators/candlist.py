@@ -406,11 +406,14 @@ class SpCcl:
             rules = WidthTol(expected, pars, widths_list)
 
             # If we find it..
-            if self._compare(expected, self.cands, rules):
+            result, sn_detected = self._compare(expected, self.cands, rules)
+            if result:
                 # Add to list of detected pulses
+                expected.append(sn_detected)
                 self.detections.append(expected)
             else:
                 # Add to list of non-detected pulses.
+                expected.append(sn_detected)
                 self.non_detections.append(expected)
 
     @staticmethod
@@ -467,11 +470,12 @@ class SpCcl:
                 if timestamp_check and dm_check and width_check:
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
+                    ## RETURN THE DETECTED CANDIDATES FROM HERE, THE WAY ITS HAPPENING NOW IS CANDS IS AT UPPER LEVEL AND WE NEED SOMETHING TO RETURN THINGS BACK ONCE DETECTED (ATLEAST S/N)
                     detected = True
-                    return True
+                    return [True,cand[3]]
         # None of the candidates match our signal. Return False to caller.
         logging.info("No detection of pulse: {}\n".format(exp))
-        return False
+        return [False,-1]
 
     def summary_export(self, vector_header) -> None:
         """
@@ -491,7 +495,7 @@ class SpCcl:
             os.path.join(self.spccl_dir, "summary.txt"), "a+"
         ) as summary_file:
             summary_file.write(
-                "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,detect_sn\n"
+                "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,expected_sn,detect_sn\n"
             )
 
             for detection in self.detections:
