@@ -470,12 +470,11 @@ class SpCcl:
                 if timestamp_check and dm_check and width_check:
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
-                    ## RETURN THE DETECTED CANDIDATES FROM HERE, THE WAY ITS HAPPENING NOW IS CANDS IS AT UPPER LEVEL AND WE NEED SOMETHING TO RETURN THINGS BACK ONCE DETECTED (ATLEAST S/N)
                     detected = True
-                    return [True,cand[3]]
+                    return [True, cand[3]]
         # None of the candidates match our signal. Return False to caller.
         logging.info("No detection of pulse: {}\n".format(exp))
-        return [False,-1]
+        return [False, -1]
 
     def summary_export(self, vector_header) -> None:
         """

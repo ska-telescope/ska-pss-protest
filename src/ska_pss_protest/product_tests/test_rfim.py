@@ -88,7 +88,7 @@ def set_source_sink(context, config, pytestconfig, conf, outdir):
     Clustering-sifting in cheetah config
     """
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
-    config("beams/beam/source/sigproc/chunk_samples","8192")
+    config("beams/beam/source/sigproc/chunk_samples", "8192")
 
     outdir = outdir(pytestconfig.getoption("outdir"))
     config_path = conf(outdir)
