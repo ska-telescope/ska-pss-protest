@@ -406,23 +406,13 @@ class SpCcl:
             rules = WidthTol(expected, pars, widths_list)
 
             # If we find it..
-            detected_t, detected_dm, detected_width, detected_sn, result = (
-                self._compare(expected, self.cands, rules)
-            )
-            if result:
+            result = self._compare(expected, self.cands, rules)
+            if result[4]:
                 # Add to list of detected pulses
-                expected.append(detected_t)
-                expected.append(detected_dm)
-                expected.append(detected_width)
-                expected.append(detected_sn)
-                self.detections.append(expected)
+                self.detections.append(result[:4])
             else:
                 # Add to list of non-detected pulses.
-                expected.append(detected_t)
-                expected.append(detected_dm)
-                expected.append(detected_width)
-                expected.append(detected_sn)
-                self.non_detections.append(expected)
+                self.non_detections.append(result[:4])
 
     @staticmethod
     def _compare(exp: list, cands: list, rules: object) -> bool:
@@ -479,10 +469,10 @@ class SpCcl:
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
                     detected = True
-                    return (cand[0], cand[1], cand[2], cand[3], True)
+                    return cand[0], cand[1], cand[2], cand[3], True
         # None of the candidates match our signal. Return False to caller.
         logging.info("No detection of pulse: {}\n".format(exp))
-        return (exp[0], exp[1], exp[2], exp[3], False)
+        return exp[0], exp[1], exp[2], exp[3], False
 
     def summary_export(self, vector_header) -> None:
         """
@@ -502,7 +492,7 @@ class SpCcl:
             os.path.join(self.spccl_dir, "summary.txt"), "a+"
         ) as summary_file:
             summary_file.write(
-                "test,frequency,duty,dm,sn,rfi_id,result,expected_mjd,expected_dm,expected_width,expected_sn,detect_mjd,detect_dm,detect_width,detect_sn\n"
+                "test,frequency,duty,dm,sn,rfi_id,result,detect_mjd,detect_dm,detect_width,detect_sn\n"
             )
 
             for detection in self.detections:
