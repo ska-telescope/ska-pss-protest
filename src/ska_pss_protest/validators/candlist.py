@@ -479,7 +479,7 @@ class SpCcl:
                     logging.info("Detected with properties: {}\n".format(cand))
                     # Candidate matches - return True to caller
                     detected = True
-                    return (cand[0], cand[1], cand[2], cand[3],True)
+                    return (cand[0], cand[1], cand[2], cand[3], True)
         # None of the candidates match our signal. Return False to caller.
         logging.info("No detection of pulse: {}\n".format(exp))
         return (exp[0], exp[1], exp[2], exp[3], False)
