@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.4
+
+- Updating versions in all necessary files
+
 ## 5.0.3
 
 - Added functionality to export S/N of detected candidate to summary file
