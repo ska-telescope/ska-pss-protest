@@ -1,4 +1,7 @@
 # Changelog
+## 5.0.5
+
+- Adding a test to SPS-MID-RFIM for broadband RFI excision
 
 ## 5.0.4
 

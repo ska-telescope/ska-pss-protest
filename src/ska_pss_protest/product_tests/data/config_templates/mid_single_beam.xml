@@ -123,6 +123,9 @@
       <base_sensitivity>1.0</base_sensitivity>
       <window>0</window>
     </rfim_sum_threshold>
+    <rfim_zdot>
+      <active>false</active>
+    </rfim_zdot>
   </rfim>
   <ddtr>
     <pool-id>default</pool-id>
