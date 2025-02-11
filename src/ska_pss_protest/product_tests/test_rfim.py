@@ -141,6 +141,21 @@ def set_rfim_sumthreshold(config, cutoff, window):
     config("rfim/rfim_sum_threshold/window", str(window))
 
 
+@given(
+    parsers.parse(
+        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius} with Zdot"
+    )
+)
+def set_rfim_iqrm_zdot(config, threshold, radius):
+    """
+    Configuring IQRM algorithm using Threshold and Radius, and Z-dot from feature file
+    """
+    config("rfim/rfim_iqrmcpu/active", "true")
+    config("rfim/rfim_iqrmcpu/threshold", str(threshold))
+    config("rfim/rfim_iqrmcpu/radius", str(radius))
+    config("rfim/rfim_zdot/active", "true")
+
+
 @when("An SPS pipeline runs")
 def run_cheetah(context, config, pytestconfig):
     """
