@@ -296,14 +296,14 @@ class VectorPull:
         self.check_disk_space(remote_path, self.cache_dir)
 
         # Request vector from server.
-        stream = requests.get(remote_path, stream=True, timeout=20)
+        stream = requests.get(remote_path, stream=True, timeout=60)
         if stream.status_code != 200:
             raise FileNotFoundError("Vector not found")
         logging.info("Pulling {}".format(remote_path))
 
         # Write content to local_path
         with open(local_path, "wb") as writer:
-            for chunk in stream.iter_content(chunk_size=8192):
+            for chunk in stream.iter_content(chunk_size=1048576):
                 writer.write(chunk)
         logging.info("Data written to {}".format(local_path))
         return local_path
