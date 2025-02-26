@@ -76,6 +76,7 @@ from time import sleep
 from typing import Union
 
 import requests
+from requests.adapters import HTTPAdapter, Retry
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
@@ -295,17 +296,18 @@ class VectorPull:
         # Check that there is enough disk space to download
         self.check_disk_space(remote_path, self.cache_dir)
 
-        # Request vector from server.
-        stream = requests.get(remote_path, stream=True, timeout=60)
-        if stream.status_code != 200:
-            raise FileNotFoundError("Vector not found")
-        logging.info("Pulling {}".format(remote_path))
-
-        # Write content to local_path
-        with open(local_path, "wb") as writer:
-            for chunk in stream.iter_content(chunk_size=1048576):
-                writer.write(chunk)
-        logging.info("Data written to {}".format(local_path))
+        session = requests.Session()
+        retries = Retry(
+            total=5,
+            backoff_factor=2,
+            status_forcelist=[500, 502, 503, 504, 104],
+        )
+        session.mount("http://", HTTPAdapter(max_retries=retries))
+        with session.get(remote_path, stream=True) as this_session:
+            with open(local_path, "wb") as writer:
+                for chunk in this_session.iter_content(chunk_size=1048576):
+                    if chunk:
+                        writer.write(chunk)
         return local_path
 
     def from_name(
