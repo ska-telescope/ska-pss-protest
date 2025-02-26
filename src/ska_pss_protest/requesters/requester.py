@@ -305,7 +305,7 @@ class VectorPull:
         session.mount("http://", HTTPAdapter(max_retries=retries))
         with session.get(remote_path, stream=True) as this_session:
             with open(local_path, "wb") as writer:
-                for chunk in this_session.iter_content(chunk_size=1048576):
+                for chunk in this_session.iter_content(chunk_size=64000):
                     if chunk:
                         writer.write(chunk)
         return local_path
