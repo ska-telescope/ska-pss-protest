@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska_pss_protest"
-version = "5.0.5"
+version = "5.0.6"
 description = "The SKA PSS Product Testing Framework"
 authors = ["SKA PSS Developers"]
 license = "BSD-3-Clause"
@@ -11,6 +11,8 @@ include = ["src/ska-pss-protest/features/*", "src/ska_pss_protest/data/config_te
 [[tool.poetry.source]]
 name = "PyPI-public"
 url = 'https://pypi.org/simple'
+default = false
+secondary = false
 
 [tool.poetry.scripts]
 protest = 'ska_pss_protest.protest:main'
@@ -36,7 +38,6 @@ pytest-cov = "^4.1.0"
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
 recommonmark = "^0.7.1"
-
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^7.2.6"

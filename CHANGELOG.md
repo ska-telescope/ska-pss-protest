@@ -1,4 +1,9 @@
 # Changelog
+## 5.0.6
+
+- Improvements to test coverage
+- Simplification of SPS candidate list reader API
+
 ## 5.0.5
 
 - Adding a test to SPS-MID-RFIM for broadband RFI excision
