@@ -213,23 +213,23 @@ class Filterbank:
         # Get truth header size, open file, and seek to that position in stream
         truth_header = VHeader(truth_vector)
         truth = open(truth_vector, "rb")
-        truth.seek(truth_header.header_size())
+        truth.seek(truth_header.header_size)
 
         # Get candidate header size, open file,
         # and seek to that position in stream
-        candidate_header_size = header.header_size()
+        candidate_header_size = header.header_size
         this_candidate = open(self.files[0], "rb")
         this_candidate.seek(candidate_header_size)
 
         # Check number of channels match  between files
-        if header.nchans() != truth_header.nchans():
+        if header.nchans != truth_header.nchans:
             raise IndexError(
                 "Filterbanks have different numbers of channels. {} vs. {}".format(  # noqa
-                    header.nchans(), truth_header.nchans()
+                    header.nchans, truth_header.nchans
                 )
             )
 
-        nbytes = int(chunk_size * header.nchans())
+        nbytes = int(chunk_size * header.nchans)
 
         cand_samples = 0
         truth_samples = 0
@@ -241,7 +241,7 @@ class Filterbank:
             cand_raw = np.fromfile(
                 this_candidate, dtype=np.uint8, count=nbytes
             )
-            cand_channelised = cand_raw.reshape(-1, header.nchans()).astype(
+            cand_channelised = cand_raw.reshape(-1, header.nchans).astype(
                 np.uint8
             )
             if cand_raw.shape[0] == 0:
@@ -249,7 +249,7 @@ class Filterbank:
 
             truth_raw = np.fromfile(truth, dtype=np.uint8, count=nbytes)
             truth_channelised = truth_raw.reshape(
-                -1, truth_header.nchans()
+                -1, truth_header.nchans
             ).astype(np.uint8)
             if truth_raw.shape[0] == 0:
                 break

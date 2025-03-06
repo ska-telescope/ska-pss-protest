@@ -80,7 +80,7 @@ def set_sink(config, context, outdir, conf, pytestconfig):
     """
     Configure data sink
     """
-    spectra_per_file = str(VHeader(context["vector_path"]).nspectra())
+    spectra_per_file = str(VHeader(context["vector_path"]).nspectra)
     outdir = outdir(pytestconfig.getoption("outdir"))
     config_path = conf(outdir)
     config("beams/beam/sinks/sink_configs/sigproc/dir", outdir)
@@ -125,14 +125,14 @@ def validate_exported_data(context, pytestconfig, teardown):
     assert len(candidates.headers) == 1
     header = candidates.headers[0]
     input_header = VHeader(context["vector_path"])
-    assert header.fch1() == input_header.fch1()
-    assert header.nchans() == input_header.nchans()
-    assert header.nbits() == input_header.nbits()
-    assert header.chbw() == input_header.chbw()
-    assert header.tsamp() == input_header.tsamp()
-    assert header.nspectra() == input_header.nspectra()
-    assert header.start_time() == input_header.start_time()
-    assert header.duration() == input_header.duration()
+    assert header.fch1 == input_header.fch1
+    assert header.nchans == input_header.nchans
+    assert header.nbits == input_header.nbits
+    assert header.chbw == input_header.chbw
+    assert header.tsamp == input_header.tsamp
+    assert header.nspectra == input_header.nspectra
+    assert header.start_time == input_header.start_time
+    assert header.duration == input_header.duration
 
     # Run bitwise search through filterbanks
     # and compare values

@@ -89,21 +89,21 @@ class FilterbankTests:
         being read correctly.
         """
         header = VHeader(get_vector.local_path)
-        assert header.fch1() == 1670.0
-        assert header.machine_id() == 10
-        assert header.chbw() == -20.0
-        assert header.nchans() == 16
-        assert header.source_name() == "noise"
-        assert header.nbits() == 8
-        assert header.start_time() == 56000.0
-        assert header.tsamp() == 6.4e-05
-        assert header.header_size() == 242
-        assert header.duration() == pytest.approx(600, 0.1)
-        assert header.data_size() == 150000000
+        assert header.fch1 == 1670.0
+        assert header.machine_id == 10
+        assert header.chbw == -20.0
+        assert header.nchans == 16
+        assert header.source_name == "noise"
+        assert header.nbits == 8
+        assert header.start_time == 56000.0
+        assert header.tsamp == 6.4e-05
+        assert header.header_size == 242
+        assert header.duration == pytest.approx(600, 0.1)
+        assert header.data_size == 150000000
         # No position info in header
         with pytest.raises(KeyError):
-            header.raj()
-            header.decj()
+            header.raj
+            header.decj
 
     def test_real_header_read(self):
         """
@@ -112,20 +112,20 @@ class FilterbankTests:
         """
         path = "tests/data/sigproc/56352_54818_B1929+10_test.fil"
         header = VHeader(path)
-        assert header.fch1() == 1732.0
-        assert header.machine_id() == 0
-        assert header.chbw() == -0.50
-        assert header.nchans() == 800
-        assert header.source_name() == "B1929+10"
-        assert header.nbits() == 8
-        assert header.start_time() == 56352.634479166663
-        assert header.tsamp() == 256e-06
-        assert header.header_size() == 296
-        assert header.duration() == pytest.approx(10, 0.1)
-        assert header.data_size() == 31250400
-        assert header.raj() == 193213.86803807662
-        assert header.decj() == 105931.84868432973
-        assert header.tel() == 0
+        assert header.fch1 == 1732.0
+        assert header.machine_id == 0
+        assert header.chbw == -0.50
+        assert header.nchans == 800
+        assert header.source_name == "B1929+10"
+        assert header.nbits == 8
+        assert header.start_time == 56352.634479166663
+        assert header.tsamp == 256e-06
+        assert header.header_size == 296
+        assert header.duration == pytest.approx(10, 0.1)
+        assert header.data_size == 31250400
+        assert header.raj == 193213.86803807662
+        assert header.decj == 105931.84868432973
+        assert header.tel == 0
 
     def test_invalid_parameter(self, get_vector):
         """

@@ -1,4 +1,5 @@
 """
+
     **************************************************************************
     |                                                                        |
     |               Unit tests for candidate parser                          |
@@ -251,14 +252,14 @@ class SpCclTests:
         # Read parameters from filterbank
         fil = VHeader(get_vector.local_path)
         pars = fil.allpars()
-        npulses = fil.duration() * pars["freq"]
+        npulses = fil.duration * pars["freq"]
         sn_pp = pars["sig"] / np.sqrt(npulses)
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        dm_offset = 4.15e6 * (1 / fil.fch1) ** 2.0 * pars["disp"]
         arrival_time = (
-            fil.start_time()
+            fil.start_time
             + (((1 / pars["freq"]) / 86400) / 2)
             + (dm_offset / 1000 / 86400)
         )
@@ -285,7 +286,7 @@ class SpCclTests:
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
             # Check the fiducial pulse timestamp (compared with calculations)
-            if arrival_time == pytest.approx(exp[i][0], fil.tsamp()):
+            if arrival_time == pytest.approx(exp[i][0], fil.tsamp):
                 fiducial_detected = True
         assert fiducial_detected is True
 
@@ -315,14 +316,14 @@ class SpCclTests:
         # Read parameters from filterbank
         fil = VHeader(get_high_dm_vector.local_path)
         pars = fil.allpars()
-        npulses = fil.duration() * pars["freq"]
+        npulses = fil.duration * pars["freq"]
         sn_pp = pars["sig"] / np.sqrt(npulses)
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        dm_offset = 4.15e6 * (1 / fil.fch1) ** 2.0 * pars["disp"]
         arrival_time = (
-            fil.start_time()
+            fil.start_time
             + (((1 / pars["freq"]) / 86400) / 2)
             + (dm_offset / 1000 / 86400)
         )
@@ -349,7 +350,7 @@ class SpCclTests:
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
             # Check the fiducial pulse timestamp (compared with calculations)
-            if arrival_time == pytest.approx(exp[i][0], fil.tsamp()):
+            if arrival_time == pytest.approx(exp[i][0], fil.tsamp):
                 fiducial_detected = True
         assert fiducial_detected is True
 

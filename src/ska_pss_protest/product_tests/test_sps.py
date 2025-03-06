@@ -193,14 +193,14 @@ def validate_exported_candidates(context, pytestconfig):
     # Compare expected common properties candidate vectors with input vector
     for header in candidates.headers:
         assert isinstance(header, VHeader)
-        assert header.fch1() == input_header.fch1()
-        assert header.nspectra() <= input_header.nspectra()
-        assert header.nchans() == input_header.nchans()
-        assert header.nbits() == input_header.nbits()
-        assert header.chbw() == input_header.chbw()
-        assert header.tsamp() == input_header.tsamp()
-        assert header.start_time() >= input_header.start_time()
-        assert header.duration() <= input_header.duration()
+        assert header.fch1 == input_header.fch1
+        assert header.nspectra <= input_header.nspectra
+        assert header.nchans == input_header.nchans
+        assert header.nbits == input_header.nbits
+        assert header.chbw == input_header.chbw
+        assert header.tsamp == input_header.tsamp
+        assert header.start_time >= input_header.start_time
+        assert header.duration <= input_header.duration
 
     # Replace candidate files with header info only
     if pytestconfig.getoption("reduce"):

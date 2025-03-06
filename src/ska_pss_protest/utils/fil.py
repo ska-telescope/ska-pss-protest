@@ -276,10 +276,10 @@ class VHeader:
 
         # Add some useful parameters that
         # are not natively part of the header.
-        all_pars["duration"] = self.duration()
-        all_pars["nspectra"] = self.nspectra()
-        all_pars["data_size"] = self.data_size()
-        all_pars["total_size"] = self.total_size()
+        all_pars["duration"] = self.duration
+        all_pars["nspectra"] = self.nspectra
+        all_pars["data_size"] = self.data_size
+        all_pars["total_size"] = self.total_size
 
         all_pars.update(self.signal_pars)
 
@@ -287,12 +287,14 @@ class VHeader:
             all_pars = self._json_conv(all_pars)
         return all_pars
 
+    @property
     def machine_id(self) -> int:
         """
         Returns machine id
         """
         return self.header_pars["machine_id"]
 
+    @property
     def tel(self) -> str:
         """
         Returns telescope used to record
@@ -300,6 +302,7 @@ class VHeader:
         """
         return self.header_pars["telescope_id"]
 
+    @property
     def fch1(self) -> float:
         """
         Returns the frequency of the first channel
@@ -307,6 +310,7 @@ class VHeader:
         """
         return self.header_pars["fch1"]
 
+    @property
     def chbw(self) -> float:
         """
         Returns the channel bandwidth
@@ -314,12 +318,14 @@ class VHeader:
         """
         return self.header_pars["foff"]
 
+    @property
     def nchans(self) -> int:
         """
         Returns the number of channels
         """
         return self.header_pars["nchans"]
 
+    @property
     def source_name(self) -> str:
         """
         Returns the name of the source
@@ -327,42 +333,49 @@ class VHeader:
         """
         return self.header_pars["source_name"]
 
+    @property
     def raj(self) -> float:
         """
         Retuns the right ascension of the source
         """
         return self.header_pars["src_raj"]
 
+    @property
     def decj(self) -> float:
         """
         Returns the declination of the source
         """
         return self.header_pars["src_dej"]
 
+    @property
     def nbits(self) -> int:
         """
         Returns the number of bits per sample
         """
         return self.header_pars["nbits"]
 
+    @property
     def start_time(self) -> float:
         """
         Returns the start time of the observation
         """
         return self.header_pars["tstart"]
 
+    @property
     def tsamp(self) -> float:
         """
         Returns the sampling interval (s)
         """
         return self.header_pars["tsamp"]
 
+    @property
     def header_size(self) -> int:
         """
         Returns the size of the header
         """
         return self.header_pars["header_size"]
 
+    @property
     def total_size(self) -> int:
         """
         Obtains size on disk of filterbank
@@ -370,26 +383,29 @@ class VHeader:
         stat = os.stat(self.path)
         return stat.st_size
 
+    @property
     def duration(self) -> float:
         """
         Returns the duration of the observation in seconds
         """
         duration = (
-            (self.total_size() - self.header_size()) / self.nchans()
-        ) * self.tsamp()
+            (self.total_size - self.header_size) / self.nchans
+        ) * self.tsamp
         return duration
 
+    @property
     def data_size(self) -> int:
         """
         Returns the size of the data component of
         the filterbank.
         """
-        data_size = self.total_size() - self.header_size()
+        data_size = self.total_size - self.header_size
         return data_size
 
+    @property
     def nspectra(self) -> int:
         """
         Returns the number of spectra
         (time samples for a single channel)
         """
-        return int(self.data_size() / self.nchans())
+        return int(self.data_size / self.nchans)
