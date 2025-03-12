@@ -2,10 +2,10 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
     @product @cpu @fdas @all @testvector @mid @labyrinth
     Scenario Outline: Detecting pulsars
-        Given A 600 second duration <test_vector> containing a pulsars
+        Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
-        And A cheetah configuration to export the SPS candidate metadata
-        And A cheetah configuration to export the CPU-FDAS candidate metadata
+        And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
+        And A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata
 
     When An FDAS pipeline runs
     Then A FDAS candidates metadata file is produced wich contains detections of the input signals
