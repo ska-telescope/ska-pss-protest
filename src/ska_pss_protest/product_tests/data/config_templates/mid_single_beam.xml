@@ -19,6 +19,12 @@
               <id>candidate_files</id>
             </sink>
           </sps_events>
+          <acc_search>
+            <active>true</active>
+            <sink>
+              <id>scl_files</id>
+            </sink>
+          </acc_search>
         </channels>
         <sink_configs>
           <ocld_files>
@@ -194,6 +200,10 @@
       <pool-id>default</pool-id>
       <priority>0</priority>
       <active>false</active>
+      <labyrinth>
+        <active>false</active>
+        <threshold>8.0</threshold>
+      </labyrinth>
     </fdas>
   </acceleration>
   <sift>
@@ -210,6 +220,10 @@
     <priority>0</priority>
     <cpu>
       <active>false</active>
+      <number_of_frequency_channels>4096</number_of_frequency_channels>
+      <number_of_subints>16</number_of_subints>
+      <number_of_subbands>128</number_of_subbands>
+      <number_of_phase_bins>256</number_of_phase_bins>
     </cpu>
   </fldo>
   <sps>
