@@ -19,12 +19,12 @@
               <id>candidate_files</id>
             </sink>
           </sps_events>
-          <acc_search>
-            <active>true</active>
+          <search_events>
+            <active>false</active>
             <sink>
               <id>scl_files</id>
             </sink>
-          </acc_search>
+          </search_events>
         </channels>
         <sink_configs>
           <ocld_files>
@@ -33,7 +33,7 @@
             <id>ocld_files</id>
           </ocld_files>
           <scl_files>
-            <extension>scl</extension>
+            <extension>.scl</extension>
             <dir>/tmp</dir>
             <id>scl_files</id>
           </scl_files>

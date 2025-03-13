@@ -1,10 +1,14 @@
+"""
+Doc-string placeholder
+"""
+
 import os
 from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, FdasScl, Filterbank, VectorPull, VHeader
+from ska_pss_protest import Cheetah, FdasScl, VectorPull, VHeader
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -87,10 +91,12 @@ def set_source(context, config, pytestconfig, conf, outdir):
     "A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata"
 )
 def set_sps_param(config, context):
-    # Set output location for candidate filterbanks
+    """
+    Configure the config file to set SPS pipeline parameters
+    """
+    # Set output location for candidate metadata files
     config("beams/beam/sinks/channels/sps_events/active", "true")
 
-    # Set output location for candidate metadata files
     config(
         "beams/beam/sinks/sink_configs/spccl_files/dir",
         context["candidate_dir"],
@@ -113,3 +119,76 @@ def set_sps_param(config, context):
     config("spsift/sigma_thresh", "6.0")
     config("spsift/dm_thresh", "5.0")
     config("spsift/pulse_width_threshold", "1000.0")
+
+
+@given(
+    "A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata"
+)
+def set_fdas_param(config, context):
+    """
+    Configure the config file to set FDAS pipeline parameters
+    """
+    # Set output location for candidate filterbanks
+    config("beams/beam/sinks/channels/search_events/active", "true")
+
+    # Set output location for candidate metadata files
+    config(
+        "beams/beam/sinks/sink_configs/scl_files/dir",
+        context["candidate_dir"],
+    )
+
+    # Configure PSBC and FDAS parameters
+    config("psbc/dump_time", "540")
+    config("acceleration/fdas/active", "true")
+    config("acceleration/fdas/labyrinth/active", "true")
+    config("acceleration/fdas/labyrinth/threshold", "8.0")
+
+    # Configure SIFT and FLDO parameters
+    config("sift/simple_sift/active", "true")
+    config("sift/simple_sift/num_candidate_harmonics", "8")
+    config("sift/simple_sift/match_factor", "0.001")
+    config("fldo/cpu/active", "true")
+
+
+@when("An FDAS pipeline runs")
+def run_cheetah(context, config, pytestconfig):
+    """
+    Set dedispersion buffer length and
+    run cheetah pipeline
+    """
+
+    # Set number of samples in dedispersion buffer
+    context["dd_samples"] = 131072
+    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+
+    # Launch cheetah with our configuration
+    cheetah = Cheetah(
+        "cheetah_pipeline",
+        context["config_path"],
+        "sigproc",
+        "Fdas",
+        build_dir=pytestconfig.getoption("path"),
+    )
+    cheetah.run(timeout=4800)
+    assert cheetah.exit_code == 0
+
+
+@then(
+    "A FDAS candidates metadata file is produced wich contains detections of the input signals"
+)
+def validate_fdas_candidates(context, pytestconfig, teardown):
+    """
+    Load the candidate metadata and validate
+    the results from cheetah pipeline
+    """
+    # Load candidate metadata
+    scl = FdasScl(context["candidate_dir"])
+    scl.from_vector(context["test_vector"].local_path)
+
+    scl.search_dummy()
+
+    assert scl.detected is True
+
+    # Clean up
+    if not pytestconfig.getoption("keep"):
+        teardown(context["candidate_dir"])
