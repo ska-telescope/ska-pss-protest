@@ -26,7 +26,13 @@ BUILD_DIR = None
 cheetah_pipeline = {
     "path": "pipelines/search_pipeline/cheetah_pipeline",
     "sources": ["sigproc", "udp_low", "udp"],
-    "pipelines": ["SinglePulse", "Empty", "Tdas", "RfiDetectionPipeline"],
+    "pipelines": [
+        "SinglePulse",
+        "Empty",
+        "Tdas",
+        "RfiDetectionPipeline",
+        "Fdas",
+    ],
 }
 
 cheetah_emulator = {

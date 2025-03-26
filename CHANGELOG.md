@@ -1,4 +1,11 @@
 # Changelog
+## 5.1.0
+
+- Adding CPU-FDAS (Labyrinth) test
+- Modifying configuration file template to run CPU-FDAS
+- Fixing expected SCL file format to match the one exported by Cheetah
+- Changes in unit tests to accommodate updated SCL file format
+
 ## 5.0.5
 
 - Adding a test to SPS-MID-RFIM for broadband RFI excision

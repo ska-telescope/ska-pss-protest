@@ -762,8 +762,8 @@ class FdasScl:
                 )
             )
         # If one file is found, load as pandas dataframe and return
-        scl_header = ["period", "pdot", "dm", "width", "sn"]
-        cand_metadata = pd.read_csv(cand_file, sep=r"\s+")
+        scl_header = ["period", "pdot", "dm", "harmonic", "width", "sn"]
+        cand_metadata = pd.read_csv(cand_file, sep="\t")
         cand_metadata.columns = scl_header
         if cand_metadata.empty:
             raise EOFError("Candidate list {} empty".format(cand_file))
@@ -797,8 +797,8 @@ class FdasScl:
         basename = os.path.splitext(os.path.basename(vector))[0].split("_")
 
         # Determine signal properties from name of vector
-        period = 1.0 / float(basename[2])
-        width = float(basename[3]) * period * 1000  # milliseconds
+        period = 1.0 / float(basename[2]) * 1000  # milliseconds
+        width = float(basename[3]) * period  # milliseconds
         disp = float(basename[4])
         accel = float(basename[5])
         sig_fold = float(basename[7])

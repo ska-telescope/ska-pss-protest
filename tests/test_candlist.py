@@ -848,8 +848,15 @@ class SclTests:
 
         # Load in "expected" candidate metadata file
         known_file = os.path.join(DATA_DIR, "scl_1/test_candlist.scl")
-        known_cands = pd.read_csv(known_file, sep=r"\s+")
-        known_cands.columns = ["period", "pdot", "dm", "width", "sn"]
+        known_cands = pd.read_csv(known_file, sep="\t")
+        known_cands.columns = [
+            "period",
+            "pdot",
+            "dm",
+            "harmonic",
+            "width",
+            "sn",
+        ]
         known_cands = known_cands.sort_values("sn", ascending=False)
 
         assert np.all(candidate.cands == known_cands)
@@ -908,13 +915,13 @@ class SclTests:
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
 
-        period = 1.0 / 500.0
-        width = 0.2 * period * 1000
+        period = 1.0 / 500.0 * 1000
+        width = 0.2 * period
         candidate.from_vector(vector_a)
         assert candidate.expected == [period, 0, 1.0, width, 50.0]
 
-        period = 1.0 / 500.00115818617536
-        width = 0.05 * period * 1000
+        period = 1.0 / 500.00115818617536 * 1000
+        width = 0.05 * period
         candidate.from_vector(vector_b)
         assert candidate.expected == [period, 0, 1.0, width, 50.0]
         assert candidate.expected != [period, 0, 2.0, width, 500.0]
@@ -924,23 +931,27 @@ class SclTests:
         Test the dummy search method recovers the one
         candidate that falls within a set of tolerances.
         """
-        vector = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        vector = (
+            "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
         candidate.search_dummy()
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
-        true_candidate = [0.002, 0, 0.999, 0.4, 49.999]
-        true = pd.DataFrame([true_candidate], index=[500])
-        true.columns = ["period", "pdot", "dm", "width", "sn"]
+        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
+        true = pd.DataFrame([true_candidate], index=[5])
+        true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
         assert np.all(true == candidate.recovered)
 
     def test_search_using_dummy_ruleset_no_detection(self):
         """
         Test the dummy search method filters all candidates
         """
-        vector = "F_1_100000.0_0.2_1.0_0.0_G_500.0_0000_1.fil"
+        vector = (
+            "FLDO-MID_336a2a6_48.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
