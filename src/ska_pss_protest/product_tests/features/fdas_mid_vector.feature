@@ -8,7 +8,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
     When A FDAS pipeline runs
-    Then A FDAS candidates metadata file is produced wich contains detections of the input signals
+    Then A FDAS candidates metadata file is produced which contains detections of the input signals
 
         Examples:
         | test_vector                                                       |

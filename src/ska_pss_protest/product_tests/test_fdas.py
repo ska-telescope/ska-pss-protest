@@ -174,7 +174,7 @@ def run_cheetah(context, config, pytestconfig):
 
 
 @then(
-    "A FDAS candidates metadata file is produced wich contains detections of the input signals"
+    "A FDAS candidates metadata file is produced which contains detections of the input signals"
 )
 def validate_fdas_candidates(context, pytestconfig, teardown):
     """
