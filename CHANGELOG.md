@@ -1,4 +1,7 @@
 # Changelog
+## 5.1.1
+- Adding tags to FDAS test feature file
+
 ## 5.1.0
 
 - Adding CPU-FDAS (Labyrinth) test

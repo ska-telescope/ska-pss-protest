@@ -1,6 +1,6 @@
 Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
-    @product @cpu @fdas @all @testvector @mid @labyrinth
+    @product @cpu @fdas @nasm @all @testvector @mid @labyrinth
     Scenario Outline: Detecting pulsars
         Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
