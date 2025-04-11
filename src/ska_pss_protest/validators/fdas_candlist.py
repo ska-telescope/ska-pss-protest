@@ -54,6 +54,8 @@ import os
 import numpy as np
 import pandas as pd
 
+# from ska_pss_protest.validators.candidate import Filterbank
+
 np.set_printoptions(precision=17)
 
 logging.basicConfig(
@@ -83,6 +85,7 @@ class FdasScl:
     def __init__(self, scl_dir=None, extension=".scl"):
         self.scl_dir = scl_dir
         self.extension = extension
+        self.vheader_param = None
 
         # Have we set a scl dir?
         if not self.scl_dir:
@@ -149,7 +152,7 @@ class FdasScl:
         cand_metadata = cand_metadata.sort_values("sn", ascending=False)
         return cand_metadata
 
-    def from_vector(self, vector: str) -> list:
+    def from_vector(self, vector: str, vector_header: dict) -> list:
         """
         Extract parameters of the pulsar using a test
         vector filename. These will be used to validate
@@ -167,6 +170,9 @@ class FdasScl:
             1xN list, where N is the number of parameters
             used to validate each candidate.
         """
+        # Save header information
+        self.vheader_param = vector_header
+
         logging.info("Extracting pulsar parameters from {}".format(vector))
 
         # Split path and extension from vector filename
@@ -206,7 +212,7 @@ class FdasScl:
         elif tol_set == "basic":
             # Basic tolerance
             logging.info("Using ruleset: Basic")
-            rules = FdasTolBasic(self.expected)
+            rules = FdasTolBasic(self.expected, self.vheader_param)
         else:
             raise ValueError(
                 "Invalid tolerance set specified: {}".format(tol_set)
@@ -267,7 +273,7 @@ class FdasScl:
         # candididates that fall within the tolerances set by the
         # rule set chosen
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & sn >= @rules.sn_tol"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N
@@ -347,15 +353,13 @@ class FdasTolDummy:
 class FdasTolBasic:
     """
     Class to compute the tolerances on the FDAS candidates
-
-    This is a placeholder class until a format set of FDAS
-    tolerances are defined.
     """
 
-    def __init__(self, expected: list):
+    def __init__(self, expected: list, header: dict):
 
         self.expected = expected
         self.period_tol = None
+        self.header = header
 
         self.calc_tols()
 
@@ -366,46 +370,49 @@ class FdasTolBasic:
         """
         self.period_tol = self.period(self.expected[0])
         self.pdot_tol = self.pdot(self.expected[1])
-        self.dm_tol = self.dm(self.expected[2])
+        self.dm_tol = self.dm(self.expected[2], self.expected[3])
         self.width_tol = self.width(self.expected[3])
         self.sn_tol = self.sn(self.expected[4])
         logging.info("EXPECTED: {}".format(self.expected))
 
-    @staticmethod
-    def period(this_period: float) -> float:
+    def period(self, this_period: float) -> float:
         """
-        Dummy method to set period tolerance
+        Method to set period tolerance
         """
         ptol = 0.1 * this_period
         return [this_period - ptol, this_period + ptol]
 
-    @staticmethod
-    def pdot(this_pdot: float) -> float:
+    def pdot(self, this_pdot: float) -> float:
         """
-        Dummy method to set period derivative tolerance
+        Method to set period derivative tolerance
         """
         return [0.1 * this_pdot, 10 * this_pdot]
 
-    @staticmethod
-    def dm(this_dm: float) -> float:
+    def dm(self, this_dm: float, wint: float) -> float:
         """
-        Dummy method to set DM tolerance
+        Method to set DM tolerance
         """
-        dmtol = 0.1 * this_dm
-        return [this_dm - dmtol, this_dm + dmtol]
+        scaler = 2
 
-    @staticmethod
-    def width(this_width: float) -> float:
+        fch_low = (
+            self.header["fch1"] + self.header["nchans"] * self.header["foff"]
+        )
+        sqdiff = ((1 / fch_low) ** 2.0) - (1 / self.header["fch1"] ** 2.0)
+
+        dmtol = (scaler * wint) / (4.15e9 * sqdiff)
+
+        return [this_dm - (dmtol * 1e3), this_dm + (dmtol * 1e3)]
+
+    def width(self, this_width: float) -> float:
         """
-        Dummy method to set width tolerance
+        Method to set width tolerance
         """
         widthtol = 0.1 * this_width
         return [this_width - widthtol, this_width + widthtol]
 
-    @staticmethod
-    def sn(this_sn: float) -> float:
+    def sn(self, this_sn: float) -> float:
         """
-        Dummy method to set S/N tolerance
+        Method to set S/N tolerance
         """
         sntol = 0.85 * this_sn
         return sntol

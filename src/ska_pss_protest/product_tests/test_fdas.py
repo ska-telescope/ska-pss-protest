@@ -185,7 +185,9 @@ def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):
     """
     # Load candidate metadata
     scl = FdasScl(context["candidate_dir"])
-    scl.from_vector(context["test_vector"].local_path)
+    scl.from_vector(
+        context["test_vector"].local_path, context["vector_header"].allpars()
+    )
 
     scl.search_tol(tol_settings)
 
