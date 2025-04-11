@@ -174,9 +174,11 @@ def run_cheetah(context, config, pytestconfig):
 
 
 @then(
-    "A FDAS candidates metadata file is produced which contains detections of the input signals"
+    parsers.parse(
+        "A FDAS candidates metadata file is produced which is validate using {tol_settings} tolerances"
+    )
 )
-def validate_fdas_candidates(context, pytestconfig, teardown):
+def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):
     """
     Load the candidate metadata and validate
     the results from cheetah pipeline
@@ -185,7 +187,7 @@ def validate_fdas_candidates(context, pytestconfig, teardown):
     scl = FdasScl(context["candidate_dir"])
     scl.from_vector(context["test_vector"].local_path)
 
-    scl.search_dummy()
+    scl.search_tol(tol_settings)
 
     assert scl.detected is True
 

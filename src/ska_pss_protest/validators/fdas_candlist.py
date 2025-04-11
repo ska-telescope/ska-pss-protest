@@ -184,7 +184,7 @@ class FdasScl:
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
-    def search_dummy(self) -> None:
+    def search_tol(self, tol_set) -> None:
         """
         Method to search for an injected pulsar from the
         list of candidate detections. A match is defined if
@@ -194,13 +194,23 @@ class FdasScl:
         This is placeholder method until formal FDAS tolerances
         are defined.
         """
-        logging.info("Using ruleset: Dummy")
         logging.info(
             "Searching pulsar candidates for {}".format(self.expected)
         )
 
         # Get a tolerance for each metadata parameter
-        rules = FdasTolDummy(self.expected)
+        if tol_set == "dummy":
+            # Dummy tolerance
+            logging.info("Using ruleset: Dummy")
+            rules = FdasTolDummy(self.expected)
+        elif tol_set == "basic":
+            # Basic tolerance
+            logging.info("Using ruleset: Basic")
+            rules = FdasTolBasic(self.expected)
+        else:
+            raise ValueError(
+                "Invalid tolerance set specified: {}".format(tol_set)
+            )
 
         # Apply tolerance rules to each candidate
         sifted, best = self._compare(self.cands, rules)
@@ -268,6 +278,73 @@ class FdasScl:
 
 
 class FdasTolDummy:
+    """
+    Class to compute the tolerances on the FDAS candidates
+
+    This is a placeholder class until a format set of FDAS
+    tolerances are defined.
+    """
+
+    def __init__(self, expected: list):
+
+        self.expected = expected
+        self.period_tol = None
+
+        self.calc_tols()
+
+    def calc_tols(self) -> None:
+        """
+        Set tolerances for each of the parameters
+        we are testing candidates against.
+        """
+        self.period_tol = self.period(self.expected[0])
+        self.pdot_tol = self.pdot(self.expected[1])
+        self.dm_tol = self.dm(self.expected[2])
+        self.width_tol = self.width(self.expected[3])
+        self.sn_tol = self.sn(self.expected[4])
+        logging.info("EXPECTED: {}".format(self.expected))
+
+    @staticmethod
+    def period(this_period: float) -> float:
+        """
+        Dummy method to set period tolerance
+        """
+        ptol = 0.1 * this_period
+        return [this_period - ptol, this_period + ptol]
+
+    @staticmethod
+    def pdot(this_pdot: float) -> float:
+        """
+        Dummy method to set period derivative tolerance
+        """
+        return [0.1 * this_pdot, 10 * this_pdot]
+
+    @staticmethod
+    def dm(this_dm: float) -> float:
+        """
+        Dummy method to set DM tolerance
+        """
+        dmtol = 0.1 * this_dm
+        return [this_dm - dmtol, this_dm + dmtol]
+
+    @staticmethod
+    def width(this_width: float) -> float:
+        """
+        Dummy method to set width tolerance
+        """
+        widthtol = 0.1 * this_width
+        return [this_width - widthtol, this_width + widthtol]
+
+    @staticmethod
+    def sn(this_sn: float) -> float:
+        """
+        Dummy method to set S/N tolerance
+        """
+        sntol = 0.85 * this_sn
+        return sntol
+
+
+class FdasTolBasic:
     """
     Class to compute the tolerances on the FDAS candidates
 
