@@ -57,6 +57,7 @@ from pytest import mark
 
 from ska_pss_protest import (
     FdasScl,
+    FdasTolBasic,
     FdasTolDummy,
     SpCcl,
     VectorPull,
@@ -937,7 +938,7 @@ class SclTests:
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
-        candidate.search_dummy()
+        candidate.search_tol("dummy")
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
         true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
@@ -955,7 +956,7 @@ class SclTests:
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
         candidate.from_vector(vector)
-        candidate.search_dummy()
+        candidate.search_tol("dummy")
         assert candidate.detected is False
         assert candidate.recovered is None
 
@@ -965,6 +966,51 @@ class SclTests:
         returns to expected ranges/limits
         """
         tols = FdasTolDummy([1, 1e-15, 100, 100, 100])
+        assert tols.period_tol == [0.9, 1.1]
+        assert tols.dm_tol == [90, 110]
+        assert tols.width_tol == [90, 110]
+        assert tols.sn_tol == 85
+        assert tols.pdot_tol == [pytest.approx(1e-16), pytest.approx(1e-14)]
+
+    def test_search_using_basic_ruleset(self):
+        """
+        Test the dummy search method recovers the one
+        candidate that falls within a set of tolerances.
+        """
+        vector = (
+            "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_tol("basic")
+        assert candidate.detected is True
+        assert candidate.recovered.shape[0] == 1
+        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
+        true = pd.DataFrame([true_candidate], index=[5])
+        true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
+        assert np.all(true == candidate.recovered)
+
+    def test_search_using_basic_ruleset_no_detection(self):
+        """
+        Test the dummy search method filters all candidates
+        """
+        vector = (
+            "FLDO-MID_336a2a6_48.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = FdasScl(scl_dir)
+        candidate.from_vector(vector)
+        candidate.search_tol("basic")
+        assert candidate.detected is False
+        assert candidate.recovered is None
+
+    def test_basic_fdas_rules(self):
+        """
+        Test the dummy tolerance generator
+        returns to expected ranges/limits
+        """
+        tols = FdasTolBasic([1, 1e-15, 100, 100, 100])
         assert tols.period_tol == [0.9, 1.1]
         assert tols.dm_tol == [90, 110]
         assert tols.width_tol == [90, 110]
