@@ -380,13 +380,17 @@ class FdasTolBasic:
         Method to set period tolerance
         """
 
-        exponent = np.floor(np.log2(self.header["duration"] / self.header["tsamp"]))
+        exponent = np.floor(
+            np.log2(self.header["duration"] / self.header["tsamp"])
+        )
         tol_bins = 1
 
-        delta_freq = 1 / ((2 ** exponent)*self.header["tsamp"])
+        delta_freq = 1 / ((2**exponent) * self.header["tsamp"])
 
-        fmin, fmax = (1 / this_period) - (tol_bins * delta_freq), (1/this_period) + (tol_bins * delta_freq)
-        return [1/fmax, 1/fmin]
+        fmin, fmax = (1 / this_period) - (tol_bins * delta_freq), (
+            1 / this_period
+        ) + (tol_bins * delta_freq)
+        return [1 / fmax, 1 / fmin]
 
     def pdot(self, this_pdot: float) -> float:
         """

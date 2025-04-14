@@ -152,6 +152,23 @@ class SclTests:
         with pytest.raises(OSError):
             FdasScl()
 
+    def test_empty_candidate_list(self):
+        """
+        Tests that the correct exception is raised
+        when an empty candidate list is passed to
+        the constructor.
+        """
+        scl_dir = os.path.join(DATA_DIR, "scl_2")
+
+        # Instantiate candidate parser, passing directory as args
+        # The directory contains a "detected" candidates file which will
+        # be loaded into memory and the contents compared to
+        # a list of expected candidates (next step)
+
+        with pytest.raises(EOFError):
+            # Pass empty directory to constructor
+            FdasScl(scl_dir)
+
     def test_no_cand_file_extension_in_valid_dir(self):
         """
         Tests that the correct exception is raised if
@@ -194,17 +211,24 @@ class SclTests:
         """
         vector_a = "FDAS-HSUM-MID_38d46df_500.0_0.2_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
         vector_b = "FDAS-HSUM-MID_38d46df_500.00115818617536_0.05_1.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
 
         period = 1.0 / 500.0 * 1000
         width = 0.2 * period
-        candidate.from_vector(vector_a)
+        candidate.from_vector(vector_a, source_properties)
         assert candidate.expected == [period, 0, 1.0, width, 50.0]
 
         period = 1.0 / 500.00115818617536 * 1000
         width = 0.05 * period
-        candidate.from_vector(vector_b)
+        candidate.from_vector(vector_b, source_properties)
         assert candidate.expected == [period, 0, 1.0, width, 50.0]
         assert candidate.expected != [period, 0, 2.0, width, 500.0]
 
@@ -216,14 +240,21 @@ class SclTests:
         vector = (
             "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
         )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
-        candidate.from_vector(vector)
+        candidate.from_vector(vector, source_properties)
         candidate.search_tol("dummy")
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
-        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
-        true = pd.DataFrame([true_candidate], index=[5])
+        true_candidate = [18.5179, 0, 99.7, 9, 2.05754, 463.76]
+        true = pd.DataFrame([true_candidate], index=[2])
         true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
         assert np.all(true == candidate.recovered)
 
@@ -234,9 +265,16 @@ class SclTests:
         vector = (
             "FLDO-MID_336a2a6_48.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
         )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
-        candidate.from_vector(vector)
+        candidate.from_vector(vector, source_properties)
         candidate.search_tol("dummy")
         assert candidate.detected is False
         assert candidate.recovered is None
@@ -261,14 +299,21 @@ class SclTests:
         vector = (
             "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
         )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
-        candidate.from_vector(vector)
+        candidate.from_vector(vector, source_properties)
         candidate.search_tol("basic")
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
-        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
-        true = pd.DataFrame([true_candidate], index=[5])
+        true_candidate = [18.5179, 0, 99.7, 9, 2.05754, 463.76]
+        true = pd.DataFrame([true_candidate], index=[2])
         true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
         assert np.all(true == candidate.recovered)
 
@@ -279,9 +324,17 @@ class SclTests:
         vector = (
             "FLDO-MID_336a2a6_48.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
         )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "freq": 0.2,
+            "duration": 600,
+        }
         scl_dir = os.path.join(DATA_DIR, "scl_1")
         candidate = FdasScl(scl_dir)
-        candidate.from_vector(vector)
+        candidate.from_vector(vector, source_properties)
         candidate.search_tol("basic")
         assert candidate.detected is False
         assert candidate.recovered is None
@@ -291,9 +344,38 @@ class SclTests:
         Test the dummy tolerance generator
         returns to expected ranges/limits
         """
-        tols = FdasTolBasic([1, 1e-15, 100, 100, 100])
-        assert tols.period_tol == [0.9, 1.1]
-        assert tols.dm_tol == [90, 110]
-        assert tols.width_tol == [90, 110]
-        assert tols.sn_tol == 85
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
+
+        tols = FdasTolBasic([1, 0, 100, 0.1, 50], source_properties)
+        assert tols.period_tol == [0.9981408178473872, 1.001866121070591]
+        assert tols.dm_tol == [99.746530646593, 100.253469353407]
+        assert tols.sn_tol == 42.5
         assert tols.pdot_tol == [pytest.approx(1e-16), pytest.approx(1e-14)]
+
+    def test_wrong_ruleset_error(self):
+        """
+        Test that the correct exception is raised
+        when an invalid ruleset is passed to the
+        constructor.
+        """
+        vector = (
+            "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = FdasScl(scl_dir)
+        candidate.from_vector(vector, source_properties)
+        with pytest.raises(ValueError):
+            candidate.search_tol("invalid_ruleset")
