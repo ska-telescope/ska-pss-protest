@@ -199,6 +199,16 @@ class FdasScl:
 
         This is placeholder method until formal FDAS tolerances
         are defined.
+
+        Parameters
+        ----------
+        tol_set: str
+            Paramter to choose which tolerance set to use.
+            Options are: dummy, basic
+            dummy: Dummy tolerance set
+            basic: Basic tolerance set
+            If no tolerance set is specified, then ValueError
+            is raised.
         """
         logging.info(
             "Searching pulsar candidates for {}".format(self.expected)
@@ -258,6 +268,9 @@ class FdasScl:
         rules : object
             An object defining the tolerances for each of the
             parameters in the known signal.
+            NOTE that the width tolerance is not used in the
+            comparison, as the width is not very accurate for
+            periodicity searches using fourier transforms.
 
         Returns
         -------
@@ -353,6 +366,8 @@ class FdasTolDummy:
 class FdasTolBasic:
     """
     Class to compute the tolerances on the FDAS candidates
+    This set is named "basic" as it is a more realistic set
+    of tolerances than the dummy set.
     """
 
     def __init__(self, expected: list, header: dict):
@@ -378,13 +393,18 @@ class FdasTolBasic:
     def period(self, this_period: float) -> float:
         """
         Method to set period tolerance
+        For the pulse period, the frequency resolution post FFT
+        is used to set the uncertainty which will be 1 frequency
+        bin either side of the true frequency, defined by tol_bins.
         """
 
         exponent = np.floor(
             np.log2(self.header["duration"] / self.header["tsamp"])
         )
+        # Number of bins to use for tolerance
         tol_bins = 1
 
+        # The frequency resolution is given by
         delta_freq = 1 / ((2**exponent) * self.header["tsamp"])
 
         fmin, fmax = (1 / this_period) - (tol_bins * delta_freq), (
@@ -395,12 +415,18 @@ class FdasTolBasic:
     def pdot(self, this_pdot: float) -> float:
         """
         Method to set period derivative tolerance
+        TODO: This is a placeholder method until
+        a more realistic set of tolerances are defined.
         """
         return [0.1 * this_pdot, 10 * this_pdot]
 
     def dm(self, this_dm: float, wint: float) -> float:
         """
         Method to set DM tolerance
+        This is defined by the maximum S/N degradation
+        allowed due to dispersion smearing. This can be
+        varied by changing the scaler value.
+        The value of 2 is taken to set S/N loss up to 85%
         """
         scaler = 2
 
@@ -416,6 +442,9 @@ class FdasTolBasic:
     def width(self, this_width: float) -> float:
         """
         Method to set width tolerance
+        TODO: Look at chances of removing this
+        as width is not very accurate for periodicity
+        searches using fourier transforms.
         """
         widthtol = 0.1 * this_width
         return [this_width - widthtol, this_width + widthtol]
@@ -423,6 +452,7 @@ class FdasTolBasic:
     def sn(self, this_sn: float) -> float:
         """
         Method to set S/N tolerance
+        TODO: Needs to be defined clearly.
         """
         sntol = 0.85 * this_sn
         return sntol

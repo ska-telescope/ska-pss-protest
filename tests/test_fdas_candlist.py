@@ -293,7 +293,7 @@ class SclTests:
 
     def test_search_using_basic_ruleset(self):
         """
-        Test the dummy search method recovers the one
+        Test the basic search method recovers the one
         candidate that falls within a set of tolerances.
         """
         vector = (
@@ -319,7 +319,7 @@ class SclTests:
 
     def test_search_using_basic_ruleset_no_detection(self):
         """
-        Test the dummy search method filters all candidates
+        Test the basic search method filters all candidates
         """
         vector = (
             "FLDO-MID_336a2a6_48.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
@@ -341,7 +341,7 @@ class SclTests:
 
     def test_basic_fdas_rules(self):
         """
-        Test the dummy tolerance generator
+        Test the basic tolerance generator
         returns to expected ranges/limits
         """
         source_properties = {
