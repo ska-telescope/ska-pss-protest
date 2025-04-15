@@ -378,6 +378,48 @@ class FdasTolBasic:
 
         self.calc_tols()
 
+    @staticmethod
+    def _get_psbc_time(tobs: float, tsamp: float) -> float:
+        """
+        Get psbc dump time
+        """
+        exponent = np.floor(np.round(np.log2(tobs / tsamp)))
+        t_psbc = (2**exponent) * tsamp
+        return t_psbc
+
+    @staticmethod
+    def _get_z_levels(z: float, base: int):
+        """
+        Use the filter number to get the surrounding
+        multiples of base
+        """
+        if base <= 0:
+            raise ValueError("Base must be positive")
+
+        nearest = round(z / base) * base
+        lower = nearest - base
+        upper = nearest + base
+
+        return lower, nearest, upper
+
+    @staticmethod
+    def _get_a_from_filter(z: float, freq: float, t_psbc: float) -> float:
+        return (z * 3e8) / (freq * t_psbc**2.0)
+
+    @staticmethod
+    def _accel_to_pdot(accel: float, period: float) -> float:
+        """
+        Convert acceleration (m/s/s) to pdot (s/s)
+        """
+        return -accel / (period * 3e8)
+
+    @staticmethod
+    def _pdot_to_accel(pdot: float, period: float) -> float:
+        """
+        Convert pdot (s/s) to acceleration (m/s/s)
+        """
+        return -pdot * period * 3e8
+
     def calc_tols(self) -> None:
         """
         Set tolerances for each of the parameters
@@ -398,14 +440,13 @@ class FdasTolBasic:
         bin either side of the true frequency, defined by tol_bins.
         """
 
-        exponent = np.floor(
-            np.log2(self.header["duration"] / self.header["tsamp"])
-        )
         # Number of bins to use for tolerance
         tol_bins = 1
 
         # The frequency resolution is given by
-        delta_freq = 1 / ((2**exponent) * self.header["tsamp"])
+        delta_freq = 1 / self._get_psbc_time(
+            self.header["duration"], self.header["tsamp"]
+        )
 
         fmin, fmax = (1 / this_period) - (tol_bins * delta_freq), (
             1 / this_period
@@ -418,7 +459,25 @@ class FdasTolBasic:
         TODO: This is a placeholder method until
         a more realistic set of tolerances are defined.
         """
-        return [0.1 * this_pdot, 10 * this_pdot]
+        delta_z = 5  # Separation of filters to use for tolerance
+
+        freq = 1 / (self.expected[0] * 1e-3)
+        accel = self._pdot_to_accel(this_pdot, self.expected[0] * 1e-3)
+        t_psbc = self._get_psbc_time(
+            self.header["duration"], self.header["tsamp"]
+        )
+
+        z = (accel * freq * t_psbc**2) / 3e8
+        z_range = self._get_z_levels(z, delta_z)
+
+        a_low = self._get_a_from_filter(z_range[0], freq, t_psbc)
+        a_high = self._get_a_from_filter(z_range[2], freq, t_psbc)
+
+        # Convert acceleration to pdot
+        pdot_high = self._accel_to_pdot(a_low, 1 / freq)
+        pdot_low = self._accel_to_pdot(a_high, 1 / freq)
+
+        return [pdot_low, pdot_high]
 
     def dm(self, this_dm: float, wint: float) -> float:
         """

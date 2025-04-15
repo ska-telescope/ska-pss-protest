@@ -352,11 +352,13 @@ class SclTests:
             "duration": 600,
         }
 
-        tols = FdasTolBasic([1, 0, 100, 0.1, 50], source_properties)
+        tols = FdasTolBasic(
+            [1, -1.3333333333333334e-07, 100, 0.1, 50], source_properties
+        )
         assert tols.period_tol == [0.9981408178473872, 1.001866121070591]
         assert tols.dm_tol == [99.746530646593, 100.253469353407]
         assert tols.sn_tol == 42.5
-        assert tols.pdot_tol == [pytest.approx(1e-16), pytest.approx(1e-14)]
+        assert tols.pdot_tol == [-1.734723475976807e-05, 1.734723475976807e-05]
 
     def test_wrong_ruleset_error(self):
         """
