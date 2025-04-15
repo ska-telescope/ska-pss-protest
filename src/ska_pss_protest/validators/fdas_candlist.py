@@ -373,7 +373,6 @@ class FdasTolBasic:
     def __init__(self, expected: list, header: dict):
 
         self.expected = expected
-        self.period_tol = None
         self.header = header
 
         self.calc_tols()
@@ -403,7 +402,11 @@ class FdasTolBasic:
         return lower, nearest, upper
 
     @staticmethod
-    def _get_a_from_filter(z: float, freq: float, t_psbc: float) -> float:
+    def _get_acc_from_filter(z: float, freq: float, t_psbc: float) -> float:
+        """
+        A method to return the acceleration (m/s/s)
+        from the filter number (z)
+        """
         return (z * 3e8) / (freq * t_psbc**2.0)
 
     @staticmethod
@@ -455,9 +458,13 @@ class FdasTolBasic:
 
     def pdot(self, this_pdot: float) -> float:
         """
-        Method to set period derivative tolerance
-        TODO: This is a placeholder method until
-        a more realistic set of tolerances are defined.
+        A method to compute Pdot tolerances. the filter number we
+        expect to find the pulsar in (z) is determined and the
+        lowest and highest acceleration based on the filter width
+        (i.e, delta_z = 5) is computed.
+        This assumes a fixed value of delta z which may be subject
+        to change later but this should be straightforward if needed.
+
         """
         delta_z = 5  # Separation of filters to use for tolerance
 
@@ -470,8 +477,8 @@ class FdasTolBasic:
         z = (accel * freq * t_psbc**2) / 3e8
         z_range = self._get_z_levels(z, delta_z)
 
-        a_low = self._get_a_from_filter(z_range[0], freq, t_psbc)
-        a_high = self._get_a_from_filter(z_range[2], freq, t_psbc)
+        a_low = self._get_acc_from_filter(z_range[0], freq, t_psbc)
+        a_high = self._get_acc_from_filter(z_range[-1], freq, t_psbc)
 
         # Convert acceleration to pdot
         pdot_high = self._accel_to_pdot(a_low, 1 / freq)
