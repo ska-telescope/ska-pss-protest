@@ -15,6 +15,8 @@
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     | Author: Lina Levin Preston                                             |
     | Email : lina.preston@manchester.ac.uk                                  |
+    | Author: Raghuttam Hombal                                               |
+    | Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
     **************************************************************************
     | Usage:                                                                 |
     |                                                                        |
@@ -24,7 +26,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
+    | Copyright 2025 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -253,9 +255,10 @@ class SclTests:
         candidate.search_tol("dummy")
         assert candidate.detected is True
         assert candidate.recovered.shape[0] == 1
-        true_candidate = [18.5179, 0, 99.7, 9, 2.05754, 463.76]
-        true = pd.DataFrame([true_candidate], index=[2])
+        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
+        true = pd.DataFrame([true_candidate], index=[5])
         true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
+        print(candidate.recovered)
         assert np.all(true == candidate.recovered)
 
     def test_search_using_dummy_ruleset_no_detection(self):
@@ -357,6 +360,7 @@ class SclTests:
         )
         assert tols.period_tol == [0.9981408178473872, 1.001866121070591]
         assert tols.dm_tol == [99.746530646593, 100.253469353407]
+        assert tols.width_tol == [-np.inf, np.inf]
         assert tols.sn_tol == 42.5
         assert tols.pdot_tol == [-1.734723475976807e-05, 1.734723475976807e-05]
 

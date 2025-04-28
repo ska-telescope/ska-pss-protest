@@ -11,10 +11,12 @@
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     | Author: Lina Levin Preston                                             |
     | Email : lina.preston@manchester.ac.uk                                  |
+    | Author: Raghuttam Hombal                                               |
+    | Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
+    | Copyright 2025 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -286,7 +288,7 @@ class FdasScl:
         # candididates that fall within the tolerances set by the
         # rule set chosen
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & sn >= @rules.sn_tol"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N
@@ -324,7 +326,7 @@ class FdasTolDummy:
         logging.info("EXPECTED: {}".format(self.expected))
 
     @staticmethod
-    def period(this_period: float) -> float:
+    def period(this_period: float) -> list[float]:
         """
         Dummy method to set period tolerance
         """
@@ -332,14 +334,14 @@ class FdasTolDummy:
         return [this_period - ptol, this_period + ptol]
 
     @staticmethod
-    def pdot(this_pdot: float) -> float:
+    def pdot(this_pdot: float) -> list[float]:
         """
         Dummy method to set period derivative tolerance
         """
         return [0.1 * this_pdot, 10 * this_pdot]
 
     @staticmethod
-    def dm(this_dm: float) -> float:
+    def dm(this_dm: float) -> list[float]:
         """
         Dummy method to set DM tolerance
         """
@@ -347,7 +349,7 @@ class FdasTolDummy:
         return [this_dm - dmtol, this_dm + dmtol]
 
     @staticmethod
-    def width(this_width: float) -> float:
+    def width(this_width: float) -> list[float]:
         """
         Dummy method to set width tolerance
         """
@@ -375,12 +377,19 @@ class FdasTolBasic:
         self.expected = expected
         self.header = header
 
+        self.psbc_time = self._get_psbc_time(
+            self.header["duration"], self.header["tsamp"]
+        )
         self.calc_tols()
 
     @staticmethod
     def _get_psbc_time(tobs: float, tsamp: float) -> float:
         """
-        Get psbc dump time
+        The function is used to calculate the time
+        resolution of the PSBC search. The PSBC time
+        is defined as the time equal to the closest
+        power of 2 number of samples and is strictly
+        smaller than the time of the observation.
         """
         exponent = np.floor(np.round(np.log2(tobs / tsamp)))
         t_psbc = (2**exponent) * tsamp
@@ -435,7 +444,7 @@ class FdasTolBasic:
         self.sn_tol = self.sn(self.expected[4])
         logging.info("EXPECTED: {}".format(self.expected))
 
-    def period(self, this_period: float) -> float:
+    def period(self, this_period: float) -> list[float]:
         """
         Method to set period tolerance
         For the pulse period, the frequency resolution post FFT
@@ -447,16 +456,14 @@ class FdasTolBasic:
         tol_bins = 1
 
         # The frequency resolution is given by
-        delta_freq = 1 / self._get_psbc_time(
-            self.header["duration"], self.header["tsamp"]
-        )
+        delta_freq = 1 / self.psbc_time
 
         fmin, fmax = (1 / this_period) - (tol_bins * delta_freq), (
             1 / this_period
         ) + (tol_bins * delta_freq)
         return [1 / fmax, 1 / fmin]
 
-    def pdot(self, this_pdot: float) -> float:
+    def pdot(self, this_pdot: float) -> list[float]:
         """
         A method to compute Pdot tolerances. the filter number we
         expect to find the pulsar in (z) is determined and the
@@ -470,9 +477,7 @@ class FdasTolBasic:
 
         freq = 1 / (self.expected[0] * 1e-3)
         accel = self._pdot_to_accel(this_pdot, self.expected[0] * 1e-3)
-        t_psbc = self._get_psbc_time(
-            self.header["duration"], self.header["tsamp"]
-        )
+        t_psbc = self.psbc_time
 
         z = (accel * freq * t_psbc**2) / 3e8
         z_range = self._get_z_levels(z, delta_z)
@@ -486,7 +491,7 @@ class FdasTolBasic:
 
         return [pdot_low, pdot_high]
 
-    def dm(self, this_dm: float, wint: float) -> float:
+    def dm(self, this_dm: float, wint: float) -> list[float]:
         """
         Method to set DM tolerance
         This is defined by the maximum S/N degradation
@@ -505,15 +510,14 @@ class FdasTolBasic:
 
         return [this_dm - (dmtol * 1e3), this_dm + (dmtol * 1e3)]
 
-    def width(self, this_width: float) -> float:
+    def width(self, this_width: float) -> list[float]:
         """
         Method to set width tolerance
-        TODO: Look at chances of removing this
-        as width is not very accurate for periodicity
-        searches using fourier transforms.
+        Considering the fact that width reported by fourier
+        domain periodicity search is not very accurate, we
+        set the width tolerance to be +/- infinity.
         """
-        widthtol = 0.1 * this_width
-        return [this_width - widthtol, this_width + widthtol]
+        return [-np.inf, np.inf]
 
     def sn(self, this_sn: float) -> float:
         """

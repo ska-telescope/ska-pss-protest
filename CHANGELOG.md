@@ -1,4 +1,9 @@
 # Changelog
+## 5.1.2
+- Realistic tolerances defined for FDAS search validator
+- Functionality to choose a tolerance set for validation in the FDAS test feature file
+- Additional unit tests to test the updated validator classes
+
 ## 5.1.1
 - Adding tags to FDAS test feature file
 

@@ -11,10 +11,12 @@
     | Email : benjamin.shaw@manchester.ac.uk                                 |
     | Author: Lina Levin Preston                                             |
     | Email : lina.preston@manchester.ac.uk                                  |
+    | Author: Raghuttam Hombal                                               |
+    | Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
+    | Copyright 2025 SKA Observatory                                         |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
