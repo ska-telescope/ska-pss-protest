@@ -188,7 +188,7 @@ class FdasScl:
         sig_fold = float(basename[7])
 
         # Set expected period derivative from acceleration parameter
-        pdot = -accel / (period * 3e8)
+        pdot = -accel * period / 3e8
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
@@ -423,14 +423,14 @@ class FdasTolBasic:
         """
         Convert acceleration (m/s/s) to pdot (s/s)
         """
-        return -accel / (period * 3e8)
+        return period * -accel / 3e8
 
     @staticmethod
     def _pdot_to_accel(pdot: float, period: float) -> float:
         """
         Convert pdot (s/s) to acceleration (m/s/s)
         """
-        return -pdot * period * 3e8
+        return pdot * 3e8 / -period
 
     def calc_tols(self) -> None:
         """
