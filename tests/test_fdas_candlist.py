@@ -362,7 +362,10 @@ class SclTests:
         assert tols.dm_tol == [99.746530646593, 100.253469353407]
         assert tols.width_tol == [-np.inf, np.inf]
         assert tols.sn_tol == 42.5
-        assert tols.pdot_tol == [-1.734723475976807e-05, 1.734723475976807e-05]
+        assert tols.pdot_tol == [
+            -1.3334819359833713e-07,
+            -1.3331349912881763e-07,
+        ]
 
     def test_wrong_ruleset_error(self):
         """

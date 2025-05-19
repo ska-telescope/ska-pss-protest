@@ -1,4 +1,7 @@
 # Changelog
+## 5.1.3
+- Updating FDAS product test feature file to use Basic tolerance ruleset
+
 ## 5.1.2
 - Realistic tolerances defined for FDAS search validator
 - Functionality to choose a tolerance set for validation in the FDAS test feature file
