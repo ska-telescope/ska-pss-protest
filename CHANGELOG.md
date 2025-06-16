@@ -1,4 +1,7 @@
 # Changelog
+## 5.1.4
+- Added RFIM-FDAS test using Labyrinth
+
 ## 5.1.3
 - Updating FDAS product test feature file to use Basic tolerance ruleset
 
