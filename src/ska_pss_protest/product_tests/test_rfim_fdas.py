@@ -1,5 +1,5 @@
 """
-This is a product level FDAS test which is used to test efficacy 
+This is a product level FDAS test which is used to test efficacy
 of RFIM algorithms in Cheetah. It is carried out by
 passing RFI-injected test vectors through Cheetah
 FDAS Pipeline with RFIM algorithms turned ON.
@@ -11,11 +11,11 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, Scl, VectorPull, VHeader
+from ska_pss_protest import Cheetah, FdasScl, VectorPull, VHeader
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
-scenarios("features/sps_mid_rfim.feature")
+scenarios("features/fdas_mid_rfim.feature")
 DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
 
 
@@ -56,56 +56,66 @@ def config():
 
 
 @given(
-    parsers.parse(
-        "A 60 second duration {vtype} Test-vector containing {freq} single pulses per second, each with a dispersion measure of {dm}, a duty cycle of {width} and folded S/N of {sn} with RFI configuration {rfi}"
-    )
+    parsers.parse("A 600 second duration {test_vector} containing a pulsar")
 )
-def pull_test_vector(context, pytestconfig, vtype, freq, dm, width, sn, rfi):
+def pull_test_vector_using_name(context, pytestconfig, test_vector):
     """
     Get test vector and add path to it to the config file
     """
-    test_vector = VectorPull(cache_dir=pytestconfig.getoption("cache"))
-    test_vector.from_properties(
-        vectype=vtype, freq=freq, duty=width, disp=dm, sig=sn, rfi=rfi
-    )
+    request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
+    request.from_name(test_vector)
 
-    vector_header = VHeader(test_vector.local_path)
+    vector_header = VHeader(request.local_path)
 
     # Pass parameter from vector to context
-    context["test_vector"] = test_vector
+    context["test_vector"] = request
     context["vector_header"] = vector_header
 
     # Verify that the test vector downloaded
-    assert os.path.isfile(test_vector.local_path)
+    assert os.path.isfile(request.local_path)
 
 
-@given(
-    "A basic cheetah configuration to ingest test vector and export single pulse candidate metadata to file"
-)
-def set_source_sink(context, config, pytestconfig, conf, outdir):
+@given("A cheetah configuration to ingest the test vector")
+def set_source(context, config, pytestconfig, conf, outdir):
     """
-    Sets up basic test vector source-sink as well as
-    Clustering-sifting in cheetah config
+    Set test vector source in cheetah config
     """
-    config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
-    config("beams/beam/source/sigproc/chunk_samples", "16384")
-
     outdir = outdir(pytestconfig.getoption("outdir"))
     config_path = conf(outdir)
+
+    config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
     context["config_path"] = config_path
     context["candidate_dir"] = outdir
 
+
+@given(
+    "A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata"
+)
+def set_sps_param(config, context):
+    """
+    Configure the config file to set SPS pipeline parameters
+    """
+    # Set output location for candidate metadata files
     config("beams/beam/sinks/channels/sps_events/active", "true")
+
     config(
         "beams/beam/sinks/sink_configs/spccl_files/dir",
         context["candidate_dir"],
     )
 
+    # Configure DDTR and SPS parameters
+    config("ddtr/klotski/active", "true")
+    config("ddtr/klotski/precise", "false")
+    config("sps/klotski/active", "true")
+    config("sps/threshold", "6.0").write(context["config_path"])
+
+    # Set SpCluster parameters
     config("sps_clustering/active", "true")
     config("sps_clustering/time_tolerance", "100.0")
     config("sps_clustering/dm_thresh", "5.0")
     config("sps_clustering/pulse_width_tolerance", "50.0")
 
+    # Set SpSift parameters
     config("spsift/active", "true")
     config("spsift/sigma_thresh", "6.0")
     config("spsift/dm_thresh", "5.0")
@@ -113,8 +123,37 @@ def set_source_sink(context, config, pytestconfig, conf, outdir):
 
 
 @given(
+    "A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata"
+)
+def set_fdas_param(config, context):
+    """
+    Configure the config file to set FDAS pipeline parameters
+    """
+    # Set output location for candidate filterbanks
+    config("beams/beam/sinks/channels/search_events/active", "true")
+
+    # Set output location for candidate metadata files
+    config(
+        "beams/beam/sinks/sink_configs/scl_files/dir",
+        context["candidate_dir"],
+    )
+
+    # Configure PSBC and FDAS parameters
+    config("psbc/dump_time", "540")
+    config("acceleration/fdas/active", "true")
+    config("acceleration/fdas/labyrinth/active", "true")
+    config("acceleration/fdas/labyrinth/threshold", "8.0")
+
+    # Configure SIFT and FLDO parameters
+    config("sift/simple_sift/active", "true")
+    config("sift/simple_sift/num_candidate_harmonics", "8")
+    config("sift/simple_sift/match_factor", "0.001")
+    config("fldo/cpu/active", "true")
+
+
+@given(
     parsers.parse(
-        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius}"
+        "A IQRM RFIM enabled with threshold of {threshold} and radius of {radius}"
     )
 )
 def set_rfim_iqrm(config, threshold, radius):
@@ -124,101 +163,51 @@ def set_rfim_iqrm(config, threshold, radius):
     config("rfim/rfim_iqrmcpu/active", "true")
     config("rfim/rfim_iqrmcpu/threshold", str(threshold))
     config("rfim/rfim_iqrmcpu/radius", str(radius))
+    config("rfim/rfim_iqrmcpu/metric", "2")
 
 
-@given(
-    parsers.parse(
-        "Sum-Threshold RFIM enabled with cutoff of {cutoff} and window size of {window}"
-    )
-)
-def set_rfim_sumthreshold(config, cutoff, window):
-    """
-    Configuring Sum-threshold algorithm using Cutoff value and
-    Window size from feature file
-    """
-    config("rfim/rfim_sum_threshold/active", "true")
-    config("rfim/rfim_sum_threshold/its_cutoff", str(cutoff))
-    config("rfim/rfim_sum_threshold/window", str(window))
-
-
-@given(
-    parsers.parse(
-        "IQRM RFIM enabled with threshold of {threshold} and radius of {radius} with Zdot"
-    )
-)
-def set_rfim_iqrm_zdot(config, threshold, radius):
-    """
-    Configuring IQRM algorithm using Threshold and Radius, and Z-dot from feature file
-    """
-    config("rfim/rfim_iqrmcpu/active", "true")
-    config("rfim/rfim_iqrmcpu/threshold", str(threshold))
-    config("rfim/rfim_iqrmcpu/radius", str(radius))
-    config("rfim/rfim_zdot/active", "true")
-
-
-@when("An SPS pipeline runs")
+@when("A FDAS pipeline runs")
 def run_cheetah(context, config, pytestconfig):
     """
-    Add SpCcl output directory to config and
-    run cheetah
+    Set dedispersion buffer length and
+    run cheetah pipeline
     """
-    config("ddtr/klotski/active", "true")
-    config("ddtr/klotski/precise", "false")
-    config("sps/klotski/active", "true")
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
     config("ddtr/dedispersion_samples", str(context["dd_samples"]))
-
-    # Set SPS S/N threshold
-    config("sps/threshold", "6.0").write(context["config_path"])
 
     # Launch cheetah with our configuration
     cheetah = Cheetah(
         "cheetah_pipeline",
         context["config_path"],
         "sigproc",
-        "SinglePulse",
+        "Fdas",
         build_dir=pytestconfig.getoption("path"),
     )
-    cheetah.run(timeout=2000)
+    cheetah.run(timeout=4800)
     assert cheetah.exit_code == 0
 
 
 @then(
-    "all injected pulses are recovered according the candidate metadata produced"
+    parsers.parse(
+        "A FDAS candidates metadata file is produced which is validate using {tol_settings} tolerances"
+    )
 )
-def validate_candidate_metadate(context, pytestconfig, teardown):
+def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):
     """
-    Validating SPS Candidates
+    Load the candidate metadata and validate
+    the results from cheetah pipeline
     """
-    spccl = SpCcl(context["candidate_dir"])
+    # Load candidate metadata
+    scl = FdasScl(context["candidate_dir"])
+    scl.from_vector(
+        context["test_vector"].local_path, context["vector_header"].allpars()
+    )
 
-    spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    widths_list = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        15000,
-    ]
+    scl.search_tol(tol_settings)
 
-    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
-    if pytestconfig.getoption("keep"):
-        spccl.summary_export(context["vector_header"].allpars())
-
-    assert len(spccl.detections) == len(spccl.expected)
-    assert len(spccl.non_detections) == 0
+    assert scl.detected is True
 
     # Clean up
     if not pytestconfig.getoption("keep"):
