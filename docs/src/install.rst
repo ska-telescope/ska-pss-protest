@@ -19,7 +19,7 @@ Verify that protest has successfully installed.
 Install from source
 -------------------
 
-Ensure `poetry is installed <https://python-poetry.org/docs/#installation>`_ first
+Ensure `poetry is installed <https://python-poetry.org/docs/#installation>`_ first. The current SKA supported poetry version is 2.1.3.
 
 .. code-block:: bash
 
