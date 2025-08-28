@@ -1,4 +1,7 @@
 # Changelog
+## 5.1.6
+- Disabled S/N Tolerance for FDAS tests
+
 ## 5.1.4
 - Added RFIM-FDAS test using Labyrinth
 
