@@ -288,7 +288,7 @@ class FdasScl:
         # candididates that fall within the tolerances set by the
         # rule set chosen
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & sn >= @rules.sn_tol"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1]"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N
