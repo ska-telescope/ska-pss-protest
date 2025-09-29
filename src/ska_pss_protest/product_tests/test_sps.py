@@ -144,6 +144,14 @@ def set_fof_clustering_config(config):
     config("sps_clustering/fof_clustering/pulse_width_tolerance", "50.0")
 
 
+@given("A cheetah configuration to cluster SPS candidate metadata using HDBScan clustering algorithm")
+def set_fof_clustering_config(config):
+    # Set SpCluster parameters
+    config("sps_clustering/active", "true")
+    config("sps_clustering/hdbscan_clustering/active","true")
+    config("sps_clustering/hdbscan_clustering/minimum_cluster_size", "15")
+
+
 @given("A cheetah configuration to sift SPS candidate metadata using thresholding algorithm")
 def set_thresholding_sift_config(config):
     # Set SpSift parameters
