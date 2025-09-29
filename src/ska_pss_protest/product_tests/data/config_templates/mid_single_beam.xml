@@ -253,18 +253,37 @@
     </emulator>
   </sps>
   <sps_clustering>
-    <active>false</active>
-    <number_of_threads>1</number_of_threads>
-    <time_tolerance>100</time_tolerance>
-    <dm_thresh>1.0</dm_thresh>
-    <pulse_width_tolerance>5</pulse_width_tolerance>
-    <linking_length>1.7</linking_length>
+    <pool-id>default</pool-id>
+    <priority>0</priority>
+    <active>true</active>
+    <fof_clustering>
+      <active>true</active>
+      <number_of_threads>1</number_of_threads>
+      <time_tolerance>100</time_tolerance>
+      <dm_thresh>100</dm_thresh>
+      <pulse_width_tolerance>3</pulse_width_tolerance>
+      <linking_length>1.73</linking_length>
+    </fof_clustering>
+    <hdbscan_clustering>
+      <active>false</active>
+      <minimum_cluster_size>15</minimum_cluster_size>
+    </hdbscan_clustering>
   </sps_clustering>
   <spsift>
-    <active>false</active>
-    <dm_thresh>0.0</dm_thresh>
-    <sigma_thresh>0.0</sigma_thresh>
-    <pulse_width_threshold>10.0</pulse_width_threshold>
-    <maximum_candidates>0</maximum_candidates>
+    <pool-id>default</pool-id>
+    <priority>0</priority>
+    <active>true</active>
+    <rfsift>
+      <active>false</active>
+      <detection_threshold>6.0</detection_threshold>
+      <sifting_threshold>8.0</sifting_threshold>
+    </rfsift>
+    <thresholding>
+      <active>true</active>
+      <dm_thresh>10.0</dm_thresh>
+      <sigma_thresh>7.0</sigma_thresh>
+      <pulse_width_threshold>1000.0</pulse_width_threshold>
+      <maximum_candidates>0</maximum_candidates>
+    </thresholding>
   </spsift>
 </cheetah>
