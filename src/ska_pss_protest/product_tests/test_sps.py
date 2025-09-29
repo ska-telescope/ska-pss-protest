@@ -134,32 +134,39 @@ def set_sink(config, context):
     )
 
 
-@given("A cheetah configuration to cluster SPS candidate metadata using FOF clustering algorithm")
+@given(
+    "A cheetah configuration to cluster SPS candidate metadata using FOF clustering algorithm"
+)
 def set_fof_clustering_config(config):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
-    config("sps_clustering/fof_clustering/active","true")
+    config("sps_clustering/fof_clustering/active", "true")
     config("sps_clustering/fof_clustering/time_tolerance", "100.0")
     config("sps_clustering/fof_clustering/dm_thresh", "5.0")
     config("sps_clustering/fof_clustering/pulse_width_tolerance", "50.0")
 
 
-@given("A cheetah configuration to cluster SPS candidate metadata using HDBScan clustering algorithm")
-def set_fof_clustering_config(config):
+@given(
+    "A cheetah configuration to cluster SPS candidate metadata using HDBScan clustering algorithm"
+)
+def set_hdbscan_clustering_config(config):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
-    config("sps_clustering/hdbscan_clustering/active","true")
+    config("sps_clustering/hdbscan_clustering/active", "true")
     config("sps_clustering/hdbscan_clustering/minimum_cluster_size", "15")
 
 
-@given("A cheetah configuration to sift SPS candidate metadata using thresholding algorithm")
+@given(
+    "A cheetah configuration to sift SPS candidate metadata using thresholding algorithm"
+)
 def set_thresholding_sift_config(config):
     # Set SpSift parameters
     config("spsift/active", "true")
-    config("spsift/thresholding/active","true")
+    config("spsift/thresholding/active", "true")
     config("spsift/thresholding/sigma_thresh", "6.0")
     config("spsift/thresholding/dm_thresh", "5.0")
     config("spsift/thresholding/pulse_width_threshold", "1000.0")
+
 
 @when("An SPS pipeline runs")
 def run_cheetah(context, config, pytestconfig):

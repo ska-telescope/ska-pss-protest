@@ -93,7 +93,6 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_123123123.fil   |
 
 
-
     @product @cpu @subset @testvector @positive @mid @physhw @nasm
     Scenario Outline: Detecting single pulses using filters subset
         Given A 60 second duration <test_vector> containing single pulses
