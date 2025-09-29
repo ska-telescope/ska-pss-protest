@@ -255,9 +255,9 @@
   <sps_clustering>
     <pool-id>default</pool-id>
     <priority>0</priority>
-    <active>true</active>
+    <active>false</active>
     <fof_clustering>
-      <active>true</active>
+      <active>false</active>
       <number_of_threads>1</number_of_threads>
       <time_tolerance>100</time_tolerance>
       <dm_thresh>100</dm_thresh>
@@ -272,14 +272,14 @@
   <spsift>
     <pool-id>default</pool-id>
     <priority>0</priority>
-    <active>true</active>
+    <active>false</active>
     <rfsift>
       <active>false</active>
       <detection_threshold>6.0</detection_threshold>
       <sifting_threshold>8.0</sifting_threshold>
     </rfsift>
     <thresholding>
-      <active>true</active>
+      <active>false</active>
       <dm_thresh>10.0</dm_thresh>
       <sigma_thresh>7.0</sigma_thresh>
       <pulse_width_threshold>1000.0</pulse_width_threshold>
