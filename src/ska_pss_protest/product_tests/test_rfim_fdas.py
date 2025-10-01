@@ -111,15 +111,17 @@ def set_sps_param(config, context):
 
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
-    config("sps_clustering/time_tolerance", "100.0")
-    config("sps_clustering/dm_thresh", "5.0")
-    config("sps_clustering/pulse_width_tolerance", "50.0")
+    config("sps_clustering/fof_clustering/active", "true")
+    config("sps_clustering/fof_clustering/time_tolerance", "100.0")
+    config("sps_clustering/fof_clustering/dm_thresh", "5.0")
+    config("sps_clustering/fof_clustering/pulse_width_tolerance", "50.0")
 
     # Set SpSift parameters
     config("spsift/active", "true")
-    config("spsift/sigma_thresh", "6.0")
-    config("spsift/dm_thresh", "5.0")
-    config("spsift/pulse_width_threshold", "1000.0")
+    config("spsift/thresholding/active", "true")
+    config("spsift/thresholding/sigma_thresh", "6.0")
+    config("spsift/thresholding/dm_thresh", "5.0")
+    config("spsift/thresholding/pulse_width_threshold", "1000.0")
 
 
 @given(
