@@ -12,5 +12,5 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
         Examples:
         | test_vector                                                       |   tol_settings    |
-        | FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil   |   basic           |
+        | FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_123123.fil   |   basic           |
 
