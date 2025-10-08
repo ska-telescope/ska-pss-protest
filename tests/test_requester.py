@@ -43,11 +43,8 @@
 """
 
 import os
-import shutil
 import tempfile
-from multiprocessing import Process
 
-import pytest
 from pytest import mark
 
 from ska_pss_protest import VectorPull
