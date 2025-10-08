@@ -91,3 +91,19 @@ class RequesterTests:
         pull.from_name(VECTOR)
         assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
         pull.flush_cache()
+
+    def test_from_name_local_changed_check_remote(self):
+        """
+        Test that a vector is pulled from the remote server
+        even if that file exists in the cache, if it has a
+        different file size to the remote version
+        """
+        cache_dir = tempfile.mkdtemp()
+        pull = VectorPull(cache_dir=cache_dir)
+        local_vector_path = os.path.join(cache_dir, VECTOR)
+        open(local_vector_path, "a").close()
+        before_size = os.stat(local_vector_path).st_size
+        pull.from_name(VECTOR)
+        after_size = os.stat(pull.local_path).st_size
+        assert after_size > before_size
+        pull.flush_cache()
