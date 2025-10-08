@@ -296,7 +296,9 @@ class VectorPull:
         self.check_disk_space(remote_path, self.cache_dir)
 
         headers = {"Accept-Encoding": "identity", "Connection": "close"}
-        with requests.get(remote_path, stream=True, timeout=(10,300), headers=headers) as stream:
+        with requests.get(
+            remote_path, stream=True, timeout=(10, 300), headers=headers
+        ) as stream:
             stream.raise_for_status()
             with open(local_path, "wb") as writer:
                 for chunk in stream.iter_content(1024 * 1024):
