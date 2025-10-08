@@ -143,6 +143,7 @@ class RequesterTests:
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
 
+    @mark.skip(reason="test times out before vector download finishes")
     def test_from_name_no_cache_env(self):
         """
         Tests from_name() method with cache dir not specified
@@ -234,6 +235,7 @@ class RequesterTests:
         with pytest.raises(FileNotFoundError):
             pull.from_properties(duty=0.00000001)
 
+    @mark.skip(reason="test times out before vector download finishes")
     def test_from_name_local_changed_check_remote(self):
         """
         Test that a vector is pulled from the remote server
