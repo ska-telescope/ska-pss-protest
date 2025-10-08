@@ -412,6 +412,8 @@ class VectorPull:
         shape="Gaussian",
         sig=50.0,
         rfi="0000",
+        tnamp=0.0,
+        tngam=0.0,
         refresh=False,
     ) -> None:
         """
@@ -458,10 +460,16 @@ class VectorPull:
             "seed": "None",
             "version": "None",
             "rfi": rfi,
+            "tnamp": tnamp,
+            "tngam": tngam,
         }
 
         # Ask server to look for test vector with params
         query = requests.get(self.prefix + "/query", params=params, timeout=20)
+        print(self.prefix + "/query")
+        print(params)
+        print(query.text)
+        print(query.url)
 
         # Did the server accept the request? Exit if not.
         if query.status_code != 200:

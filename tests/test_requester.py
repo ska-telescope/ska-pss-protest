@@ -55,7 +55,7 @@ from ska_pss_protest import VectorPull
 # pylint: disable=E1123,C0114,W1514
 
 VECTOR = (
-    "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil"
+    "FDAS-HSUM-MID_38d46df_500.0_0.1_1.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil"
 )
 
 
@@ -212,7 +212,7 @@ class RequesterTests:
         custom_cache_dir = tempfile.mkdtemp()
         pull = VectorPull(cache_dir=custom_cache_dir)
         assert pull.cache_dir == custom_cache_dir
-        pull.from_properties(vectype="TEST", freq=1.0, duty=0.1, disp=100)
+        pull.from_properties(vectype="FDAS-HSUM-MID", freq=500.0, duty=0.1, disp=1.0)
         assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
         pull.flush_cache()
 
