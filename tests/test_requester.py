@@ -81,4 +81,3 @@ class RequesterTests:
         assert pull.local_path == os.path.join(env_cache_dir, VECTOR)
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
-
