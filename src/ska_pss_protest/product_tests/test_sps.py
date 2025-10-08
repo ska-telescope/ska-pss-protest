@@ -112,6 +112,7 @@ def set_source(context, config, pytestconfig, conf, outdir):
     config_path = conf(outdir)
 
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
+    config("beams/beam/source/sigproc/chunk_samples", "16384")
     context["config_path"] = config_path
     context["candidate_dir"] = outdir
 
