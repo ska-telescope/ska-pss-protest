@@ -242,7 +242,7 @@ class VectorPull:
             Full path to remote vector
 
         """
-        file_head = requests.head(url, timeout=20)
+        file_head = requests.head(url, timeout=200)
         if file_head.status_code != 200:
             raise FileNotFoundError("Vector not found on remote server")
 
@@ -465,7 +465,9 @@ class VectorPull:
         }
 
         # Ask server to look for test vector with params
-        query = requests.get(self.prefix + "/query", params=params, timeout=200)
+        query = requests.get(
+            self.prefix + "/query", params=params, timeout=200
+        )
 
         # Did the server accept the request? Exit if not.
         if query.status_code != 200:
