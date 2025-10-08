@@ -78,3 +78,16 @@ class RequesterTests:
         assert pull.local_path == os.path.join(env_cache_dir, VECTOR)
         assert os.path.isfile(pull.local_path)
         pull.flush_cache()
+
+    def test_from_name_custom_cache(self):
+        """
+        Tests from_name() method using a user specified cache dir.
+        Vector does not a-priori exist in cache.
+        """
+        custom_cache_dir = tempfile.mkdtemp()
+        pull = VectorPull(cache_dir=custom_cache_dir)
+        assert pull.cache_dir == custom_cache_dir
+        assert os.path.isdir(custom_cache_dir)
+        pull.from_name(VECTOR)
+        assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
+        pull.flush_cache()
