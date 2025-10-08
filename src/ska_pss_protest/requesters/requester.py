@@ -296,7 +296,7 @@ class VectorPull:
         self.check_disk_space(remote_path, self.cache_dir)
 
         # Request vector from server.
-        stream = requests.get(remote_path, stream=True, timeout=20)
+        stream = requests.get(remote_path, stream=True, timeout=200)
         if stream.status_code != 200:
             raise FileNotFoundError("Vector not found")
         logging.info("Pulling {}".format(remote_path))
@@ -465,7 +465,7 @@ class VectorPull:
         }
 
         # Ask server to look for test vector with params
-        query = requests.get(self.prefix + "/query", params=params, timeout=20)
+        query = requests.get(self.prefix + "/query", params=params, timeout=200)
 
         # Did the server accept the request? Exit if not.
         if query.status_code != 200:
