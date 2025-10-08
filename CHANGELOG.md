@@ -1,4 +1,7 @@
 # Changelog
+## 5.2.0
+- Updating the naming scheme of the test vectors to include red noise parameters
+
 ## 5.1.6
 - Disabled S/N Tolerance for FDAS tests
 

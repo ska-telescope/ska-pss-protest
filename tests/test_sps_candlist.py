@@ -73,7 +73,7 @@ def get_vector():
     """
     vector = VectorPull()
     vector.from_name(
-        "SPS-MID_747e95f_0.2_0.2_1.0_0.0_Gaussian_20.0_0000_123123123.fil"
+        "SPS-MID_747e95f_0.2_0.2_1.0_0.0_Gaussian_20.0_0000_0.0_0.0_123123123.fil"
     )
     yield vector
 
@@ -88,7 +88,7 @@ def get_high_dm_vector():
     """
     vector = VectorPull()
     vector.from_name(
-        "SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_123123123.fil"
+        "SPS-MID_747e95f_0.2_0.0002_1480.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil"
     )
     yield vector
 

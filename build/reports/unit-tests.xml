@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="8" skipped="5" tests="84" time="37.485" timestamp="2025-10-08T11:02:55.069127+01:00" hostname="dokimi"><testcase classname="tests.test_candidate.CandidateTests" name="test_non_existent_cand_dir" time="0.002" /><testcase classname="tests.test_candidate.CandidateTests" name="test_no_candidate_dir" time="0.001" /><testcase classname="tests.test_candidate.CandidateTests" name="test_no_cand_file_extension_in_valid_dir" time="0.001" /><testcase classname="tests.test_candidate.CandidateTests" name="test_no_cand_files_in_valid_dir" time="0.001" /><testcase classname="tests.test_candidate.CandidateTests" name="test_get_header" time="0.002" /><testcase classname="tests.test_candidate.CandidateTests" name="test_compare_data_chunk_size" time="0.001" /><testcase classname="tests.test_candidate.CandidateTests" name="test_compare_data_number_of_files" time="0.002" /><testcase classname="tests.test_candidate.CandidateTests" name="test_compare_data_match" time="0.002" /><testcase classname="tests.test_candidate.CandidateTests" name="test_compare_data_mismatch" time="0.002" /><testcase classname="tests.test_candidate.CandidateTests" name="test_json_dump" time="0.002" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_non_existent_spccl_dir" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_load_detected_candidates" time="0.008" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_no_candidate_dir" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_empty_candidate_list" time="0.003" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_no_cand_file_extension_in_valid_dir" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_wrong_number_of_cand_files" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_from_vector" time="0.004" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_search_using_dummy_ruleset" time="0.114" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_search_using_dummy_ruleset_no_detection" time="0.032" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_dummy_fdas_rules" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_search_using_basic_ruleset" time="0.050" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_search_using_basic_ruleset_no_detection" time="0.033" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_basic_fdas_rules" time="0.001" /><testcase classname="tests.test_fdas_candlist.SclTests" name="test_wrong_ruleset_error" time="0.004" /><testcase classname="tests.test_fil.FilterbankTests" name="test_synthetic_header_read" time="4.685" /><testcase classname="tests.test_fil.FilterbankTests" name="test_real_header_read" time="0.002" /><testcase classname="tests.test_fil.FilterbankTests" name="test_invalid_parameter" time="0.002" /><testcase classname="tests.test_fil.FilterbankTests" name="test_non_existent_filterbank" time="0.001" /><testcase classname="tests.test_fil.FilterbankTests" name="test_signal_par_extraction_synthetic_vector" time="0.002" /><testcase classname="tests.test_fil.FilterbankTests" name="test_signal_par_extraction_real_vector" time="0.002" /><testcase classname="tests.test_fil.FilterbankTests" name="test_invalid_nchar" time="0.001" /><testcase classname="tests.test_fil.FilterbankTests" name="test_file_size_calculation" time="0.001" /><testcase classname="tests.test_fil.FilterbankTests" name="test_json_conv" time="0.001" /><testcase classname="tests.test_parser.ParserTests" name="test_not_json_exception" time="0.001" /><testcase classname="tests.test_parser.ParserTests" name="test_search_string" time="0.001" /><testcase classname="tests.test_parser.ParserTests" name="test_no_errors_in_logfile" time="0.001" /><testcase classname="tests.test_parser.ParserTests" name="test_errors_in_logfile" time="0.001" /><testcase classname="tests.test_protest.ProtestTests" name="test_protest_marker_setter" time="0.001" /><testcase classname="tests.test_requester.RequesterTests" name="test_two_simultaneous_downloads" time="3.060"><failure message="AssertionError: assert False&#10; +  where False = &lt;function isfile at 0x7fda8e179fc0&gt;('/tmp/tmpn7f579nf/FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil')&#10; +    where &lt;function isfile at 0x7fda8e179fc0&gt; = &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt;.isfile&#10; +      where &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt; = os.path&#10; +    and   '/tmp/tmpn7f579nf/FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil' = &lt;function join at 0x7fda8e17a7a0&gt;('/tmp/tmpn7f579nf', 'FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil')&#10; +      where &lt;function join at 0x7fda8e17a7a0&gt; = &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt;.join&#10; +        where &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt; = os.path">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1090&gt;
+
+    def test_two_simultaneous_downloads(self):
+        """
+        Tests that two simulataneous downloads of the same vector
+        to the same location on the filesystem cannot interfere
+        with each other. To do this we utilise the multiprocessing
+        module to launch two downloads in parallel.
+        """
+    
+        vector = "FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil"
+    
+        def task(cache_dir):
+            """
+            A function to set up a requester object and request
+            download of an FDAS test vector. This will be called by
+            the multiprocessing method Process().
+            """
+            pull = VectorPull(cache_dir=cache_dir)
+            pull.from_properties(
+                vectype="FDAS-HSUM-MID",
+                freq=500.0,
+                duty=0.05,
+                disp=1.0,
+                acc=100.397,
+                sig=50.0,
+            )
+    
+        cache_dir = tempfile.mkdtemp()
+    
+        # Check that we don't already have the file we want
+        # to test the download of
+        assert not os.path.isfile(
+            os.path.join(
+                cache_dir,
+                vector,
+            )
+        )
+    
+        processes = []
+    
+        # Set and launch the first download process
+        process_a = Process(target=task, args=(cache_dir,))
+        processes.append(process_a)
+        process_a.start()
+        # Set and launch the second download process
+        process_b = Process(target=task, args=(cache_dir,))
+        processes.append(process_b)
+        process_b.start()
+    
+        # Wait for both process to complete
+        for this_process in processes:
+            this_process.join()
+    
+        # Check that we have our file at the location we expect
+&gt;       assert os.path.isfile(
+            os.path.join(
+                cache_dir,
+                vector,
+            )
+        )
+E       AssertionError: assert False
+E        +  where False = &lt;function isfile at 0x7fda8e179fc0&gt;('/tmp/tmpn7f579nf/FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil')
+E        +    where &lt;function isfile at 0x7fda8e179fc0&gt; = &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt;.isfile
+E        +      where &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt; = os.path
+E        +    and   '/tmp/tmpn7f579nf/FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil' = &lt;function join at 0x7fda8e17a7a0&gt;('/tmp/tmpn7f579nf', 'FDAS-HSUM-MID_38d46df_500.0_0.05_1.0_100.397_Gaussian_50.0_0000_0.0_0.0_123123123.fil')
+E        +      where &lt;function join at 0x7fda8e17a7a0&gt; = &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt;.join
+E        +        where &lt;module 'posixpath' from '/usr/lib/python3.10/posixpath.py'&gt; = os.path
+
+tests/test_requester.py:123: AssertionError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_with_cache_env" time="3.418"><failure message="FileNotFoundError: Vector not found on remote server">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1270&gt;
+
+    def test_from_name_with_cache_env(self):
+        """
+        Tests from_name() method with cache dir specified
+        as environment variable. Vector does not a-priori
+        exist in cache.
+        """
+        env_cache_dir = os.environ["CACHE_DIR"] = tempfile.mkdtemp()
+        pull = VectorPull()
+        assert pull.cache_dir == env_cache_dir
+        assert os.path.isdir(env_cache_dir)
+&gt;       pull.from_name(VECTOR)
+
+tests/test_requester.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/ska_pss_protest/requesters/requester.py:403: in from_name
+    self.local_path = self._download(remote_path)
+src/ska_pss_protest/requesters/requester.py:296: in _download
+    self.check_disk_space(remote_path, self.cache_dir)
+src/ska_pss_protest/requesters/requester.py:224: in check_disk_space
+    vector_size = self._remote_header(vector_url)["Content-Length"]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+url = 'http://testvectors.jb.man.ac.uk/TEST/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil'
+
+    @staticmethod
+    def _remote_header(url: str) -&gt; dict:
+        """
+        Makes a HEAD request to a remote test vector
+        and returns the HTTP header information
+    
+        Parameters
+        ----------
+        url: str
+            Full path to remote vector
+    
+        """
+        file_head = requests.head(url, timeout=20)
+        if file_head.status_code != 200:
+&gt;           raise FileNotFoundError("Vector not found on remote server")
+E           FileNotFoundError: Vector not found on remote server
+
+src/ska_pss_protest/requesters/requester.py:247: FileNotFoundError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_no_cache_env" time="3.752"><failure message="FileNotFoundError: Vector not found on remote server">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1c00&gt;
+
+    def test_from_name_no_cache_env(self):
+        """
+        Tests from_name() method with cache dir not specified
+        Vector does not a-priori exist in cache.
+        """
+        try:
+            del os.environ["CACHE_DIR"]
+        except KeyError:
+            pass
+        pull = VectorPull()
+        assert (
+            pull.cache_dir
+            == os.path.expanduser("~") + "/.cache/SKA/test_vectors"
+        )
+&gt;       pull.from_name(VECTOR)
+
+tests/test_requester.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/ska_pss_protest/requesters/requester.py:403: in from_name
+    self.local_path = self._download(remote_path)
+src/ska_pss_protest/requesters/requester.py:296: in _download
+    self.check_disk_space(remote_path, self.cache_dir)
+src/ska_pss_protest/requesters/requester.py:224: in check_disk_space
+    vector_size = self._remote_header(vector_url)["Content-Length"]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+url = 'http://testvectors.jb.man.ac.uk/TEST/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil'
+
+    @staticmethod
+    def _remote_header(url: str) -&gt; dict:
+        """
+        Makes a HEAD request to a remote test vector
+        and returns the HTTP header information
+    
+        Parameters
+        ----------
+        url: str
+            Full path to remote vector
+    
+        """
+        file_head = requests.head(url, timeout=20)
+        if file_head.status_code != 200:
+&gt;           raise FileNotFoundError("Vector not found on remote server")
+E           FileNotFoundError: Vector not found on remote server
+
+src/ska_pss_protest/requesters/requester.py:247: FileNotFoundError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_custom_cache" time="4.103"><failure message="FileNotFoundError: Vector not found on remote server">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1660&gt;
+
+    def test_from_name_custom_cache(self):
+        """
+        Tests from_name() method using a user specified cache dir.
+        Vector does not a-priori exist in cache.
+        """
+        custom_cache_dir = tempfile.mkdtemp()
+        pull = VectorPull(cache_dir=custom_cache_dir)
+        assert pull.cache_dir == custom_cache_dir
+        assert os.path.isdir(custom_cache_dir)
+&gt;       pull.from_name(VECTOR)
+
+tests/test_requester.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/ska_pss_protest/requesters/requester.py:403: in from_name
+    self.local_path = self._download(remote_path)
+src/ska_pss_protest/requesters/requester.py:296: in _download
+    self.check_disk_space(remote_path, self.cache_dir)
+src/ska_pss_protest/requesters/requester.py:224: in check_disk_space
+    vector_size = self._remote_header(vector_url)["Content-Length"]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+url = 'http://testvectors.jb.man.ac.uk/TEST/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil'
+
+    @staticmethod
+    def _remote_header(url: str) -&gt; dict:
+        """
+        Makes a HEAD request to a remote test vector
+        and returns the HTTP header information
+    
+        Parameters
+        ----------
+        url: str
+            Full path to remote vector
+    
+        """
+        file_head = requests.head(url, timeout=20)
+        if file_head.status_code != 200:
+&gt;           raise FileNotFoundError("Vector not found on remote server")
+E           FileNotFoundError: Vector not found on remote server
+
+src/ska_pss_protest/requesters/requester.py:247: FileNotFoundError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_vector_in_cache" time="0.842"><failure message="FileNotFoundError: Vector not found on remote server">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1c60&gt;
+
+    def test_from_name_vector_in_cache(self):
+        """
+        Tests from_name() method with vector already in cache.
+        """
+        custom_cache_dir = tempfile.mkdtemp()
+    
+        pull = VectorPull(cache_dir=custom_cache_dir)
+        assert pull.cache_dir == custom_cache_dir
+        assert os.path.isdir(custom_cache_dir)
+    
+        # Get vector into cache and clear local_path variable
+&gt;       pull.from_name(VECTOR)
+
+tests/test_requester.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/ska_pss_protest/requesters/requester.py:403: in from_name
+    self.local_path = self._download(remote_path)
+src/ska_pss_protest/requesters/requester.py:296: in _download
+    self.check_disk_space(remote_path, self.cache_dir)
+src/ska_pss_protest/requesters/requester.py:224: in check_disk_space
+    vector_size = self._remote_header(vector_url)["Content-Length"]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+url = 'http://testvectors.jb.man.ac.uk/TEST/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil'
+
+    @staticmethod
+    def _remote_header(url: str) -&gt; dict:
+        """
+        Makes a HEAD request to a remote test vector
+        and returns the HTTP header information
+    
+        Parameters
+        ----------
+        url: str
+            Full path to remote vector
+    
+        """
+        file_head = requests.head(url, timeout=20)
+        if file_head.status_code != 200:
+&gt;           raise FileNotFoundError("Vector not found on remote server")
+E           FileNotFoundError: Vector not found on remote server
+
+src/ska_pss_protest/requesters/requester.py:247: FileNotFoundError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_pull_non_existent_vector" time="1.266" /><testcase classname="tests.test_requester.RequesterTests" name="test_pull_from_properties" time="2.876"><failure message="AssertionError: assert '/tmp/tmpn7gb...639476129.fil' == '/tmp/tmpn7gb...639476129.fil'&#10;  &#10;  - /tmp/tmpn7gbqwsx/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil&#10;  ?                                                                  --------&#10;  + /tmp/tmpn7gbqwsx/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_1639476129.fil">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac1810&gt;
+
+    def test_pull_from_properties(self):
+        """
+        Tests from_properties() method.
+        """
+        custom_cache_dir = tempfile.mkdtemp()
+        pull = VectorPull(cache_dir=custom_cache_dir)
+        assert pull.cache_dir == custom_cache_dir
+        pull.from_properties(vectype="TEST", freq=1.0, duty=0.1, disp=100)
+&gt;       assert pull.local_path == os.path.join(custom_cache_dir, VECTOR)
+E       AssertionError: assert '/tmp/tmpn7gb...639476129.fil' == '/tmp/tmpn7gb...639476129.fil'
+E         
+E         - /tmp/tmpn7gbqwsx/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil
+E         ?                                                                  --------
+E         + /tmp/tmpn7gbqwsx/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_1639476129.fil
+
+tests/test_requester.py:214: AssertionError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_properties_bad_request" time="2.613" /><testcase classname="tests.test_requester.RequesterTests" name="test_from_properties_no_matching_vector" time="3.380" /><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_local_changed_check_remote" time="1.549"><failure message="FileNotFoundError: Vector not found on remote server">self = &lt;tests.test_requester.RequesterTests object at 0x7fd9fcac2350&gt;
+
+    def test_from_name_local_changed_check_remote(self):
+        """
+        Test that a vector is pulled from the remote server
+        even if that file exists in the cache, if it has a
+        different file size to the remote version
+        """
+        cache_dir = tempfile.mkdtemp()
+        pull = VectorPull(cache_dir=cache_dir)
+        local_vector_path = os.path.join(cache_dir, VECTOR)
+        open(local_vector_path, "a").close()
+        before_size = os.stat(local_vector_path).st_size
+&gt;       pull.from_name(VECTOR)
+
+tests/test_requester.py:246: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/ska_pss_protest/requesters/requester.py:349: in from_name
+    if self._compare_remote(this_path, remote_path):
+src/ska_pss_protest/requesters/requester.py:269: in _compare_remote
+    self._remote_header(remote_path)["Content-Length"]
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+url = 'http://testvectors.jb.man.ac.uk/TEST/TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil'
+
+    @staticmethod
+    def _remote_header(url: str) -&gt; dict:
+        """
+        Makes a HEAD request to a remote test vector
+        and returns the HTTP header information
+    
+        Parameters
+        ----------
+        url: str
+            Full path to remote vector
+    
+        """
+        file_head = requests.head(url, timeout=20)
+        if file_head.status_code != 200:
+&gt;           raise FileNotFoundError("Vector not found on remote server")
+E           FileNotFoundError: Vector not found on remote server
+
+src/ska_pss_protest/requesters/requester.py:247: FileNotFoundError</failure></testcase><testcase classname="tests.test_requester.RequesterTests" name="test_from_name_local_changed_check_remote_off" time="3.894" /><testcase classname="tests.test_runner.RunnerTests" name="test_no_build_dir" time="0.003"><failure message="Failed: DID NOT RAISE &lt;class 'OSError'&gt;">self = &lt;tests.test_runner.RunnerTests object at 0x7fd9fcac1ff0&gt;
+
+    def test_no_build_dir(self):
+        """
+        If the name of the build directory
+        is not set, raise exception.
+        """
+        try:
+            del os.environ["CHEETAH_BUILD"]
+        except KeyError:
+            pass
+    
+&gt;       with pytest.raises(EnvironmentError):
+E       Failed: DID NOT RAISE &lt;class 'OSError'&gt;
+
+tests/test_runner.py:118: Failed</failure></testcase><testcase classname="tests.test_runner.RunnerTests" name="test_no_executable" time="0.003" /><testcase classname="tests.test_runner.RunnerTests" name="test_build_dir_not_found" time="0.001" /><testcase classname="tests.test_runner.RunnerTests" name="test_invalid_pipeline" time="0.003" /><testcase classname="tests.test_runner.RunnerTests" name="test_invalid_source" time="0.004" /><testcase classname="tests.test_runner.RunnerTests" name="test_no_exec_permission" time="0.004" /><testcase classname="tests.test_runner.RunnerTests" name="test_no_config_file" time="0.003" /><testcase classname="tests.test_runner.RunnerTests" name="test_search_path" time="0.001" /><testcase classname="tests.test_runner.RunnerTests" name="test_install_dir_search" time="0.001" /><testcase classname="tests.test_runner.RunnerTests" name="test_subprocess_call_to_cheetah_pipeline" time="0.008" /><testcase classname="tests.test_runner.RunnerTests" name="test_subprocess_call_to_cheetah_candidate_pipeline" time="0.008" /><testcase classname="tests.test_runner.RunnerTests" name="test_subprocess_call_to_emulator" time="0.005" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_non_existent_spccl_dir" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_load_detected_candidates" time="0.003" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_no_candidate_dir" time="0.001" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_no_cand_file_extension_in_valid_dir" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_no_cand_files_in_valid_dir" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_wrong_number_of_cand_files" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_candidate_list_empty" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_vector_no_vector_provided" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_vector_exact" time="0.001"><skipped type="pytest.skip" message="test times out before vector download finishes">/home/raghuttam/ska-pss-protest/tests/test_sps_candlist.py:220: test times out before vector download finishes</skipped></testcase><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_vector_exact_highdm" time="0.001"><skipped type="pytest.skip" message="test times out before vector download finishes">/home/raghuttam/ska-pss-protest/tests/test_sps_candlist.py:285: test times out before vector download finishes</skipped></testcase><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_spccl_no_header" time="0.004" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_spccl_with_header" time="0.004" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_spccl_corrupted" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_from_spccl_no_file" time="0.001" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_dm_within_tol_using_vector" time="0.001"><skipped type="pytest.skip" message="test times out before vector download finishes">/home/raghuttam/ska-pss-protest/tests/test_sps_candlist.py:405: test times out before vector download finishes</skipped></testcase><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_dm_within_tol_no_vector" time="0.004" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_dm_tol_exceeded_no_vector" time="0.006" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_widthstep_within_tol_no_vector" time="0.006" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_widthstep_within_tol_using_vector" time="0.001"><skipped type="pytest.skip" message="test times out before vector download finishes">/home/raghuttam/ska-pss-protest/tests/test_sps_candlist.py:551: test times out before vector download finishes</skipped></testcase><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_compare_widthstep_tol_exceeded_no_vector" time="0.003" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_widthsteptol" time="0.002" /><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_summary_exporter_detections" time="0.001"><skipped type="pytest.skip" message="test times out before vector download finishes">/home/raghuttam/ska-pss-protest/tests/test_sps_candlist.py:716: test times out before vector download finishes</skipped></testcase><testcase classname="tests.test_sps_candlist.SpCclTests" name="test_summary_exporter_non_detections" time="0.004" /></testsuite></testsuites>
