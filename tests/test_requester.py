@@ -54,7 +54,9 @@ from ska_pss_protest import VectorPull
 
 # pylint: disable=E1123,C0114,W1514
 
-VECTOR = "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil"
+VECTOR = (
+    "TEST_38d46df_1.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_1639476129.fil"
+)
 
 
 @mark.unit
