@@ -1,4 +1,11 @@
 # Changelog
+## 5.2.1
+- Modifying the SPS emulator test to use updated naming scheme of test vectors
+
+## 5.2.0
+- Updating the naming scheme of the test vectors to include red noise parameters
+- Updating product tests to include the test vectors with updated naming scheme
+
 ## 5.1.6
 - Disabled S/N Tolerance for FDAS tests
 

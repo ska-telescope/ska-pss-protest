@@ -13,4 +13,4 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
         Examples:
         | test_vector                                                       |   threshold   |   radius  |   tol_settings    |
-        | FLDO-MID_6fbbb58_54_0.1_100_0_Gaussian_40.0_pkmk_123123.fil	    |   3           |   400     |   basic           |
+        | FLDO-MID_6fbbb58_54_0.1_100_0_Gaussian_40.0_pkmk_0.0_0.0_123123.fil	    |   3           |   400     |   basic           |

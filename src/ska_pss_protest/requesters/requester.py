@@ -102,7 +102,7 @@ class VectorPull:
         # period of time. This prevents mutiple test processes from
         # evaluating the write status of a locally stored test vector
         # at the same time.
-        sleep(random.uniform(0, 5))
+        sleep(30)
 
         self._setup_cache()
 
@@ -242,7 +242,7 @@ class VectorPull:
             Full path to remote vector
 
         """
-        file_head = requests.head(url, timeout=20)
+        file_head = requests.head(url, timeout=200)
         if file_head.status_code != 200:
             raise FileNotFoundError("Vector not found on remote server")
 
@@ -296,7 +296,7 @@ class VectorPull:
         self.check_disk_space(remote_path, self.cache_dir)
 
         # Request vector from server.
-        stream = requests.get(remote_path, stream=True, timeout=20)
+        stream = requests.get(remote_path, stream=True, timeout=200)
         if stream.status_code != 200:
             raise FileNotFoundError("Vector not found")
         logging.info("Pulling {}".format(remote_path))
@@ -412,6 +412,8 @@ class VectorPull:
         shape="Gaussian",
         sig=50.0,
         rfi="0000",
+        tnamp=0.0,
+        tngam=0.0,
         refresh=False,
     ) -> None:
         """
@@ -458,10 +460,14 @@ class VectorPull:
             "seed": "None",
             "version": "None",
             "rfi": rfi,
+            "tnamp": tnamp,
+            "tngam": tngam,
         }
 
         # Ask server to look for test vector with params
-        query = requests.get(self.prefix + "/query", params=params, timeout=20)
+        query = requests.get(
+            self.prefix + "/query", params=params, timeout=200
+        )
 
         # Did the server accept the request? Exit if not.
         if query.status_code != 200:
