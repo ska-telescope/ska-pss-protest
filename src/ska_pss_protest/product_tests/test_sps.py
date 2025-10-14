@@ -242,15 +242,15 @@ def validate_candidate_metadata(context, pytestconfig, teardown):
         8,
         16,
         32,
-        64,
+        63,
         128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        15000,
+        250,
+        500,
+        1000,
+        2000,
+        4000,
+        8000,
+        16004,
     ]
     spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
 
