@@ -393,3 +393,84 @@ class VHeader:
         (time samples for a single channel)
         """
         return int(self.data_size() / self.nchans())
+
+
+class OcldReader:
+    """
+    This class reads and parses OCLD raw file header data
+
+    ...
+
+    Attributes
+    ----------
+    path : str
+        Path to OCLD raw file
+        to be evaluated
+    metadata : dict
+        Dictionary containing all metadata
+        parameters of OCLD raw file
+    """
+
+    def __init__(self, path):
+
+        self.path = path
+        self.metadata = {}
+
+    @staticmethod
+    def _parse(path: str, data_block_size: int) -> dict:
+        """
+        Reads header information from OCLD raw file
+        and places each key and its value in a dict object.
+
+        Arguments:
+        ----------
+        path : str
+            Path to OCLD raw file
+        data_block_size : int
+            Size of data block to be read = nsubints * nbands * nbins
+
+        Returns:
+        --------
+        metadata : dict
+            Dictionary containing all metadata
+            parameters of OCLD raw file
+        """
+
+        metadata = {}
+
+        with open(path, "rb") as f:
+            f.seek(0, os.SEEK_END)
+            file_size = f.tell()
+            number_of_cands = file_size // (data_block_size + 1024)
+            metadata["number_of_candidates"] = number_of_cands
+
+            for cand in range(number_of_cands):
+                seek_ptr = (data_block_size + 1024) * cand
+                f.seek(seek_ptr)
+
+                metadata_chunk = f.read(1024)
+                fpp_chunk = np.fromfile(
+                    f, dtype=np.float32, count=data_block_size
+                )
+
+        return metadata
+
+    def load_metadata(self, nsubints: int, nbands: int, nbins: int):
+        """
+        Loads metadata from OCLD raw file
+
+        Arguments:
+        ----------
+        nsubints : int
+            Number of sub-integrations in the file
+        nbands : int
+            Number of frequency bands in the file
+        nbins : int
+            Number of time bins per sub-integration
+
+        Returns:
+        --------
+        """
+
+        data_block_size = nsubints * nbands * nbins
+        self.metadata = self._parse(self.path, data_block_size)
