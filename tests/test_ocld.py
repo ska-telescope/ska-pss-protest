@@ -49,6 +49,7 @@
     **************************************************************************
 """
 
+import pandas as pd
 import pytest
 from pytest import mark
 
@@ -81,3 +82,41 @@ class OcldReaderTests:
         with pytest.raises(expected_exception=FileNotFoundError):
             reader = OcldReader("niefiuweb.ocld")
             reader.load_metadata()
+
+    def test_ocld_metadata_header_content(self):
+        """
+        Test OCLD metadata content
+        """
+        path = "tests/data/ocld/test.ocld"
+        reader = OcldReader(path)
+        reader.load_metadata()
+
+        expected_metadata = {
+            "nsubints": 16,
+            "nbands": 64,
+            "nphase": 128,
+        }
+
+        for key, value in expected_metadata.items():
+            assert reader.metadata.get(key) == value
+
+    def test_ocld_metadata_dataframe(self):
+        """
+        Test OCLD metadata as DataFrame
+        """
+        path = "tests/data/ocld/test.ocld"
+        reader = OcldReader(path)
+        reader.load_metadata()
+
+        df = reader.get_metadata_df()
+
+        assert isinstance(df, pd.DataFrame)
+        assert not df.empty
+        assert "PERIOD" in df.columns
+        assert "PDOT" in df.columns
+        assert "DM" in df.columns
+        assert "COUNT" not in df.columns
+        assert "NSUBINT" not in df.columns
+        assert "NPHASE" not in df.columns
+        assert "NSUBBAND" not in df.columns
+        assert len(df) == 1  # Assuming test.ocld has one candidate

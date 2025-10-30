@@ -51,6 +51,8 @@
 import logging
 import os
 
+import pandas as pd
+
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
             |%(funcName)s|%(module)s#%(lineno)d|%(message)s",
@@ -80,6 +82,7 @@ class OcldReader:
         self.path = path
         self.metadata = {}
         self.header_size = 512
+        self.df = pd.DataFrame()
 
     @staticmethod
     def _check_file(path: str) -> bool:
@@ -156,18 +159,19 @@ class OcldReader:
 
                 metadata_chunk = f.read(header_block_size)
                 metadata_chunk = metadata_chunk.replace(b"\x00", b"")
+                metadata_chunk = str(metadata_chunk, "utf-8")
                 metadata_chunk = dict(
                     (k, v)
                     for k, v in (
-                        e.split(b":") for e in metadata_chunk.split(b",")
+                        e.split(":") for e in metadata_chunk.split(",")
                     )
                 )
 
                 # Removing unneeded entries
-                metadata_chunk.pop(b"COUNT", None)
-                metadata_chunk.pop(b"NSUBINT", None)
-                metadata_chunk.pop(b"NPHASE", None)
-                metadata_chunk.pop(b"NSUBBAND", None)
+                metadata_chunk.pop("COUNT", None)
+                metadata_chunk.pop("NSUBINT", None)
+                metadata_chunk.pop("NPHASE", None)
+                metadata_chunk.pop("NSUBBAND", None)
 
                 metadata["candidates"].append(metadata_chunk)
                 # fpp_chunk = np.fromfile(f, dtype=np.float32, count=data_block_size)
@@ -186,5 +190,21 @@ class OcldReader:
         Returns:
         --------
         """
-
         self.metadata = self._parse(self.path, header_block_size)
+
+    def get_metadata_df(self) -> pd.DataFrame:
+        """
+        Returns metadata as pandas DataFrame
+
+        Returns:
+        --------
+        pd.DataFrame
+            DataFrame containing metadata of all candidates
+        """
+        if not self.metadata:
+            raise RuntimeError(
+                "Metadata not loaded. Please run load_metadata() first."
+            )
+
+        self.df = pd.DataFrame(self.metadata["candidates"])
+        return self.df
