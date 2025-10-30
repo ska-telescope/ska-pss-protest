@@ -99,7 +99,6 @@ class OcldReader:
         """
         if not os.path.isfile(path):
             raise FileNotFoundError(f"File {path} not found.")
-            return False
         return True
 
     @staticmethod
