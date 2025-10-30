@@ -14,7 +14,7 @@
     **************************************************************************
     | License:                                                               |
     |                                                                        |
-    | Copyright 2024 University of Manchester                                |
+    | Copyright 2025 University of Manchester                                |
     |                                                                        |
     |Redistribution and use in source and binary forms, with or without      |
     |modification, are permitted provided that the following conditions are  |
@@ -98,6 +98,7 @@ class OcldReader:
             True if file exists, else False
         """
         if not os.path.isfile(path):
+            raise FileNotFoundError(f"File {path} not found.")
             return False
         return True
 
@@ -129,16 +130,19 @@ class OcldReader:
         with open(path, "rb") as f:
             # COUNT:1,NPHASE:128,NSUBBAND:64,NSUBINT:16
             first_header_chunk = f.read(header_block_size)
+            first_header_chunk = first_header_chunk.replace(b"\x00", b"")
+
             first_header_chunk = dict(
-                (k, int(v))
+                (k, float(v))
                 for k, v in (
-                    e.split(":") for e in first_header_chunk.split(",")
+                    e.split(b":", -1)
+                    for e in first_header_chunk.split(b",", -1)
                 )
             )
-            number_of_cands = first_header_chunk["COUNT"]
-            metadata["nsubints"] = first_header_chunk["nsubints"]
-            metadata["nbands"] = first_header_chunk["nbands"]
-            metadata["nphase"] = first_header_chunk["nbins"]
+            number_of_cands = int(first_header_chunk[b"COUNT"])
+            metadata["nsubints"] = first_header_chunk[b"NSUBINT"]
+            metadata["nbands"] = first_header_chunk[b"NSUBBAND"]
+            metadata["nphase"] = first_header_chunk[b"NPHASE"]
             data_block_size = (
                 metadata["nsubints"]
                 * metadata["nbands"]
@@ -148,22 +152,23 @@ class OcldReader:
             metadata["candidates"] = []
 
             for cand in range(number_of_cands):
-                seek_ptr = (data_block_size + header_block_size) * cand
+                seek_ptr = int((data_block_size + header_block_size) * cand)
                 f.seek(seek_ptr)  # Move to candidate header
 
                 metadata_chunk = f.read(header_block_size)
+                metadata_chunk = metadata_chunk.replace(b"\x00", b"")
                 metadata_chunk = dict(
                     (k, v)
                     for k, v in (
-                        e.split(":") for e in metadata_chunk.split(",")
+                        e.split(b":") for e in metadata_chunk.split(b",")
                     )
                 )
 
                 # Removing unneeded entries
-                metadata_chunk.pop("COUNT", None)
-                metadata_chunk.pop("NSUBINT", None)
-                metadata_chunk.pop("NPHASE", None)
-                metadata_chunk.pop("NSUBBAND", None)
+                metadata_chunk.pop(b"COUNT", None)
+                metadata_chunk.pop(b"NSUBINT", None)
+                metadata_chunk.pop(b"NPHASE", None)
+                metadata_chunk.pop(b"NSUBBAND", None)
 
                 metadata["candidates"].append(metadata_chunk)
                 # fpp_chunk = np.fromfile(f, dtype=np.float32, count=data_block_size)
