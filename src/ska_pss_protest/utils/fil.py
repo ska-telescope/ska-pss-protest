@@ -415,9 +415,31 @@ class OcldReader:
 
         self.path = path
         self.metadata = {}
+        self.header_size = 512
 
     @staticmethod
-    def _parse(path: str, data_block_size: int) -> dict:
+    def _check_file(path: str) -> bool:
+        """
+        Checks for the presence of a file on
+        the filesystem.
+
+        Parameters
+        ----------
+        path: str
+            Path to file to be checked
+
+        Returns
+        -------
+        bool
+            True if file exists, else False
+        """
+        if not os.path.isfile(path):
+            return False
+        return True
+
+
+    @staticmethod
+    def _parse(path: str, header_block_size: int) -> dict:
         """
         Reads header information from OCLD raw file
         and places each key and its value in a dict object.
@@ -438,20 +460,39 @@ class OcldReader:
 
         metadata = {}
 
+        if not OcldReader._check_file(path):
+            raise FileNotFoundError(f"File {path} not found.")
+
         with open(path, "rb") as f:
-            f.seek(0, os.SEEK_END)
-            file_size = f.tell()
-            number_of_cands = file_size // (data_block_size + 1024)
-            metadata["number_of_candidates"] = number_of_cands
+            # COUNT:1,NPHASE:128,NSUBBAND:64,NSUBINT:16
+            first_header_chunk = f.read(header_block_size)
+            first_header_chunk = dict((k, int(v)) for k, v in (e.split(':') for e in first_header_chunk.split(',')))
+            number_of_cands = first_header_chunk['COUNT']
+            metadata['nsubints'] = first_header_chunk['nsubints']
+            metadata['nbands'] = first_header_chunk['nbands']
+            metadata['nphase'] = first_header_chunk['nbins']
+            data_block_size = (
+                metadata['nsubints'] *
+                metadata['nbands'] *
+                metadata['nphase'] * 4  # float32
+            )
+            metadata['candidates'] = []
 
             for cand in range(number_of_cands):
-                seek_ptr = (data_block_size + 1024) * cand
-                f.seek(seek_ptr)
+                seek_ptr = (data_block_size + header_block_size) * cand
+                f.seek(seek_ptr) # Move to candidate header
 
-                metadata_chunk = f.read(1024)
-                fpp_chunk = np.fromfile(
-                    f, dtype=np.float32, count=data_block_size
-                )
+                metadata_chunk = f.read(header_block_size)
+                metadata_chunk = dict((k, v) for k, v in (e.split(':') for e in metadata_chunk.split(',')))
+                
+                #Removing unneeded entries
+                metadata_chunk.pop('COUNT', None)
+                metadata_chunk.pop('NSUBINT', None)
+                metadata_chunk.pop('NPHASE', None)
+                metadata_chunk.pop('NSUBBAND', None)
+
+                metadata['candidates'].append(metadata_chunk)
+                #fpp_chunk = np.fromfile(f, dtype=np.float32, count=data_block_size)
 
         return metadata
 
