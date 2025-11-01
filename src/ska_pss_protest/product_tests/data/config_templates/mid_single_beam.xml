@@ -282,7 +282,7 @@
       <active>false</active>
       <dm_thresh>10.0</dm_thresh>
       <sigma_thresh>7.0</sigma_thresh>
-      <pulse_width_threshold>1000.0</pulse_width_threshold>
+      <pulse_width_threshold>1100.0</pulse_width_threshold>
       <maximum_candidates>0</maximum_candidates>
     </thresholding>
   </spsift>

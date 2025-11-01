@@ -85,12 +85,12 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
 
         Examples:
         | test_vector                                                               |
-        | SPS-MID_747e95f_0.125_0.00125_740.0_0.0_Gaussian_50.0_0000_123123123.fil  |
-        | SPS-MID_747e95f_0.125_0.125_740.0_0.0_Gaussian_50.0_0000_123123123.fil    |
-        | SPS-MID_747e95f_0.125_0.00125_1480.0_0.0_Gaussian_50.0_0000_123123123.fil |
-        | SPS-MID_747e95f_0.125_0.125_1480.0_0.0_Gaussian_50.0_0000_123123123.fil   |
-        | SPS-MID_747e95f_0.125_0.00125_3000.0_0.0_Gaussian_50.0_0000_123123123.fil |
-        | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_123123123.fil   |
+        | SPS-MID_747e95f_0.125_0.00125_740.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil  |
+        | SPS-MID_747e95f_0.125_0.125_740.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil    |
+        | SPS-MID_747e95f_0.125_0.00125_1480.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.125_1480.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   |
+        | SPS-MID_747e95f_0.125_0.00125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil |
+        | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   |
 
 
     @product @cpu @subset @testvector @positive @mid @physhw @nasm

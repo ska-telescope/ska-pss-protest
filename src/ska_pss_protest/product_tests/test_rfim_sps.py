@@ -5,6 +5,7 @@ passing RFI-injected test vectors through Cheetah
 SPS Pipeline with RFIM algorithms turned ON.
 """
 
+import logging
 import os
 from xml.etree import ElementTree as et
 
@@ -170,7 +171,37 @@ def run_cheetah(context, config, pytestconfig):
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
-    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    # read the root tree for trial widths
+
+    widths_element = root_tree.find("sps/klotski/widths")
+    trial_widths = []
+    if widths_element is not None:
+        widths_string = widths_element.text.strip()
+        for r in widths_string.split(","):
+            trial_widths.append(int(r))
+    else:
+        logging.info("Search width not selected")
+
+    context["trial_width"] = trial_widths
+
+    # Get the dedispersion plan and downsampling from config
+    dedispersion_elements = root_tree.findall("ddtr/dedispersion")
+    dm_plan = []
+    i = 0
+    for element in dedispersion_elements:
+        dm_plan.append(
+            [
+                float(element.find("start").text),
+                float(element.find("end").text),
+                2**i,
+            ]
+        )
+        i = i + 1
+
+    # read dedispersion plan
+
+    context["dm_plan"] = dm_plan
 
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
@@ -197,25 +228,12 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
     spccl = SpCcl(context["candidate_dir"])
 
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    widths_list = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        63,
-        128,
-        250,
-        500,
-        1000,
-        2000,
-        4000,
-        8000,
-        16004,
-    ]
 
-    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
+    spccl.compare_widthstep(
+        context["vector_header"].allpars(),
+        context["trial_width"],
+        context["dm_plan"],
+    )
     if pytestconfig.getoption("keep"):
         spccl.summary_export(context["vector_header"].allpars())
 
