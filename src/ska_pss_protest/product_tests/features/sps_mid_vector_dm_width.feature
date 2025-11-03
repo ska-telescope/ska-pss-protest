@@ -99,7 +99,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
 	And A cheetah configuration to ingest the test vector
 	And A cheetah configuration to export SPS filterbanked candidate data and SPS candidate metadata
 	And A cheetah configuration to cluster SPS candidate metadata using FOF clustering algorithm
-    And A cheetah configuration to sift SPS candidate metadata using thresholding algorithm
+    	And A cheetah configuration to sift SPS candidate metadata using thresholding algorithm
 
 	When An SPS pipeline runs
 	Then Candidate filterbanks are exported to disk and their header properties are consistent with the test vector

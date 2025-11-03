@@ -188,29 +188,25 @@ def run_cheetah(context, config, pytestconfig):
     # read the root tree for trial widths
 
     widths_element = root_tree.find("sps/klotski/widths")
-    trial_widths = []
-    if widths_element is not None:
-        widths_string = widths_element.text.strip()
-        for r in widths_string.split(","):
-            trial_widths.append(int(r))
+    if widths_element is not None and widths_element.text:
+        trial_widths = [int(r) for r in widths_element.text.strip().split(",")]
     else:
-        logging.info("Search width not selected")
+        logging.warning("Search width not selected")
+        trial_widths = []
 
     context["trial_width"] = trial_widths
 
     # Get the dedispersion plan and downsampling from config
     dedispersion_elements = root_tree.findall("ddtr/dedispersion")
-    dm_plan = []
-    i = 0
-    for element in dedispersion_elements:
-        dm_plan.append(
-            [
-                float(element.find("start").text),
-                float(element.find("end").text),
-                2**i,
-            ]
-        )
-        i = i + 1
+
+    dm_plan = [
+        [
+            float(element.find("start").text),
+            float(element.find("end").text),
+            2**i,
+        ]
+        for i, element in enumerate(dedispersion_elements)
+    ]
 
     # read dedispersion plan
 
