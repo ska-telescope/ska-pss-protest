@@ -1,4 +1,9 @@
 # Changelog
+## 5.2.2
+- Included code to account for downsampling in SPS candidate validators with corresponding downsampling factor in the dedispersion plan
+- Modified SPS tests to use updated cheetah config
+- Added tests to use multiple SPS clustering (Friends-of-friends and HDBScan) and sifting (Thresholding and RF-sift) algorithms
+
 ## 5.2.1
 - Modifying the SPS emulator test to use updated naming scheme of test vectors
 

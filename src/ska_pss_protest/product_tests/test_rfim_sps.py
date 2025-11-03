@@ -5,6 +5,7 @@ passing RFI-injected test vectors through Cheetah
 SPS Pipeline with RFIM algorithms turned ON.
 """
 
+import logging
 import os
 from xml.etree import ElementTree as et
 
@@ -102,14 +103,16 @@ def set_source_sink(context, config, pytestconfig, conf, outdir):
     )
 
     config("sps_clustering/active", "true")
-    config("sps_clustering/time_tolerance", "100.0")
-    config("sps_clustering/dm_thresh", "5.0")
-    config("sps_clustering/pulse_width_tolerance", "50.0")
+    config("sps_clustering/fof_clustering/active", "true")
+    config("sps_clustering/fof_clustering/time_tolerance", "100.0")
+    config("sps_clustering/fof_clustering/dm_thresh", "50.0")
+    config("sps_clustering/fof_clustering/pulse_width_tolerance", "5.0")
 
     config("spsift/active", "true")
-    config("spsift/sigma_thresh", "6.0")
-    config("spsift/dm_thresh", "5.0")
-    config("spsift/pulse_width_threshold", "1000.0")
+    config("spsift/thresholding/active", "true")
+    config("spsift/thresholding/sigma_thresh", "6.0")
+    config("spsift/thresholding/dm_thresh", "5.0")
+    config("spsift/thresholding/pulse_width_threshold", "1100.0")
 
 
 @given(
@@ -168,7 +171,32 @@ def run_cheetah(context, config, pytestconfig):
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
-    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    # read the root tree for trial widths
+
+    widths_element = root_tree.find("sps/klotski/widths")
+    if widths_element is not None and widths_element.text:
+        trial_widths = [int(r) for r in widths_element.text.strip().split(",")]
+    else:
+        logging.warning("Search width not selected")
+        trial_widths = []
+
+    context["trial_width"] = trial_widths
+
+    # Get the dedispersion plan and downsampling from config
+    dedispersion_elements = root_tree.findall("ddtr/dedispersion")
+    dm_plan = [
+        [
+            float(element.find("start").text),
+            float(element.find("end").text),
+            2**i,
+        ]
+        for i, element in enumerate(dedispersion_elements)
+    ]
+
+    # read dedispersion plan
+
+    context["dm_plan"] = dm_plan
 
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
@@ -195,25 +223,12 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
     spccl = SpCcl(context["candidate_dir"])
 
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    widths_list = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        15000,
-    ]
 
-    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
+    spccl.compare_widthstep(
+        context["vector_header"].allpars(),
+        context["trial_width"],
+        context["dm_plan"],
+    )
     if pytestconfig.getoption("keep"):
         spccl.summary_export(context["vector_header"].allpars())
 
