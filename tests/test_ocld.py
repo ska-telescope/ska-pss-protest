@@ -49,6 +49,7 @@
     **************************************************************************
 """
 
+import numpy as np
 import pandas as pd
 import pytest
 from pytest import mark
@@ -82,6 +83,32 @@ class OcldReaderTests:
         with pytest.raises(expected_exception=FileNotFoundError):
             reader = OcldReader("niefiuweb.ocld")
             reader.load_metadata()
+
+        with pytest.raises(expected_exception=FileNotFoundError):
+            filename = "niefiuweb.ocld"
+            reader = OcldReader(filename)
+            reader._parse(filename, 512)
+
+        with pytest.raises(expected_exception=FileNotFoundError):
+            filename = "niefiuweb.ocld"
+            reader = OcldReader(filename)
+            reader._get_candidate_data(filename, 0, 512, 131072)
+
+    def test_ocld_runtime_errors(self):
+        """
+        Test OCLD runtime errors for not loading metadata
+        """
+        with pytest.raises(expected_exception=RuntimeError):
+            reader = OcldReader("tests/data/ocld/test.ocld")
+            reader.get_metadata_df()
+
+        with pytest.raises(expected_exception=RuntimeError):
+            reader = OcldReader("tests/data/ocld/test.ocld")
+            reader.get_candidate_fpp(0)
+
+        with pytest.raises(expected_exception=RuntimeError):
+            reader = OcldReader("tests/data/ocld/test.ocld")
+            reader.get_candidate_pulse_profile(0)
 
     def test_ocld_metadata_header_content(self):
         """
@@ -120,3 +147,35 @@ class OcldReaderTests:
         assert "NPHASE" not in df.columns
         assert "NSUBBAND" not in df.columns
         assert len(df) == 1  # Assuming test.ocld has one candidate
+
+    def test_ocld_get_candidate_fpp(self):
+        """
+        Test retrieving candidate FPP data
+        """
+        path = "tests/data/ocld/test.ocld"
+        reader = OcldReader(path)
+        reader.load_metadata()
+
+        candidate_index = 0
+        fpp_data = reader.get_candidate_fpp(candidate_index)
+
+        assert isinstance(fpp_data, np.ndarray)
+        assert fpp_data.shape == (
+            int(reader.metadata["nsubints"]),
+            int(reader.metadata["nbands"]),
+            int(reader.metadata["nphase"]),
+        )
+
+    def test_ocld_get_candidate_pulse_profile(self):
+        """
+        Test retrieving candidate pulse profile data
+        """
+        path = "tests/data/ocld/test.ocld"
+        reader = OcldReader(path)
+        reader.load_metadata()
+
+        candidate_index = 0
+        pulse_profile = reader.get_candidate_pulse_profile(candidate_index)
+
+        assert isinstance(pulse_profile, np.ndarray)
+        assert pulse_profile.shape == (int(reader.metadata["nphase"]),)

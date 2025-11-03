@@ -51,6 +51,7 @@
 import logging
 import os
 
+import numpy as np
 import pandas as pd
 
 logging.basicConfig(
@@ -178,6 +179,43 @@ class OcldReader:
 
         return metadata
 
+    @staticmethod
+    def _get_candidate_data(
+        path: str,
+        candidate_index: int,
+        header_block_size: int,
+        data_block_size: int,
+    ) -> np.ndarray:
+        """
+        Reads data for a specific candidate from OCLD raw file
+        and returns it as a folded pulse profile (FPP).
+
+        Arguments:
+        ----------
+        path : str
+            Path to OCLD raw file
+        candidate_index : int
+            Index of the candidate to read data for
+        header_block_size : int
+            Size of header block to be read = 512 bytes (default)
+
+        Returns:
+        --------
+        np.ndarray
+            Numpy array containing folded pulse profile data
+        """
+
+        seek_ptr = int((header_block_size + data_block_size) * candidate_index)
+        if not OcldReader._check_file(path):
+            raise FileNotFoundError(f"File {path} not found.")
+
+        with open(path, "rb") as f:
+            f.seek(seek_ptr + header_block_size)  # Move to candidate data
+            fpp_chunk = np.fromfile(
+                f, dtype=np.float32, count=int(data_block_size / 4)
+            )
+        return fpp_chunk
+
     def load_metadata(self, header_block_size: int = 512):
         """
         Loads metadata from OCLD raw file
@@ -208,3 +246,60 @@ class OcldReader:
 
         self.df = pd.DataFrame(self.metadata["candidates"])
         return self.df
+
+    def get_candidate_fpp(self, candidate_index: int) -> np.ndarray:
+        """
+        Returns folded pulse profile (FPP) data for a specific candidate
+
+        Arguments:
+        ----------
+        candidate_index : int
+            Index of the candidate to read data for
+
+        Returns:
+        --------
+        np.ndarray
+            Numpy array containing folded pulse profile data
+        """
+        if not self.metadata:
+            raise RuntimeError(
+                "Metadata not loaded. Please run load_metadata() first."
+            )
+
+        data_block_size = (
+            self.metadata["nsubints"]
+            * self.metadata["nbands"]
+            * self.metadata["nphase"]
+            * 4  # float32
+        )
+
+        fpp_data = self._get_candidate_data(
+            self.path, candidate_index, self.header_size, data_block_size
+        ).reshape(
+            int(self.metadata["nsubints"]),
+            int(self.metadata["nbands"]),
+            int(self.metadata["nphase"]),
+        )
+        return fpp_data
+
+    def get_candidate_pulse_profile(self, candidate_index: int) -> np.ndarray:
+        """
+        Returns pulse profile for a specific candidate by
+        summing over frequency channels and sub-integrations.
+
+        Arguments:
+        ----------
+        candidate_index : int
+            Index of the candidate to read data for
+
+        Returns:
+        --------
+        np.ndarray
+            Numpy array containing pulse profile data
+        """
+        fpp_data = self.get_candidate_fpp(candidate_index)
+
+        # Sum over sub-integrations and frequency bands
+        pulse_profile = np.sum(fpp_data, axis=(0, 1))
+
+        return pulse_profile
