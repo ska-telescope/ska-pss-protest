@@ -1,4 +1,7 @@
 # Changelog
+## 5.2.4
+- Fixing indentation in feature file for SPS tests
+
 ## 5.2.3
 - Setting right version numbers for ProTest
 - Disabling RequesterTests due to network reset issues
