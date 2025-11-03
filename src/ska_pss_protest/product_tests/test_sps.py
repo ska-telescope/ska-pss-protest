@@ -11,6 +11,7 @@ In some of the tests we enable and configure sifting and clustering
 algorithms to reduce the number of candidates exported to SDP.
 """
 
+import logging
 import os
 from xml.etree import ElementTree as et
 
@@ -112,6 +113,7 @@ def set_source(context, config, pytestconfig, conf, outdir):
     config_path = conf(outdir)
 
     config("beams/beam/source/sigproc/file", context["test_vector"].local_path)
+    config("beams/beam/source/sigproc/chunk_samples", "16384")
     context["config_path"] = config_path
     context["candidate_dir"] = outdir
 
@@ -134,19 +136,38 @@ def set_sink(config, context):
     )
 
 
-@given("A cheetah configuration to sift and cluster SPS candidate metadata")
-def set_config(config):
+@given(
+    "A cheetah configuration to cluster SPS candidate metadata using FOF clustering algorithm"
+)
+def set_fof_clustering_config(config):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
-    config("sps_clustering/time_tolerance", "100.0")
-    config("sps_clustering/dm_thresh", "5.0")
-    config("sps_clustering/pulse_width_tolerance", "50.0")
+    config("sps_clustering/fof_clustering/active", "true")
+    config("sps_clustering/fof_clustering/time_tolerance", "100.0")
+    config("sps_clustering/fof_clustering/dm_thresh", "50.0")
+    config("sps_clustering/fof_clustering/pulse_width_tolerance", "5.0")
 
+
+@given(
+    "A cheetah configuration to cluster SPS candidate metadata using HDBScan clustering algorithm"
+)
+def set_hdbscan_clustering_config(config):
+    # Set SpCluster parameters
+    config("sps_clustering/active", "true")
+    config("sps_clustering/hdbscan_clustering/active", "true")
+    config("sps_clustering/hdbscan_clustering/minimum_cluster_size", "15")
+
+
+@given(
+    "A cheetah configuration to sift SPS candidate metadata using thresholding algorithm"
+)
+def set_thresholding_sift_config(config):
     # Set SpSift parameters
     config("spsift/active", "true")
-    config("spsift/sigma_thresh", "6.0")
-    config("spsift/dm_thresh", "5.0")
-    config("spsift/pulse_width_threshold", "1000.0")
+    config("spsift/thresholding/active", "true")
+    config("spsift/thresholding/sigma_thresh", "6.0")
+    config("spsift/thresholding/dm_thresh", "5.0")
+    config("spsift/thresholding/pulse_width_threshold", "1100.0")
 
 
 @when("An SPS pipeline runs")
@@ -162,7 +183,34 @@ def run_cheetah(context, config, pytestconfig):
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
-    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+
+    # read the root tree for trial widths
+
+    widths_element = root_tree.find("sps/klotski/widths")
+    if widths_element is not None and widths_element.text:
+        trial_widths = [int(r) for r in widths_element.text.strip().split(",")]
+    else:
+        logging.warning("Search width not selected")
+        trial_widths = []
+
+    context["trial_width"] = trial_widths
+
+    # Get the dedispersion plan and downsampling from config
+    dedispersion_elements = root_tree.findall("ddtr/dedispersion")
+
+    dm_plan = [
+        [
+            float(element.find("start").text),
+            float(element.find("end").text),
+            2**i,
+        ]
+        for i, element in enumerate(dedispersion_elements)
+    ]
+
+    # read dedispersion plan
+
+    context["dm_plan"] = dm_plan
 
     # Set SPS S/N threshold
     config("sps/threshold", "6.0").write(context["config_path"])
@@ -215,24 +263,11 @@ def validate_candidate_metadata(context, pytestconfig, teardown):
 
     # Generate list of expected candidates
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
-    widths_list = [
-        1,
-        2,
-        4,
-        8,
-        16,
-        32,
-        64,
-        128,
-        256,
-        512,
-        1024,
-        2048,
-        4096,
-        8192,
-        15000,
-    ]
-    spccl.compare_widthstep(context["vector_header"].allpars(), widths_list)
+    spccl.compare_widthstep(
+        context["vector_header"].allpars(),
+        context["trial_width"],
+        context["dm_plan"],
+    )
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0

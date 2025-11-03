@@ -412,6 +412,14 @@ class SpCclTests:
         candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
 
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -421,6 +429,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -429,7 +438,7 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list
+            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
         )
 
         assert len(candidate.detections) == len(candidate.expected)
@@ -452,6 +461,15 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -461,6 +479,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -468,7 +487,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list, dm_plan)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -491,6 +510,15 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -500,6 +528,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -507,7 +536,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list, dm_plan)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
@@ -528,6 +557,15 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -537,6 +575,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -544,7 +583,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list, dm_plan)
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
 
@@ -557,6 +596,15 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -566,6 +614,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -574,7 +623,7 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list
+            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
         )
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -598,6 +647,13 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
         widths_list = [
             1,
             2,
@@ -607,6 +663,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -614,7 +671,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list, dm_plan)
         assert len(candidate.detections) < len(candidate.expected)
         assert len(candidate.non_detections) > 0
 
@@ -624,6 +681,7 @@ class SpCclTests:
         SpCcl metadata tolerance ranges, based on the DM step
         size, is returning the correct values.
         """
+
         widths_list = [
             1,
             2,
@@ -633,6 +691,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -643,6 +702,8 @@ class SpCclTests:
 
         # Test a pulse width of 0.001 ms
         expected = [56000.00004631352, 1.0, 0.001, 18.257418583505537]
+        # downsampling for dm = 1
+        downf = 1
         vector_pars = {
             "fch1": 1670.0,
             "foff": -0.078125,
@@ -654,13 +715,15 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list, downf)
         assert tols.width_tol == [1.0, 128.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-12, abs=1e-17)
         assert tols.dm_tol == pytest.approx(0.002534, abs=1e-6)
 
         # Test a pulse width of 0.1 ms
         expected = [56000.00004631352, 1.0, 0.1, 18.257418583505537]
+        # downsampling factor for dm = 1
+        downf = 1
         vector_pars = {
             "fch1": 1670.0,
             "foff": -0.078125,
@@ -672,13 +735,15 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list, downf)
         assert tols.width_tol == [64.0, 256.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-10, abs=1e-15)
         assert tols.dm_tol == pytest.approx(0.2534, abs=1e-04)
 
         # Test a pulse width of 10 ms
         expected = [56000.00004631352, 1.0, 10.0, 18.257418583505537]
+        # downsampling factor for dm = 1.0
+        downf = 1
         vector_pars = {
             "fch1": 1670.0,
             "foff": -0.078125,
@@ -690,13 +755,15 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = WidthTol(expected, vector_pars, widths_list)
-        assert tols.width_tol == [4096.0, 32768.0]
+        tols = WidthTol(expected, vector_pars, widths_list, downf)
+        assert tols.width_tol == [4096.0, 16384.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-8, abs=1e-13)
         assert tols.dm_tol == pytest.approx(25.34, abs=0.01)
 
-        # Test a pulse width of 10 ms
+        # Test a pulse width of 1000 ms
         expected = [56000.00004631352, 1.0, 1000.0, 18.257418583505537]
+        # downsampling factor for dm of 1.0
+        downf = 1
         vector_pars = {
             "fch1": 1670.0,
             "foff": -0.078125,
@@ -708,7 +775,7 @@ class SpCclTests:
             "sig": 50.0,
         }
 
-        tols = WidthTol(expected, vector_pars, widths_list)
+        tols = WidthTol(expected, vector_pars, widths_list, downf)
         assert tols.width_tol == [524288.0, 1000000.0]
         assert tols.timestamp_tol == pytest.approx(4.91505e-6, abs=1e-11)
         assert tols.dm_tol == pytest.approx(2534, abs=1)
@@ -723,6 +790,15 @@ class SpCclTests:
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = SpCcl(spccl_dir)
         candidate.from_vector(get_vector.local_path)
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -732,6 +808,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -740,7 +817,7 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list
+            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
         )
         candidate.summary_export(VHeader(get_vector.local_path).allpars())
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
@@ -775,6 +852,15 @@ class SpCclTests:
         candidate.from_spccl(
             os.path.join(DATA_DIR, "spccl_2/lowdm/expected.spccl")
         )
+
+        dm_plan = [
+            [0, 100, 1],
+            [100, 300, 2],
+            [300, 700, 4],
+            [700, 1500, 8],
+            [1500, 3100, 16],
+        ]
+
         widths_list = [
             1,
             2,
@@ -784,6 +870,7 @@ class SpCclTests:
             32,
             64,
             128,
+            256,
             512,
             1024,
             2048,
@@ -791,7 +878,7 @@ class SpCclTests:
             8192,
             15000,
         ]
-        candidate.compare_widthstep(source_properties, widths_list)
+        candidate.compare_widthstep(source_properties, widths_list, dm_plan)
         candidate.summary_export(source_properties)
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
         with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:

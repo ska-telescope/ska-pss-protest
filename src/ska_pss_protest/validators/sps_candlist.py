@@ -365,7 +365,9 @@ class SpCcl:
 
         self.expected = cand_metadata
 
-    def compare_widthstep(self, pars=None, widths_list=None) -> None:
+    def compare_widthstep(
+        self, pars=None, widths_list=None, dm_plan=None
+    ) -> None:
         """
         Function to search for each expected pulse from the
         list of candidate detections. A match is defined if
@@ -392,20 +394,35 @@ class SpCcl:
                     "foff" : -20.0,
                     "nchans" : 16}
 
-        windex : int
+        width_list : list
             List pulse widths searched by the relevant
             SPS algotrithm used.
+
+        dm_plan : list
+            dm plan used in the search, should be in
+            format [[dm_start1, dm_end1, downsampling_factor1],
+            [dm_start1, dm_end1, downsampling_factor1], .......]
+            This is used to find the actual boxcar size used in the search,
+            and decide the tolerance on width.
         """
         logging.info("Using ruleset: WidthStep")
 
         # For each known pulse in the test vector...
         for expected in self.expected:
             logging.info("Searching candidates for {}".format(expected))
+            # Find the downsampling factor corresponding to the expected dm in the dm plan
+            expected_dm = expected[1]
+            downsampling_factor = 1
+            for dm_range in dm_plan:
+                if expected_dm >= dm_range[0]:
+                    if expected_dm < dm_range[1]:
+                        downsampling_factor = dm_range[2]
+                        break
+            logging.info("Downsampling factor: %s", str(downsampling_factor))
 
             # Generate rules from the known pulse parameters and the
             # test vector parameters
-            rules = WidthTol(expected, pars, widths_list)
-
+            rules = WidthTol(expected, pars, widths_list, downsampling_factor)
             # If we find it..
             result = self._compare(expected, self.cands, rules)
             if result[4]:
@@ -530,12 +547,17 @@ class WidthTol:
 
     widths_list : list
         A list of matched filter (boxcar) widths (in bins).
+
+    downf : downsampling factor for the expected dm
     """
 
-    def __init__(self, expected: list, pars: dict, widths_list: list):
+    def __init__(
+        self, expected: list, pars: dict, widths_list: list, downf: int
+    ):
         self.expected = expected
         self.pars = pars
         self.widths_list = widths_list
+        self.downf = downf
 
         self.width_tol = None
         self.dm_tol = None
@@ -620,7 +642,15 @@ class WidthTol:
         wint : float
             The "true" width of the pulse in microseconds
         """
-
+        # Find the nearest trial width that will be used in the downsampled search
+        downf = self.downf
+        # width in numbner of samples in the downsampled time series
+        wint_samples = round(wint / (downf * self.pars["tsamp"] * 1e6))
+        # Index of the trial width that is likely being used in the search
+        nearest = np.absolute(
+            np.array(self.widths_list) - wint_samples
+        ).argmin()
+        # Note that the actual trial width in time units will be 'widths_list[nearest]*tsamp*downf'
         # Take list of trial boxcar sizes and
         # convert to a list of widths (us)
         trial_widths = np.asarray(
@@ -630,29 +660,35 @@ class WidthTol:
             ]
         )
 
-        # Find the closest index in trial_widths to the test value wint
-        nearest = np.absolute(trial_widths - wint).argmin()
-
         # Determine the lower and upper bounds of an acceptable candidate width.....
         # Is nearest width the narrowest?
         if nearest == 0:
             # Is our intrinsic width narrower than the narrowest?
-            if wint < trial_widths[0]:
-                lower, upper = wint, trial_widths[nearest + 1]
+            # We have to multiply 'trial_width[nearest]' with 'downf' to get actual width in time units
+            if wint < trial_widths[0] * downf:
+                lower, upper = wint, trial_widths[nearest + 1] * downf
             # Or is it wider than the narrowest?
             else:
-                lower, upper = trial_widths[nearest], trial_widths[nearest + 1]
+                lower, upper = (
+                    trial_widths[nearest] * downf,
+                    trial_widths[nearest + 1] * downf,
+                )
         # Is nearest width the widest?
         elif nearest == len(trial_widths) - 1:
             # Is our intrinsic width wider than the widest?
-            if wint > trial_widths[-1]:
-                lower, upper = trial_widths[nearest - 1], wint
+            if wint > trial_widths[-1] * downf:
+                lower, upper = trial_widths[nearest - 1] * downf, wint
             # Is our intrinsic width narrower than the widest?
             else:
-                lower, upper = trial_widths[nearest - 1], trial_widths[nearest]
+                lower, upper = (
+                    trial_widths[nearest - 1] * downf,
+                    trial_widths[nearest] * downf,
+                )
         else:
-            lower, upper = trial_widths[nearest - 1], trial_widths[nearest + 1]
-
+            lower, upper = (
+                trial_widths[nearest - 1] * downf,
+                trial_widths[nearest + 1] * downf,
+            )
         self.width_tol = [lower, upper]
 
     def sig(self, sn_int: float, wint: float, period: float) -> None:
