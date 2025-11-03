@@ -86,12 +86,10 @@ class OcldReaderTests:
 
         with pytest.raises(expected_exception=FileNotFoundError):
             filename = "niefiuweb.ocld"
-            reader = OcldReader(filename)
             reader._parse(filename, 512)
 
         with pytest.raises(expected_exception=FileNotFoundError):
             filename = "niefiuweb.ocld"
-            reader = OcldReader(filename)
             reader._get_candidate_data(filename, 0, 512, 131072)
 
     def test_ocld_runtime_errors(self):
