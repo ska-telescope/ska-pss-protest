@@ -1,4 +1,11 @@
 # Changelog
+## 5.2.4
+- Fixing indentation in feature file for SPS tests
+
+## 5.2.3
+- Setting right version numbers for ProTest
+- Disabling RequesterTests due to network reset issues
+
 ## 5.2.2
 - Included code to account for downsampling in SPS candidate validators with corresponding downsampling factor in the dedispersion plan
 - Modified SPS tests to use updated cheetah config
