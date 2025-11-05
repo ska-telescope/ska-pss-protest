@@ -230,7 +230,7 @@ class OcldReader:
         """
         self.metadata = self._parse(self.path, header_block_size)
 
-    def get_metadata_df(self) -> pd.DataFrame:
+    def create_metadata_df(self) -> None:
         """
         Returns metadata as pandas DataFrame
 
@@ -245,7 +245,19 @@ class OcldReader:
             )
 
         self.df = pd.DataFrame(self.metadata["candidates"])
-        return self.df
+
+    def get_metadata_df(self) -> pd.DataFrame:
+        """
+        Returns metadata as pandas DataFrame
+
+        Returns:
+        --------
+        pd.DataFrame
+            DataFrame containing metadata of all candidates
+        """
+        if self.df.empty:
+            self.create_metadata_df()
+        return self.df.copy()
 
     def get_candidate_fpp(self, candidate_index: int) -> np.ndarray:
         """
