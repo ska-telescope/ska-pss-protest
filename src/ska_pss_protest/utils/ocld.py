@@ -115,8 +115,8 @@ class OcldReader:
         ----------
         path : str
             Path to OCLD raw file
-        data_block_size : int
-            Size of data block to be read = nsubints * nbands * nbins
+        header_block_size : int
+            Size of header block to be read
 
         Returns:
         --------
@@ -127,8 +127,7 @@ class OcldReader:
 
         metadata = {}
 
-        if not OcldReader._check_file(path):
-            raise FileNotFoundError(f"File {path} not found.")
+        assert OcldReader._check_file(path) is True
 
         with open(path, "rb") as f:
             # COUNT:1,NPHASE:128,NSUBBAND:64,NSUBINT:16
@@ -176,6 +175,7 @@ class OcldReader:
 
                 metadata["candidates"].append(metadata_chunk)
                 # fpp_chunk = np.fromfile(f, dtype=np.float32, count=data_block_size)
+            f.close()
 
         return metadata
 
@@ -206,17 +206,17 @@ class OcldReader:
         """
 
         seek_ptr = int((header_block_size + data_block_size) * candidate_index)
-        if not OcldReader._check_file(path):
-            raise FileNotFoundError(f"File {path} not found.")
+        assert OcldReader._check_file(path) is True
 
         with open(path, "rb") as f:
             f.seek(seek_ptr + header_block_size)  # Move to candidate data
             fpp_chunk = np.fromfile(
                 f, dtype=np.float32, count=int(data_block_size / 4)
             )
+            f.close()
         return fpp_chunk
 
-    def load_metadata(self, header_block_size: int = 512):
+    def load_metadata(self, header_block_size: int = 512) -> None:
         """
         Loads metadata from OCLD raw file
 
