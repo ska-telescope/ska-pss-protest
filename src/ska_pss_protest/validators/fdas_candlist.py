@@ -297,6 +297,13 @@ class FdasScl:
             return sifted_cands, detection
         return None, None
 
+class FldoOcld:
+    """
+    Placeholder class for FDAS OCLD candidate validation
+    """
+
+    def __init__(self):
+        pass
 
 class FdasTolDummy:
     """
