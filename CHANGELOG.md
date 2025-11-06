@@ -1,4 +1,7 @@
 # Changelog
+## 5.2.5
+- Added a module to read OCLD files. This reader is provides a `Pandas.DataFrame` of all the candidates' metadata and also extracts individual candidate data.
+
 ## 5.2.4
 - Fixing indentation in feature file for SPS tests
 
