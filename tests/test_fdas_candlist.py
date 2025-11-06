@@ -57,13 +57,7 @@ import pandas as pd
 import pytest
 from pytest import mark
 
-from ska_pss_protest import (
-    FdasScl,
-    FdasTolBasic,
-    FdasTolDummy,
-    FldoOcld,
-    VectorPull,
-)
+from ska_pss_protest import FdasScl, FdasTolBasic, FdasTolDummy, VectorPull
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -149,7 +143,7 @@ class SclTests:
         ]
         known_cands = known_cands.sort_values("sn", ascending=False)
 
-        assert np.all(candidate.cands == known_cands)
+        assert np.all(candidate.scl_cands == known_cands)
 
     def test_no_candidate_dir(self):
         """
@@ -394,19 +388,3 @@ class SclTests:
         candidate.from_vector(vector, source_properties)
         with pytest.raises(ValueError):
             candidate.search_tol("invalid_ruleset")
-
-
-@mark.candlisttests
-@mark.fldoocldtests
-@mark.unit
-class FldoOcldTests:
-    """
-    Tests of the FDAS OCLD candidate metadata file parser(s)
-    """
-
-    def test_fldo_ocld_placeholder(self):
-        """
-        Test placeholder class for FDAS OCLD candidate validation
-        """
-        fldo_ocld = FldoOcld()
-        assert fldo_ocld is not None

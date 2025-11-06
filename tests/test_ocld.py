@@ -137,9 +137,9 @@ class OcldReaderTests:
 
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
-        assert "PERIOD" in df.columns
-        assert "PDOT" in df.columns
-        assert "DM" in df.columns
+        assert "period" in df.columns
+        assert "pdot" in df.columns
+        assert "dm" in df.columns
         assert "COUNT" not in df.columns
         assert "NSUBINT" not in df.columns
         assert "NPHASE" not in df.columns

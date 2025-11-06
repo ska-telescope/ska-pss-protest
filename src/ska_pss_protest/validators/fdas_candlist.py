@@ -99,14 +99,15 @@ class FdasScl:
             raise OSError("No such directory: {}".format(self.scl_dir))
 
         # Get list of cands from file in scl directory
-        self.cands = self._get_cands(self.scl_dir, self.extension)
+        self.scl_cands = self._get_scl_cands(self.scl_dir, self.extension)
+        self.ocld_cands = self._get_ocld_cands(self.scl_dir, ".ocld")
 
         self.expected = None
         self.detected = None
         self.recovered = None
 
     @staticmethod
-    def _get_cands(scl_dir: str, ext: str) -> list:
+    def _get_scl_cands(scl_dir: str, ext: str) -> list:
         """
         Look up cands file in scl directory,
         and process each line as a candidate, return
@@ -156,170 +157,7 @@ class FdasScl:
         cand_metadata = cand_metadata.sort_values("sn", ascending=False)
         return cand_metadata
 
-    def from_vector(self, vector: str, vector_header: dict) -> list:
-        """
-        Extract parameters of the pulsar using a test
-        vector filename. These will be used to validate
-        an acceleration search.
-
-        Parameters
-        ----------
-        vector: str
-            Path to test vector
-
-        Returns
-        -------
-        list
-            List of pulsar parameters. The list is an
-            1xN list, where N is the number of parameters
-            used to validate each candidate.
-        """
-        # Save header information
-        self.vheader_param = vector_header
-
-        logging.info("Extracting pulsar parameters from {}".format(vector))
-
-        # Split path and extension from vector filename
-        basename = os.path.splitext(os.path.basename(vector))[0].split("_")
-
-        # Determine signal properties from name of vector
-        period = 1.0 / float(basename[2]) * 1000  # milliseconds
-        width = float(basename[3]) * period  # milliseconds
-        disp = float(basename[4])
-        accel = float(basename[5])
-        sig_fold = float(basename[7])
-
-        # Set expected period derivative from acceleration parameter
-        pdot = -accel * period / 3e8
-
-        self.expected = [period, pdot, disp, width, sig_fold]
-
-    def search_tol(self, tol_set) -> None:
-        """
-        Method to search for an injected pulsar from the
-        list of candidate detections. A match is defined if
-        a candidate signal matches an expected signal within
-        tolerances, as defined in the FdasDummyTol class.
-
-        This is placeholder method until formal FDAS tolerances
-        are defined.
-
-        Parameters
-        ----------
-        tol_set: str
-            Paramter to choose which tolerance set to use.
-            Options are: dummy, basic
-            dummy: Dummy tolerance set
-            basic: Basic tolerance set
-            If no tolerance set is specified, then ValueError
-            is raised.
-        """
-        logging.info(
-            "Searching pulsar candidates for {}".format(self.expected)
-        )
-
-        # Get a tolerance for each metadata parameter
-        if tol_set == "dummy":
-            # Dummy tolerance
-            logging.info("Using ruleset: Dummy")
-            rules = FdasTolDummy(self.expected)
-        elif tol_set == "basic":
-            # Basic tolerance
-            logging.info("Using ruleset: Basic")
-            rules = FdasTolBasic(self.expected, self.vheader_param)
-        else:
-            raise ValueError(
-                "Invalid tolerance set specified: {}".format(tol_set)
-            )
-
-        # Apply tolerance rules to each candidate
-        sifted, best = self._compare(self.cands, rules)
-
-        # Are there ANY candidates within our tolerances?
-        if best is None:
-            # If no, our pulsar was not recovered. Exit
-            self.detected = False
-            return
-
-        # One or more candidates have survived our tolerance rules.
-        logging.info(
-            "Reduced candidate list to {} candidates".format(sifted.shape[0])
-        )
-        logging.info("Candidates within tolerances:\n{}".format(sifted))
-
-        # Find the highest S/N candidate in our list of survivors.
-        self.recovered = sifted.loc[[best]]
-        logging.info("Best candidate is \n{}".format(self.recovered))
-        self.detected = True
-
-    @staticmethod
-    def _compare(
-        cands: pd.DataFrame, rules: object
-    ) -> tuple[pd.DataFrame, int]:
-        """
-        Compares metadata for a known pulsar signal to the metadata for each
-        detected candidate. If a candidate that is consistent with the known
-        signal is found, within the tolerances set by the ruleset used,
-        its metadata is returned, else, None.
-
-        Parameters
-        ----------
-        cands : object
-           A pandas dataframe comprising 5 columns describing the
-           period, period derivatives, dm, width, and S/N for each
-           candidate
-
-        rules : object
-            An object defining the tolerances for each of the
-            parameters in the known signal.
-            NOTE that the width tolerance is not used in the
-            comparison, as the width is not very accurate for
-            periodicity searches using fourier transforms.
-
-        Returns
-        -------
-        sifted cands : object
-            pandas dataframe containing only candidates which
-            satisfy tolerances defined in the ruleset used.
-
-        detection : int
-            The index of the surviving candidate that has the
-            highest S/N.
-        """
-        # Take our pandas dataframe and reduce it to only those
-        # candididates that fall within the tolerances set by the
-        # rule set chosen
-        sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1]"
-        )
-        if not sifted_cands.empty:
-            # If we have any candidates left, sort them by S/N
-            sifted_cands = sifted_cands.sort_values(by="sn", ascending=False)
-            detection = sifted_cands["sn"].idxmax()
-            return sifted_cands, detection
-        return None, None
-
-
-class FldoOcld:
-    """
-    Placeholder class for FDAS OCLD candidate validation
-    """
-
-    def __init__(self, ocld_dir=None, extension=".ocld"):
-        self.ocld_dir = ocld_dir
-        self.extension = extension
-
-        # Have we set a ocld dir?
-        if not self.ocld_dir:
-            raise OSError("No candidate directory specified")
-        # Does the ocld dir exist on the filesystem?
-        if not os.path.isdir(self.ocld_dir):
-            raise OSError("No such directory: {}".format(self.ocld_dir))
-
-        self.candidate_df = self._get_cands(self.ocld_dir, self.extension)
-
-    @staticmethod
-    def _get_cands(ocld_dir: str, ext: str) -> pd.DataFrame:
+    def _get_ocld_cands(self, ocld_dir: str, ext: str) -> pd.DataFrame:
         """
         Look up OCLD file in a directory,
         and use the OcldReader to parse the candidate metadata,
@@ -438,22 +276,26 @@ class FldoOcld:
             )
 
         # Apply tolerance rules to each candidate
-        sifted, best = self._compare(self.candidate_df, rules)
+        sifted_scl, best_scl = self._compare(self.scl_cands, rules)
 
         # Are there ANY candidates within our tolerances?
-        if best is None:
+        if best_scl is None:
             # If no, our pulsar was not recovered. Exit
             self.detected = False
             return
 
         # One or more candidates have survived our tolerance rules.
         logging.info(
-            "Reduced candidate list to {} candidates".format(sifted.shape[0])
+            "Reduced SCL candidate list to {} candidates".format(
+                sifted_scl.shape[0]
+            )
         )
-        logging.info("Candidates within tolerances:\n{}".format(sifted))
+        logging.info(
+            "SCL Candidates within tolerances:\n{}".format(sifted_scl)
+        )
 
         # Find the highest S/N candidate in our list of survivors.
-        self.recovered = sifted.loc[[best]]
+        self.recovered = sifted_scl.loc[[best_scl]]
         logging.info("Best candidate is \n{}".format(self.recovered))
         self.detected = True
 
@@ -495,7 +337,7 @@ class FldoOcld:
         # candididates that fall within the tolerances set by the
         # rule set chosen
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1] & @rules.sn_tol <= sn"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1]"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N

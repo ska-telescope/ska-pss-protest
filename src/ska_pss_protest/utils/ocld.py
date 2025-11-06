@@ -161,7 +161,7 @@ class OcldReader:
                 metadata_chunk = metadata_chunk.replace(b"\x00", b"")
                 metadata_chunk = str(metadata_chunk, "utf-8")
                 metadata_chunk = dict(
-                    (k, v)
+                    (k, float(v))
                     for k, v in (
                         e.split(":") for e in metadata_chunk.split(",")
                     )
@@ -245,6 +245,15 @@ class OcldReader:
             )
 
         self.df = pd.DataFrame(self.metadata["candidates"])
+        self.df = self.df.rename(
+            columns={
+                "PERIOD": "period",
+                "PDOT": "pdot",
+                "DM": "dm",
+                "WIDTH": "width",
+                "SIGMA": "sn",
+            }
+        )
 
     def get_metadata_df(self) -> pd.DataFrame:
         """
