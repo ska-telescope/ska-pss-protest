@@ -237,7 +237,7 @@ class FdasScl:
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
-    def search_tol(self, tol_set) -> None:
+    def search_tol(self, tol_set:str , ocld_tol_factor:float = 1.0) -> None:
         """
         Method to search for an injected pulsar from the
         list of candidate detections. A match is defined if
@@ -256,6 +256,8 @@ class FdasScl:
             basic: Basic tolerance set
             If no tolerance set is specified, then ValueError
             is raised.
+        ocld_tol_factor: float
+            A factor to scale the OCLD tolerances by.
         """
         logging.info(
             "Searching pulsar candidates for {}".format(self.expected)
@@ -277,6 +279,11 @@ class FdasScl:
 
         # Apply tolerance rules to each candidate
         sifted_scl, best_scl = self._compare(self.scl_cands, rules)
+        sifted_ocld, best_ocld = self._compare(self.ocld_cands, rules, ocld_tol_factor)
+
+        logging.info(
+            "OCLD Candidates within tolerances:\n{}".format(sifted_ocld)
+        )
 
         # Are there ANY candidates within our tolerances?
         if best_scl is None:
@@ -301,7 +308,7 @@ class FdasScl:
 
     @staticmethod
     def _compare(
-        cands: pd.DataFrame, rules: object
+        cands: pd.DataFrame, rules: object, tol_factor: float = 1.0
     ) -> tuple[pd.DataFrame, int]:
         """
         Compares metadata for a known pulsar signal to the metadata for each
@@ -322,6 +329,11 @@ class FdasScl:
             NOTE that the width tolerance is not used in the
             comparison, as the width is not very accurate for
             periodicity searches using fourier transforms.
+        
+        tol_factor : float
+            A factor to scale the tolerances by, specifically
+            for use with OCLD candidates where the tolerances
+            may need to be strictened.
 
         Returns
         -------
@@ -336,6 +348,26 @@ class FdasScl:
         # Take our pandas dataframe and reduce it to only those
         # candididates that fall within the tolerances set by the
         # rule set chosen
+
+        if tol_factor != 1.0:
+            # Scale tolerances by factor
+            rules.period_tol = [
+                rules.period_tol[0] * tol_factor,
+                rules.period_tol[1] * tol_factor,
+            ]
+            rules.pdot_tol = [
+                rules.pdot_tol[0] * tol_factor,
+                rules.pdot_tol[1] * tol_factor,
+            ]
+            rules.dm_tol = [
+                rules.dm_tol[0] * tol_factor,
+                rules.dm_tol[1] * tol_factor,
+            ]
+            rules.width_tol = [
+                rules.width_tol[0] * tol_factor,
+                rules.width_tol[1] * tol_factor,
+            ]
+
         sifted_cands = cands.query(
             "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1]"
         )
