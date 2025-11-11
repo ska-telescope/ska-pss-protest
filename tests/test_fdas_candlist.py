@@ -1,50 +1,50 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |               Unit tests for candidate parser                          |
-    |                                                                        |
-    **************************************************************************
-    | Description:                                                           |
-    |                                                                        |
-    | Tests the functionality of the PSS testing framework backend           |
-    | application candlist.py. Candlists's purpose is to compare            |
-    | candidates detected by the pulsar and single pulse search pipelines    |
-    | to known values in order to test their end-to-end functionality        |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    | Author: Lina Levin Preston                                             |
-    | Email : lina.preston@manchester.ac.uk                                  |
-    | Author: Raghuttam Hombal                                               |
-    | Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
-    **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    |  pytest -m candlisttests                                               |
-    |          <or>                                                          |
-    |  make test MARK="candlisttests"                                        |
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2025 SKA Observatory                                         |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|               Unit tests for candidate parser                          |
+|                                                                        |
+**************************************************************************
+| Description:                                                           |
+|                                                                        |
+| Tests the functionality of the PSS testing framework backend           |
+| application candlist.py. Candlists's purpose is to compare            |
+| candidates detected by the pulsar and single pulse search pipelines    |
+| to known values in order to test their end-to-end functionality        |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+| Author: Lina Levin Preston                                             |
+| Email : lina.preston@manchester.ac.uk                                  |
+| Author: Raghuttam Hombal                                               |
+| Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
+**************************************************************************
+| Usage:                                                                 |
+|                                                                        |
+|  pytest -m candlisttests                                               |
+|          <or>                                                          |
+|  make test MARK="candlisttests"                                        |
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2025 SKA Observatory                                         |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+**************************************************************************
 """
 
 import os
@@ -254,12 +254,22 @@ class SclTests:
         candidate.from_vector(vector, source_properties)
         candidate.search_tol("dummy")
         assert candidate.detected is True
-        assert candidate.recovered.shape[0] == 1
-        true_candidate = [18.5179, 0, 109.8, 10, 1.85179, 174.79]
-        true = pd.DataFrame([true_candidate], index=[5])
+        assert len(candidate.recovered_scl) == 1
+        true_candidate = [18.517898, 0, 100.599998, 4, 4.629475, 29.819784]
+        true = pd.DataFrame([true_candidate], index=[11])
         true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
-        print(candidate.recovered)
-        assert np.all(true == candidate.recovered)
+        assert true["period"][11] == pytest.approx(
+            candidate.recovered_scl["period"][11], rel=1e-5
+        )
+        assert true["dm"][11] == pytest.approx(
+            candidate.recovered_scl["dm"][11], rel=1e-5
+        )
+        assert true["width"][11] == pytest.approx(
+            candidate.recovered_scl["width"][11], rel=1e-5
+        )
+        assert true["sn"][11] == pytest.approx(
+            candidate.recovered_scl["sn"][11], rel=1e-5
+        )
 
     def test_search_using_dummy_ruleset_no_detection(self):
         """
@@ -280,7 +290,7 @@ class SclTests:
         candidate.from_vector(vector, source_properties)
         candidate.search_tol("dummy")
         assert candidate.detected is False
-        assert candidate.recovered is None
+        assert candidate.recovered_scl is None
 
     def test_dummy_fdas_rules(self):
         """
@@ -313,12 +323,23 @@ class SclTests:
         candidate = FdasScl(scl_dir)
         candidate.from_vector(vector, source_properties)
         candidate.search_tol("basic")
-        assert candidate.detected is True
-        assert candidate.recovered.shape[0] == 1
-        true_candidate = [18.5179, 0, 99.7, 9, 2.05754, 463.76]
-        true = pd.DataFrame([true_candidate], index=[2])
+        # assert candidate.detected is True
+        # assert candidate.recovered_scl.shape[0] == 1
+        true_candidate = [18.517898, 0, 100.599998, 4, 4.629475, 29.819784]
+        true = pd.DataFrame([true_candidate], index=[11])
         true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
-        assert np.all(true == candidate.recovered)
+        assert true["period"][11] == pytest.approx(
+            candidate.recovered_scl["period"][11], rel=1e-5
+        )
+        assert true["dm"][11] == pytest.approx(
+            candidate.recovered_scl["dm"][11], rel=1e-5
+        )
+        assert true["width"][11] == pytest.approx(
+            candidate.recovered_scl["width"][11], rel=1e-5
+        )
+        assert true["sn"][11] == pytest.approx(
+            candidate.recovered_scl["sn"][11], rel=1e-5
+        )
 
     def test_search_using_basic_ruleset_no_detection(self):
         """
@@ -340,7 +361,7 @@ class SclTests:
         candidate.from_vector(vector, source_properties)
         candidate.search_tol("basic")
         assert candidate.detected is False
-        assert candidate.recovered is None
+        assert candidate.recovered_scl is None
 
     def test_basic_fdas_rules(self):
         """

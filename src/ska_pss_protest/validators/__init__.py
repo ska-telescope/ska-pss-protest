@@ -1,4 +1,4 @@
-""" PSS pipeline validation """
+"""PSS pipeline validation"""
 
 from .candidate import Filterbank  # noqa
 from .fdas_candlist import FdasScl, FdasTolBasic, FdasTolDummy  # noqa

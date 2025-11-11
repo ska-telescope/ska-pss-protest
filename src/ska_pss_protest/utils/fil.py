@@ -1,110 +1,110 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |                   PSS filterbank/sigproc file reader                   |
-    |                                                                        |
-    **************************************************************************
-    | Description:                                                           |
-    |                                                                        |
-    | This module provides header information from a sigproc/filterbank      |
-    | This code is based on components of the filtools packages              |
-    | https://filtools.readthedocs.io/en/latest/                             |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    | Author: Michael Keith                                                  |
-    | Email: michael.keith@manchester.ac.uk                                  |
-    **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    | from fil import VHeader                                                |
-    |                                                                        |
-    | filterbank = VHeader(<path to filterbank>)                             |
-    |                                                                        |
-    | Then to show the duration of the observation, for example:             |
-    | print(filterbank.duration()). All other public methods are             |
-    | listed below.                                                          |
-    |                                                                        |
-    | all_pars()                                                             |
-    |      A dictionary of all header parameters (dict)                      |
-    |                                                                        |
-    | machine_id()                                                           |
-    |      The identifier of the data taking system (int)                    |
-    |                                                                        |
-    | tel()                                                                  |
-    |      The code used to identify the telescope (str)                     |
-    |                                                                        |
-    | fch1()                                                                 |
-    |      The frequency of the first channel in MHz (float)                 |
-    |                                                                        |
-    | chbw()                                                                 |
-    |      The channel bandwidth in MHz (float)                               |
-    |                                                                        |
-    | nchans()                                                               |
-    |      The number of channels (int)                                      |
-    |                                                                        |
-    | source_name()                                                          |
-    |      The name of the source (for test vectors this is generated        |
-    |       by the fast_fake package) (str)                                  |
-    |                                                                        |
-    | raj()                                                                  |
-    |      The source right ascension, as a decimal (float)                  |
-    |                                                                        |
-    | decj()                                                                 |
-    |      The source declination, as a decimal (float)                      |
-    |                                                                        |
-    | nbits()                                                                |
-    |      The number of bits per sample (int)                               |
-    |                                                                        |
-    | start_time()                                                           |
-    |      The MJD of the first sample (float)                               |
-    |                                                                        |
-    | tsamp()                                                                |
-    |      The sample interval (float)                                       |
-    |                                                                        |
-    | header_size()                                                          |
-    |      The size (in bytes) of the header (int)                           |
-    |                                                                        |
-    | duration()                                                             |
-    |      The duration of the observation (float)                           |
-    |                                                                        |
-    | data_size()                                                            |
-    |      The size (in bytes) of the data (int)                             |
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2024 University of Manchester                                |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    |                                                                        |
-    |THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS     |
-    |"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT       |
-    |LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A |
-    |PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
-    |HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,  |
-    |SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT        |
-    |LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,   |
-    |DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON       |
-    |ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR      |
-    |TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  |
-    |USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH        |
-    |DAMAGE.                                                                 |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|                   PSS filterbank/sigproc file reader                   |
+|                                                                        |
+**************************************************************************
+| Description:                                                           |
+|                                                                        |
+| This module provides header information from a sigproc/filterbank      |
+| This code is based on components of the filtools packages              |
+| https://filtools.readthedocs.io/en/latest/                             |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+| Author: Michael Keith                                                  |
+| Email: michael.keith@manchester.ac.uk                                  |
+**************************************************************************
+| Usage:                                                                 |
+|                                                                        |
+| from fil import VHeader                                                |
+|                                                                        |
+| filterbank = VHeader(<path to filterbank>)                             |
+|                                                                        |
+| Then to show the duration of the observation, for example:             |
+| print(filterbank.duration()). All other public methods are             |
+| listed below.                                                          |
+|                                                                        |
+| all_pars()                                                             |
+|      A dictionary of all header parameters (dict)                      |
+|                                                                        |
+| machine_id()                                                           |
+|      The identifier of the data taking system (int)                    |
+|                                                                        |
+| tel()                                                                  |
+|      The code used to identify the telescope (str)                     |
+|                                                                        |
+| fch1()                                                                 |
+|      The frequency of the first channel in MHz (float)                 |
+|                                                                        |
+| chbw()                                                                 |
+|      The channel bandwidth in MHz (float)                               |
+|                                                                        |
+| nchans()                                                               |
+|      The number of channels (int)                                      |
+|                                                                        |
+| source_name()                                                          |
+|      The name of the source (for test vectors this is generated        |
+|       by the fast_fake package) (str)                                  |
+|                                                                        |
+| raj()                                                                  |
+|      The source right ascension, as a decimal (float)                  |
+|                                                                        |
+| decj()                                                                 |
+|      The source declination, as a decimal (float)                      |
+|                                                                        |
+| nbits()                                                                |
+|      The number of bits per sample (int)                               |
+|                                                                        |
+| start_time()                                                           |
+|      The MJD of the first sample (float)                               |
+|                                                                        |
+| tsamp()                                                                |
+|      The sample interval (float)                                       |
+|                                                                        |
+| header_size()                                                          |
+|      The size (in bytes) of the header (int)                           |
+|                                                                        |
+| duration()                                                             |
+|      The duration of the observation (float)                           |
+|                                                                        |
+| data_size()                                                            |
+|      The size (in bytes) of the data (int)                             |
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2024 University of Manchester                                |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+|                                                                        |
+|THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS     |
+|"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT       |
+|LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A |
+|PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+|HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,  |
+|SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT        |
+|LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,   |
+|DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON       |
+|ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR      |
+|TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  |
+|USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH        |
+|DAMAGE.                                                                 |
+**************************************************************************
 """
 
 import logging

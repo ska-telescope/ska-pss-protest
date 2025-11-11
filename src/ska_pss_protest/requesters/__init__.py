@@ -1,3 +1,3 @@
-""" PSS Test Vector Handling """
+"""PSS Test Vector Handling"""
 
 from .requester import VectorPull  # noqa

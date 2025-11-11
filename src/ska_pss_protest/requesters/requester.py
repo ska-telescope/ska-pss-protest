@@ -1,71 +1,71 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |                  PSS Test Vector download and cacheing                 |
-    |                                                                        |
-    **************************************************************************
-    | Description:                                                           |
-    |                                                                        |
-    | Testing framework backend application that handles the downloading     |
-    | and cacheing of test vectors required for PSS pipeline tests.          |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    | Author: Lina Levin Preston                                             |
-    | Email : lina.preston@manchester.ac.uk                                  |
-    **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    | from requester import VectorPull                                       |
-    | vector = VectorPull(cache_dir=<custom_cache_dir>)                      |
-    |                                                                        |
-    | If cache_dir is not set, the env variable CACHE_DIR will be used.      |
-    | If CACHE_DIR is also not set, cache will be placed in                  |
-    | ~/.cache/SKA/test_vectors                                              |
-    |                                                                        |
-    | Available methods:                                                     |
-    |                                                                        |
-    | If the name of the vector is known                                     |
-    | from_name(<name of vector>, <refresh=True/False>)                      |
-    |                                                                        |
-    | If the full URL of the vector is known                                 |
-    | from_url(<url of vector>, refresh=<True/False>)                        |
-    |                                                                        |
-    | If a vector with specific properties is required but the explicit      |
-    | name or url is not known                                               |
-    | from_properties(duty=0.1, refresh=<True/False>) for a vector with a    |
-    | 10% duty cycle (see method docstring for options/defaults).            |
-    |                                                                        |
-    | if refresh is set to True, the local cache will not be checked and a   |
-    | download of the vector is made. Else a download only occurs if the     |
-    | vector is not found in the cache.                                      |
-    |                                                                        |
-    | Attributes:                                                            |
-    | cache_dir - the directory to be checked/used for cacheing vectors      |
-    | local_path - the path to the local copy of the vector if downloaded    |
-    |              or if already existing in cache.
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|                  PSS Test Vector download and cacheing                 |
+|                                                                        |
+**************************************************************************
+| Description:                                                           |
+|                                                                        |
+| Testing framework backend application that handles the downloading     |
+| and cacheing of test vectors required for PSS pipeline tests.          |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+| Author: Lina Levin Preston                                             |
+| Email : lina.preston@manchester.ac.uk                                  |
+**************************************************************************
+| Usage:                                                                 |
+|                                                                        |
+| from requester import VectorPull                                       |
+| vector = VectorPull(cache_dir=<custom_cache_dir>)                      |
+|                                                                        |
+| If cache_dir is not set, the env variable CACHE_DIR will be used.      |
+| If CACHE_DIR is also not set, cache will be placed in                  |
+| ~/.cache/SKA/test_vectors                                              |
+|                                                                        |
+| Available methods:                                                     |
+|                                                                        |
+| If the name of the vector is known                                     |
+| from_name(<name of vector>, <refresh=True/False>)                      |
+|                                                                        |
+| If the full URL of the vector is known                                 |
+| from_url(<url of vector>, refresh=<True/False>)                        |
+|                                                                        |
+| If a vector with specific properties is required but the explicit      |
+| name or url is not known                                               |
+| from_properties(duty=0.1, refresh=<True/False>) for a vector with a    |
+| 10% duty cycle (see method docstring for options/defaults).            |
+|                                                                        |
+| if refresh is set to True, the local cache will not be checked and a   |
+| download of the vector is made. Else a download only occurs if the     |
+| vector is not found in the cache.                                      |
+|                                                                        |
+| Attributes:                                                            |
+| cache_dir - the directory to be checked/used for cacheing vectors      |
+| local_path - the path to the local copy of the vector if downloaded    |
+|              or if already existing in cache.
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2024 SKA Observatory                                         |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+**************************************************************************
 """
 
 import logging
