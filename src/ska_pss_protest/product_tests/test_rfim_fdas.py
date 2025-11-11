@@ -133,10 +133,15 @@ def set_fdas_param(config, context):
     """
     # Set output location for candidate filterbanks
     config("beams/beam/sinks/channels/search_events/active", "true")
+    config("beams/beam/sinks/channels/ocld/active", "true")
 
     # Set output location for candidate metadata files
     config(
         "beams/beam/sinks/sink_configs/scl_files/dir",
+        context["candidate_dir"],
+    )
+    config(
+        "beams/beam/sinks/sink_configs/ocld_files/dir",
         context["candidate_dir"],
     )
 

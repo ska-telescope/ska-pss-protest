@@ -104,7 +104,8 @@ class FdasScl:
 
         self.expected = None
         self.detected = None
-        self.recovered = None
+        self.recovered_scl = None
+        self.recovered_ocld = None
 
     @staticmethod
     def _get_scl_cands(scl_dir: str, ext: str) -> list:
@@ -237,7 +238,7 @@ class FdasScl:
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
-    def search_tol(self, tol_set:str , ocld_tol_factor:float = 1.0) -> None:
+    def search_tol(self, tol_set: str, ocld_tol_factor: float = 1.0) -> None:
         """
         Method to search for an injected pulsar from the
         list of candidate detections. A match is defined if
@@ -258,6 +259,7 @@ class FdasScl:
             is raised.
         ocld_tol_factor: float
             A factor to scale the OCLD tolerances by.
+            1.0 means no scaling, <1.0 tightens tolerances.
         """
         logging.info(
             "Searching pulsar candidates for {}".format(self.expected)
@@ -279,10 +281,8 @@ class FdasScl:
 
         # Apply tolerance rules to each candidate
         sifted_scl, best_scl = self._compare(self.scl_cands, rules)
-        sifted_ocld, best_ocld = self._compare(self.ocld_cands, rules, ocld_tol_factor)
-
-        logging.info(
-            "OCLD Candidates within tolerances:\n{}".format(sifted_ocld)
+        sifted_ocld, best_ocld = self._compare(
+            self.ocld_cands, rules, ocld_tol_factor
         )
 
         # Are there ANY candidates within our tolerances?
@@ -302,9 +302,20 @@ class FdasScl:
         )
 
         # Find the highest S/N candidate in our list of survivors.
-        self.recovered = sifted_scl.loc[[best_scl]]
-        logging.info("Best candidate is \n{}".format(self.recovered))
+        self.recovered_scl = sifted_scl.loc[[best_scl]]
+        logging.info("Best candidate is \n{}".format(self.recovered_scl))
         self.detected = True
+
+        logging.info(
+            "Reduced OCLD candidate list to {} candidates".format(
+                sifted_ocld.shape[0]
+            )
+        )
+        logging.info(
+            "OCLD Candidates within tolerances:\n{}".format(sifted_ocld)
+        )
+        self.recovered_ocld = sifted_ocld.loc[[best_ocld]]
+        logging.info("Best OCLD candidate is \n{}".format(self.recovered_ocld))
 
     @staticmethod
     def _compare(
@@ -329,7 +340,7 @@ class FdasScl:
             NOTE that the width tolerance is not used in the
             comparison, as the width is not very accurate for
             periodicity searches using fourier transforms.
-        
+
         tol_factor : float
             A factor to scale the tolerances by, specifically
             for use with OCLD candidates where the tolerances
