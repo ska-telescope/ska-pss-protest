@@ -418,19 +418,19 @@ class FdasScl:
         if tol_factor != 1.0:
             # Scale tolerances by factor
             rules.period_tol = [
-                rules.period_tol[0] * tol_factor,
+                rules.period_tol[0] / tol_factor,
                 rules.period_tol[1] * tol_factor,
             ]
             rules.pdot_tol = [
-                rules.pdot_tol[0] * tol_factor,
+                rules.pdot_tol[0] / tol_factor,
                 rules.pdot_tol[1] * tol_factor,
             ]
             rules.dm_tol = [
-                rules.dm_tol[0] * tol_factor,
+                rules.dm_tol[0] / tol_factor,
                 rules.dm_tol[1] * tol_factor,
             ]
             rules.width_tol = [
-                rules.width_tol[0] * tol_factor,
+                rules.width_tol[0] / tol_factor,
                 rules.width_tol[1] * tol_factor,
             ]
 

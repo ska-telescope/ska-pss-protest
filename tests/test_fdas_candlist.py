@@ -185,6 +185,18 @@ class SclTests:
             FdasScl(scl_dir, "sdfhjs")
         shutil.rmtree(scl_dir)
 
+    def test_no_ocld_file_extension_in_valid_dir(self):
+        """
+        Tests that the correct exception is raised if
+        a valid directory is passed to the constructor
+        but OCLD files of a custom extension are not found
+        there
+        """
+
+        scl_dir = os.path.join(DATA_DIR, "scl_3")
+        with pytest.raises(IOError):
+            FdasScl(scl_dir)
+
     def test_wrong_number_of_cand_files(self):
         """
         We expect one candidate file per scan and therefore
@@ -339,6 +351,43 @@ class SclTests:
         )
         assert true["sn"][11] == pytest.approx(
             candidate.recovered_scl["sn"][11], rel=1e-5
+        )
+
+    def test_search_using_basic_ruleset_ocld_tol(self):
+        """
+        Test the basic search method recovers the one
+        candidate that falls within a set of tolerance
+        adjusted by ocld_tol_factor.
+        """
+        vector = (
+            "FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_123123.fil"
+        )
+        source_properties = {
+            "fch1": 1670.0,
+            "foff": -0.078125,
+            "nchans": 4096,
+            "tsamp": 6.4e-05,
+            "duration": 600,
+        }
+        scl_dir = os.path.join(DATA_DIR, "scl_1")
+        candidate = FdasScl(scl_dir)
+        candidate.from_vector(vector, source_properties)
+        candidate.search_tol("basic", ocld_tol_factor=0.99)
+
+        # assert candidate.detected is True
+        # assert candidate.recovered_scl.shape[0] == 1
+        true_candidate = [18.517898, 0, 100.599998, 4, 4.629475, 29.819784]
+        true = pd.DataFrame([true_candidate], index=[11])
+        true.columns = ["period", "pdot", "dm", "harmonic", "width", "sn"]
+
+        assert true["period"][11] == pytest.approx(
+            candidate.recovered_ocld["period"][14], rel=1e-5
+        )
+        assert true["pdot"][11] == pytest.approx(
+            candidate.recovered_ocld["pdot"][14], rel=1e-5
+        )
+        assert true["dm"][11] == pytest.approx(
+            candidate.recovered_ocld["dm"][14], rel=1e-5
         )
 
     def test_search_using_basic_ruleset_no_detection(self):
