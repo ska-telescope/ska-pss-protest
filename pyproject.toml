@@ -17,7 +17,7 @@ protest = 'ska_pss_protest.protest:main'
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-numpy = ">=1.26.4"
+numpy = "^1.26.4"
 requests = ">=2.31.0"
 pytest-mock = ">=3.12.0"
 pytest-html = ">=4.1.1"
