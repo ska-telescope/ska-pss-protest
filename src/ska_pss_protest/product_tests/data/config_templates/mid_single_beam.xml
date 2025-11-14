@@ -25,6 +25,12 @@
               <id>scl_files</id>
             </sink>
           </search_events>
+          <ocld>
+            <active>false</active>
+            <sink>
+              <id>ocld_files</id>
+            </sink>
+          </ocld>
         </channels>
         <sink_configs>
           <ocld_files>

@@ -1,4 +1,8 @@
 # Changelog
+## 5.2.6
+- Changed configuration file to export OCLD files
+- Used the OCLD reader to read the OCLD files and validate the metadata 
+
 ## 5.2.5
 - Added a module to read OCLD files. This reader is provides a `Pandas.DataFrame` of all the candidates' metadata and also extracts individual candidate data.
 

@@ -1,53 +1,53 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |                       PSS Candidate parser                             |
-    |                                                                        |
-    **************************************************************************
-    | Description: Candidate metadata sifter for FDAS                        |
-    |                                                                        |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    | Author: Lina Levin Preston                                             |
-    | Email : lina.preston@manchester.ac.uk                                  |
-    | Author: Raghuttam Hombal                                               |
-    | Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2025 SKA Observatory                                         |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    |                                                                        |
-    |THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS     |
-    |"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT       |
-    |LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A |
-    |PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
-    |HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,  |
-    |SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT        |
-    |LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,   |
-    |DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON       |
-    |ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR      |
-    |TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  |
-    |USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH        |
-    |DAMAGE.                                                                 |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|                       PSS Candidate parser                             |
+|                                                                        |
+**************************************************************************
+| Description: Candidate metadata sifter for FDAS                        |
+|                                                                        |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+| Author: Lina Levin Preston                                             |
+| Email : lina.preston@manchester.ac.uk                                  |
+| Author: Raghuttam Hombal                                               |
+| Email : raghuttamshreepadraj.hombal@manchester.ac.uk                   |
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2025 SKA Observatory                                         |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+|                                                                        |
+|THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS     |
+|"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT       |
+|LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A |
+|PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT      |
+|HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,  |
+|SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT        |
+|LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,   |
+|DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON       |
+|ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR      |
+|TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE  |
+|USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH        |
+|DAMAGE.                                                                 |
+**************************************************************************
 """
 
 import logging
@@ -55,6 +55,8 @@ import os
 
 import numpy as np
 import pandas as pd
+
+from ska_pss_protest import OcldReader
 
 # from ska_pss_protest.validators.candidate import Filterbank
 
@@ -97,14 +99,16 @@ class FdasScl:
             raise OSError("No such directory: {}".format(self.scl_dir))
 
         # Get list of cands from file in scl directory
-        self.cands = self._get_cands(self.scl_dir, self.extension)
+        self.scl_cands = self._get_scl_cands(self.scl_dir, self.extension)
+        self.ocld_cands = self._get_ocld_cands(self.scl_dir, ".ocld")
 
         self.expected = None
         self.detected = None
-        self.recovered = None
+        self.recovered_scl = None
+        self.recovered_ocld = None
 
     @staticmethod
-    def _get_cands(scl_dir: str, ext: str) -> list:
+    def _get_scl_cands(scl_dir: str, ext: str) -> list:
         """
         Look up cands file in scl directory,
         and process each line as a candidate, return
@@ -154,6 +158,48 @@ class FdasScl:
         cand_metadata = cand_metadata.sort_values("sn", ascending=False)
         return cand_metadata
 
+    def _get_ocld_cands(self, ocld_dir: str, ext: str) -> pd.DataFrame:
+        """
+        Look up OCLD file in a directory,
+        and use the OcldReader to parse the candidate metadata,
+        returning a pandas dataframe.
+
+        Parameters
+        ----------
+        ocld_dir: str
+            Directory expected to contain
+            candidate metadata and data file
+
+        ext: str
+            Extension of candidate metadata file
+
+        Returns
+        -------
+        cand_metadata: pandas.DataFrame
+           Dataframe containing candidate metadata
+        """
+        # Get name of metadata file from spccl_dir
+        files = []
+        for this_file in os.listdir(ocld_dir):
+            if this_file.endswith(ext):
+                files.append(this_file)
+        # Do we only have one candidate metadata file?
+        if len(files) == 1:
+            cand_file = os.path.join(ocld_dir, files[0])
+            logging.info("Detected candidates found at: {}".format(cand_file))
+        else:
+            raise IOError(
+                "Expected 1 file in {} \
+                    with extension {}. Found {}".format(
+                    ocld_dir, ext, len(files)
+                )
+            )
+
+        # If one file is found, load as pandas dataframe and return
+        ocld_reader = OcldReader(cand_file)
+        ocld_reader.load_metadata()
+        return ocld_reader.get_metadata_df()
+
     def from_vector(self, vector: str, vector_header: dict) -> list:
         """
         Extract parameters of the pulsar using a test
@@ -192,7 +238,7 @@ class FdasScl:
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
-    def search_tol(self, tol_set) -> None:
+    def search_tol(self, tol_set: str, ocld_tol_factor: float = 1.0) -> None:
         """
         Method to search for an injected pulsar from the
         list of candidate detections. A match is defined if
@@ -211,6 +257,9 @@ class FdasScl:
             basic: Basic tolerance set
             If no tolerance set is specified, then ValueError
             is raised.
+        ocld_tol_factor: float
+            A factor to scale the OCLD tolerances by.
+            1.0 means no scaling, <1.0 tightens tolerances.
         """
         logging.info(
             "Searching pulsar candidates for {}".format(self.expected)
@@ -231,28 +280,99 @@ class FdasScl:
             )
 
         # Apply tolerance rules to each candidate
-        sifted, best = self._compare(self.cands, rules)
+        sifted_scl, best_scl = self._compare_scl(self.scl_cands, rules)
+        sifted_ocld, best_ocld = self._compare_ocld(
+            self.ocld_cands, rules, ocld_tol_factor
+        )
 
         # Are there ANY candidates within our tolerances?
-        if best is None:
+        if best_scl is None:
             # If no, our pulsar was not recovered. Exit
             self.detected = False
             return
 
         # One or more candidates have survived our tolerance rules.
         logging.info(
-            "Reduced candidate list to {} candidates".format(sifted.shape[0])
+            "Reduced SCL candidate list to {} candidates".format(
+                sifted_scl.shape[0]
+            )
         )
-        logging.info("Candidates within tolerances:\n{}".format(sifted))
+        logging.info(
+            "SCL Candidates within tolerances:\n{}".format(sifted_scl)
+        )
 
         # Find the highest S/N candidate in our list of survivors.
-        self.recovered = sifted.loc[[best]]
-        logging.info("Best candidate is \n{}".format(self.recovered))
+        self.recovered_scl = sifted_scl.loc[[best_scl]]
+        logging.info("Best candidate is \n{}".format(self.recovered_scl))
         self.detected = True
 
+        logging.info(
+            "Reduced OCLD candidate list to {} candidates".format(
+                sifted_ocld.shape[0]
+            )
+        )
+        logging.info(
+            "OCLD Candidates within tolerances:\n{}".format(sifted_ocld)
+        )
+        self.recovered_ocld = sifted_ocld.loc[[best_ocld]]
+        logging.info("Best OCLD candidate is \n{}".format(self.recovered_ocld))
+
     @staticmethod
-    def _compare(
+    def _compare_scl(
         cands: pd.DataFrame, rules: object
+    ) -> tuple[pd.DataFrame, int]:
+        """
+        Compares OCLD metadata for a known pulsar signal to the metadata for each
+        detected candidate. If a candidate that is consistent with the known
+        signal is found, within the tolerances set by the ruleset used,
+        its metadata is returned, else, None.
+
+        Parameters
+        ----------
+        cands : object
+           A pandas dataframe comprising 5 columns describing the
+           period, period derivatives, dm, width, and S/N for each
+           candidate
+
+        rules : object
+            An object defining the tolerances for each of the
+            parameters in the known signal.
+            NOTE that the width tolerance is not used in the
+            comparison, as the width is not very accurate for
+            periodicity searches using fourier transforms.
+
+        tol_factor : float
+            A factor to scale the tolerances by, specifically
+            for use with OCLD candidates where the tolerances
+            may need to be strictened.
+
+        Returns
+        -------
+        sifted cands : object
+            pandas dataframe containing only candidates which
+            satisfy tolerances defined in the ruleset used.
+
+        detection : int
+            The index of the surviving candidate that has the
+            highest S/N.
+        """
+        # Take our pandas dataframe and reduce it to only those
+        # candididates that fall within the tolerances set by the
+        # rule set chosen
+
+        sifted_cands = cands.query(
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1]"
+        )
+        if not sifted_cands.empty:
+            # If we have any candidates left, sort them by S/N
+            sifted_cands = sifted_cands.sort_values(by="sn", ascending=False)
+            detection = sifted_cands["sn"].idxmax()
+            return sifted_cands, detection
+        return None, None
+
+    @staticmethod
+    def _compare_ocld(
+        cands: pd.DataFrame, rules: object, tol_factor: float = 1.0
     ) -> tuple[pd.DataFrame, int]:
         """
         Compares metadata for a known pulsar signal to the metadata for each
@@ -274,6 +394,11 @@ class FdasScl:
             comparison, as the width is not very accurate for
             periodicity searches using fourier transforms.
 
+        tol_factor : float
+            A factor to scale the tolerances by, specifically
+            for use with OCLD candidates where the tolerances
+            may need to be strictened.
+
         Returns
         -------
         sifted cands : object
@@ -287,8 +412,30 @@ class FdasScl:
         # Take our pandas dataframe and reduce it to only those
         # candididates that fall within the tolerances set by the
         # rule set chosen
+        if rules.pdot_tol[0] == 0.0 and rules.pdot_tol[1] == 0.0:
+            # If pdot is zero, set to very small range
+            rules.pdot_tol = [-1e-10, 1e-10]
+        if tol_factor != 1.0:
+            # Scale tolerances by factor
+            rules.period_tol = [
+                rules.period_tol[0] / tol_factor,
+                rules.period_tol[1] * tol_factor,
+            ]
+            rules.pdot_tol = [
+                rules.pdot_tol[0] / tol_factor,
+                rules.pdot_tol[1] * tol_factor,
+            ]
+            rules.dm_tol = [
+                rules.dm_tol[0] / tol_factor,
+                rules.dm_tol[1] * tol_factor,
+            ]
+            rules.width_tol = [
+                rules.width_tol[0] / tol_factor,
+                rules.width_tol[1] * tol_factor,
+            ]
+
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & @rules.width_tol[0] <= width <= @rules.width_tol[1]"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & sn >= @rules.sn_tol"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N

@@ -1,45 +1,45 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |               Unit tests for candidate parser                          |
-    |                                                                        |
-    **************************************************************************
-    | Description:                                                           |
-    |                                                                        |
-    | Tests the functionality of the PSS testing framework backend           |
-    | application candidate.py. Candidate's purpose is to parse and inspect  |
-    | candidate filterbanks exported by the PSS search pipelines             |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    |  pytest -m candtests                                                   |
-    |          <or>                                                          |
-    |  make test MARK="candtests"                                            |
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|               Unit tests for candidate parser                          |
+|                                                                        |
+**************************************************************************
+| Description:                                                           |
+|                                                                        |
+| Tests the functionality of the PSS testing framework backend           |
+| application candidate.py. Candidate's purpose is to parse and inspect  |
+| candidate filterbanks exported by the PSS search pipelines             |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+**************************************************************************
+| Usage:                                                                 |
+|                                                                        |
+|  pytest -m candtests                                                   |
+|          <or>                                                          |
+|  make test MARK="candtests"                                            |
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2024 SKA Observatory                                         |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+**************************************************************************
 """
 
 import json

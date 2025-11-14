@@ -1,62 +1,62 @@
 """
-    **************************************************************************
-    |                                                                        |
-    |                   PSS Candidate Filterbank parser                      |
-    |                                                                        |
-    **************************************************************************
-    | Description: This is a PSS testing framework backend application that  |
-    | handles the parsing and verification of candidate filterbank data from |
-    | the SPS search pipelines.                                              |
-    **************************************************************************
-    | Author: Benjamin Shaw                                                  |
-    | Email : benjamin.shaw@manchester.ac.uk                                 |
-    **************************************************************************
-    | Usage:                                                                 |
-    |                                                                        |
-    | from candidate import Filterbank                                       |
-    | candidates = Filterbank(<candidate_directory>, extension=<extension>)  |
-    |                                                                        |
-    | where <candidate_directory> is the path to the directory containing    |
-    | candidate filterbanks that have been exported by the PSS pipeline, and |
-    | <extension> is the file extension of the files in <candidate_directory>|
-    | (default is .fil).                                                     |
-    |                                                                        |
-    | candidates.get_header() will return a list of VHeader objects.         |
-    | see protest/fil.py for information on the VHeader class (its basic     |
-    | purpose is to explore the header (and other) properties of a           |
-    | filterbank file). The header properties of all of the candidate        |
-    | filterbanks can be compared with those associated with the input data  |
-    | (typically a PSS test vector).                                         |
-    |                                                                        |
-    | candidates.compare_data(<test_vector>, chunk_samples=<chunk_samples>)  |
-    | will conduct a bitwise comparison of the data in a candidate           |
-    | filterbank and compare the values, in chunks of <chunk_samples> to     |
-    | the data in the input data (typically a PSS test vector). If a         |
-    | difference is found in any chunk, the method will return False.        |
-    | As this is a direct comparison (basically a diff), an exception will   |
-    | be raised if multiple (> 1) candidates are found in <candidate_dir>.   |
-    **************************************************************************
-    | License:                                                               |
-    |                                                                        |
-    | Copyright 2024 SKA Observatory                                         |
-    |                                                                        |
-    |Redistribution and use in source and binary forms, with or without      |
-    |modification, are permitted provided that the following conditions are  |
-    |met:                                                                    |
-    |                                                                        |
-    |1. Redistributions of source code must retain the above copyright       |
-    |notice,                                                                 |
-    |this list of conditions and the following disclaimer.                   |
-    |                                                                        |
-    |2. Redistributions in binary form must reproduce the above copyright    |
-    |notice, this list of conditions and the following disclaimer in the     |
-    |documentation and/or other materials provided with the distribution.    |
-    |                                                                        |
-    |3. Neither the name of the copyright holder nor the names of its        |
-    |contributors may be used to endorse or promote products derived from    |
-    |this                                                                    |
-    |software without specific prior written permission.                     |
-    **************************************************************************
+**************************************************************************
+|                                                                        |
+|                   PSS Candidate Filterbank parser                      |
+|                                                                        |
+**************************************************************************
+| Description: This is a PSS testing framework backend application that  |
+| handles the parsing and verification of candidate filterbank data from |
+| the SPS search pipelines.                                              |
+**************************************************************************
+| Author: Benjamin Shaw                                                  |
+| Email : benjamin.shaw@manchester.ac.uk                                 |
+**************************************************************************
+| Usage:                                                                 |
+|                                                                        |
+| from candidate import Filterbank                                       |
+| candidates = Filterbank(<candidate_directory>, extension=<extension>)  |
+|                                                                        |
+| where <candidate_directory> is the path to the directory containing    |
+| candidate filterbanks that have been exported by the PSS pipeline, and |
+| <extension> is the file extension of the files in <candidate_directory>|
+| (default is .fil).                                                     |
+|                                                                        |
+| candidates.get_header() will return a list of VHeader objects.         |
+| see protest/fil.py for information on the VHeader class (its basic     |
+| purpose is to explore the header (and other) properties of a           |
+| filterbank file). The header properties of all of the candidate        |
+| filterbanks can be compared with those associated with the input data  |
+| (typically a PSS test vector).                                         |
+|                                                                        |
+| candidates.compare_data(<test_vector>, chunk_samples=<chunk_samples>)  |
+| will conduct a bitwise comparison of the data in a candidate           |
+| filterbank and compare the values, in chunks of <chunk_samples> to     |
+| the data in the input data (typically a PSS test vector). If a         |
+| difference is found in any chunk, the method will return False.        |
+| As this is a direct comparison (basically a diff), an exception will   |
+| be raised if multiple (> 1) candidates are found in <candidate_dir>.   |
+**************************************************************************
+| License:                                                               |
+|                                                                        |
+| Copyright 2024 SKA Observatory                                         |
+|                                                                        |
+|Redistribution and use in source and binary forms, with or without      |
+|modification, are permitted provided that the following conditions are  |
+|met:                                                                    |
+|                                                                        |
+|1. Redistributions of source code must retain the above copyright       |
+|notice,                                                                 |
+|this list of conditions and the following disclaimer.                   |
+|                                                                        |
+|2. Redistributions in binary form must reproduce the above copyright    |
+|notice, this list of conditions and the following disclaimer in the     |
+|documentation and/or other materials provided with the distribution.    |
+|                                                                        |
+|3. Neither the name of the copyright holder nor the names of its        |
+|contributors may be used to endorse or promote products derived from    |
+|this                                                                    |
+|software without specific prior written permission.                     |
+**************************************************************************
 """
 
 import json
