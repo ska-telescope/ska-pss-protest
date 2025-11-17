@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska_pss_protest"
-version = "5.2.6"
+version = "5.2.7"
 description = "The SKA PSS Product Testing Framework"
 authors = ["SKA PSS Developers"]
 license = "BSD-3-Clause"
