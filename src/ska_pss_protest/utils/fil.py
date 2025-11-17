@@ -208,7 +208,7 @@ class VHeader:
                 "rfi_id": basename[8],
             }
             return signal_pars
-        except ValueError:
+        except (ValueError, IndexError):
             return {}
 
     @staticmethod
