@@ -8,14 +8,14 @@ Feature: PSS to SDP Candidate Data Streaming
     Given the PSS Cheetah pipeline is initialised
     And the network exporter is configured with a valid endpoint
 
-  @AT4-2140 @happy-path
+  @XTP-TBD @happy-path
   Scenario: Stream single pulse candidate data to SDP
     Given single pulse candidates have been detected by the pipeline
     When the SpCcl data is sent to the configured network endpoint
     Then the candidate data is transmitted to the receiver
     And the data payload contains valid candidate metadata
 
-  @AT4-2140 @happy-path
+  @XTP-TBD @happy-path
   Scenario: Transmitted data contains required candidate fields
     Given a single pulse candidate with known properties exists
     When the candidate is serialised for transmission
@@ -25,7 +25,7 @@ Feature: PSS to SDP Candidate Data Streaming
     And the payload contains the pulse width field
     And the payload contains the sigma significance field
 
-  @AT4-2140 @happy-path
+  @XTP-TBD @happy-path
   Scenario: Transmitted data contains time-frequency data descriptors
     Given a single pulse candidate with associated time-frequency data exists
     When the candidate is serialised for transmission
@@ -33,7 +33,7 @@ Feature: PSS to SDP Candidate Data Streaming
     And the payload contains the frequency-time data descriptor
     And the payload contains channel metadata including frequency and width
 
-  @AT4-2140 @configuration
+  @XTP-TBD @configuration
   Scenario Outline: Configure network endpoint for candidate streaming
     Given the pipeline configuration contains network sink settings
     When the endpoint is configured with IP address "<ip_address>" and port "<port>"
@@ -46,14 +46,14 @@ Feature: PSS to SDP Candidate Data Streaming
       | 10.0.0.50       | 9021 |
       | 172.16.0.1      | 9022 |
 
-  @AT4-2140 @multiple-endpoints
+  @XTP-TBD @multiple-endpoints
   Scenario: Stream candidates to multiple network endpoints
     Given multiple network endpoints are configured in the sink configuration
     When single pulse candidates are detected
     Then the candidate data is transmitted to all configured endpoints
     And each endpoint receives identical candidate information
 
-  @AT4-2140 @data-integrity
+  @XTP-TBD @data-integrity
   Scenario: Transmitted candidate data maintains integrity
     Given a candidate with dispersion measure of 100.5 pc/cm3 exists
     And the candidate has a signal-to-noise ratio of 8.5
@@ -61,7 +61,7 @@ Feature: PSS to SDP Candidate Data Streaming
     Then the received dispersion measure matches the original value
     And the received signal-to-noise ratio matches the original value
 
-  @AT4-2140 @performance
+  @XTP-TBD @performance
   Scenario: Network streaming handles high candidate rates
     Given the pipeline is processing data at real-time rates
     When multiple candidates are detected within a short time window
