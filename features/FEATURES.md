@@ -15,7 +15,7 @@ Defines scenarios for streaming candidate data from PSS to SDP using network pro
 | Transmitted data contains time-frequency data descriptors | Ensures time-frequency metadata is included in payloads |
 | Configure network endpoint for candidate streaming | Tests endpoint configuration with various IP/port combinations |
 | Stream candidates to multiple network endpoints | Verifies multi-endpoint transmission capability |
-| Transmitted candidate data maintains integrity | Confirms data values are preserved during transmission |
+| Transmitted candidate field maintains integrity | Confirms each field value is preserved during transmission (5 fields tested) |
 | Network streaming handles high candidate rates | Tests performance under high candidate detection rates |
 
 ### [error_handling_resilience.feature](error_handling_resilience.feature)

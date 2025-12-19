@@ -104,7 +104,7 @@ Feature: PSS-SDP Interface Error Handling and Resilience
     And the timeout is logged with relevant context
     And the system attempts to recover and continue
 
-  @XTP-TBD @data-validation
+  @XTP-TBD @error-handling @data-validation
   Scenario: Validate candidate data before transmission
     Given candidate data is ready for export
     When the data is validated before transmission

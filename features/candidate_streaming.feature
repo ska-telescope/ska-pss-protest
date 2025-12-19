@@ -11,7 +11,7 @@ Feature: PSS to SDP Candidate Data Streaming
   @XTP-TBD @happy-path
   Scenario: Stream single pulse candidate data to SDP
     Given single pulse candidates have been detected by the pipeline
-    When the SpCcl data is sent to the configured network endpoint
+    When the SPCCL data is sent to the configured network endpoint
     Then the candidate data is transmitted to the receiver
     And the data payload contains valid candidate metadata
 
@@ -54,12 +54,18 @@ Feature: PSS to SDP Candidate Data Streaming
     And each endpoint receives identical candidate information
 
   @XTP-TBD @data-integrity
-  Scenario: Transmitted candidate data maintains integrity
-    Given a candidate with dispersion measure of 100.5 pc/cm3 exists
-    And the candidate has a signal-to-noise ratio of 8.5
+  Scenario Outline: Transmitted candidate field maintains integrity
+    Given a candidate with <field_name> of <original_value> exists
     When the candidate is transmitted to the receiver
-    Then the received dispersion measure matches the original value
-    And the received signal-to-noise ratio matches the original value
+    Then the received <field_name> matches the original value
+
+    Examples:
+      | field_name             | original_value |
+      | dispersion measure     | 100.5 pc/cm3   |
+      | signal-to-noise ratio  | 8.5            |
+      | pulse width            | 2.3 ms         |
+      | sigma significance     | 7.2            |
+      | start time             | 58000.123 MJD  |
 
   @XTP-TBD @performance
   Scenario: Network streaming handles high candidate rates
