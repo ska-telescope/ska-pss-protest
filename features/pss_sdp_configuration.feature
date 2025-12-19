@@ -1,0 +1,140 @@
+@pss-sdp-interface @configuration @ska-sdp-recvaddrs
+Feature: PSS-SDP Interface Configuration
+  As a system integrator
+  I want to configure the PSS-SDP interface parameters
+  So that candidate data flows correctly between systems
+
+  Background:
+    Given the PSS pipeline configuration file is available
+    And the SDP receive address schema is defined
+
+  @XTP-TBD @xml-configuration
+  Scenario: Configure PSS exporter via XML configuration file
+    Given an XML configuration file with beam settings exists
+    When the configuration specifies sinks for the beam
+    Then the DataExport module loads the sink configurations
+    And the exporters are initialised according to the configuration
+
+  @XTP-TBD @sink-configuration
+  Scenario Outline: Configure different exporter sink types
+    Given the sink_configs section of the XML configuration
+    When a sink of type "<sink_type>" is configured with id "<sink_id>"
+    Then the exporter factory creates an instance of the correct type
+    And the exporter is associated with the specified id
+
+    Examples:
+      | sink_type           | sink_id              |
+      | sigproc             | sigproc_output       |
+      | spccl_files         | spccl_file_output    |
+      | network             | network_output       |
+      | scl_candidate_data  | scl_output           |
+
+  @XTP-TBD @channel-sink-mapping
+  Scenario: Map channels to configured sinks
+    Given the channels section defines a single pulse events channel
+    And the channel references a configured SPCCL file sink
+    When the pipeline processes single pulse events
+    Then the events are routed to the SPCCL file exporter
+
+  @XTP-TBD @recvaddrs-schema
+  Scenario: Configure SDP receive addresses using ska-sdp-recvaddrs schema
+    Given the ska-sdp-recvaddrs schema is used
+    When the PSS beam configuration is defined
+    Then the search_beam_id identifies the pulsar search beam
+    And the function is set to pulsar search mode
+
+  @XTP-TBD @host-mapping
+  Scenario: Configure host mapping for channel-based addressing
+    Given the ska-sdp-recvaddrs configuration for PSS
+    When host mapping is defined with start channel and host address
+    Then multiple channel ranges can map to different hosts
+    And the receiver resolves host addresses correctly
+
+  @XTP-TBD @port-mapping
+  Scenario Outline: Configure port mapping with increment calculation
+    Given the port mapping defines start_channel "<start>", start_port "<port>", and increment "<inc>"
+    When calculating the port for channel "<channel>"
+    Then the resulting port is "<result>"
+
+    Examples:
+      | start | port | inc | channel | result |
+      | 0     | 9021 | 1   | 0       | 9021   |
+      | 0     | 9021 | 1   | 5       | 9026   |
+      | 10    | 9030 | 2   | 15      | 9040   |
+
+
+  @XTP-TBD @file-exporter-config
+  Scenario: Configure file streamer output parameters
+    Given a file-based exporter configuration
+    When the output directory is set to "/output/candidates"
+    And the file extension is set to ".spccl"
+    Then the exporter writes files to the specified directory
+    And files are created with the specified extension
+
+  @XTP-TBD @network-endpoint-config
+  Scenario: Configure network streaming endpoint
+    Given a network exporter configuration
+    When the endpoint is configured with the following settings
+      | parameter  | value           |
+      | port       | 9021            |
+      | ip_address | 192.168.1.100   |
+    Then the network streamer connects to the specified endpoint
+
+  @XTP-TBD @threads-configuration
+  Scenario: Configure sink processing threads
+    Given the sinks configuration section
+    When the threads parameter is set to 2
+    Then the sink processing uses the configured number of threads
+    And data export is parallelised appropriately
+
+  @XTP-TBD @beam-activation
+  Scenario: Configure beam activation status
+    Given a beam configuration exists
+    When the active parameter is set to true
+    Then the beam is processed by the pipeline
+    And candidate data from this beam is exported
+
+  @XTP-TBD @pss-receive-config
+  Scenario: Configure pss-receive listening parameters
+    Given the pss-receive deployment configuration
+    When the UDP listening port is set to 9021
+    And the listening interface is set to "0.0.0.0"
+    Then the receiver listens on all interfaces on the specified port
+    And incoming candidate data packets are accepted
+
+  @XTP-TBD @pss-receive-storage
+  Scenario: Configure pss-receive output storage location
+    Given the pss-receive container configuration
+    When the output directory is set to "/output/candidates"
+    Then received candidate data is written to the configured directory
+    And the persistent volume mount point is respected
+
+  @XTP-TBD @pss-receive-file-naming
+  Scenario: Configure pss-receive output file naming pattern
+    Given the pss-receive file output configuration
+    When the filename pattern includes beam identifier and timestamp
+    Then output files are created with unique identifiable names
+    And file collisions are avoided across multiple beams
+
+  @XTP-TBD @config-coordination
+  Scenario: PSS and SDP configurations align for data flow
+    Given the PSS network exporter is configured with endpoint "pss-receive:9021"
+    And the SDP pss-receive service is listening on port 9021
+    When the configurations are validated
+    Then the PSS endpoint resolves to the SDP service
+    And data can flow from PSS to SDP
+
+  @XTP-TBD @multi-beam-config
+  Scenario: Configure multiple independent beams with unique endpoints
+    Given the configuration defines 4 pulsar search beams
+    When each beam is assigned a unique port in range 9021-9024
+    Then each beam exports candidate data to its designated endpoint
+    And beam data streams remain independent
+
+  @XTP-TBD @default-values
+  Scenario: Apply default configuration values for optional parameters
+    Given a minimal PSS exporter configuration
+    When optional parameters are omitted
+    Then default thread count is applied
+    And default timeout values are used
+    And the pipeline initialises successfully with defaults

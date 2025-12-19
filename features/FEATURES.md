@@ -70,6 +70,29 @@ Defines scenarios for SDP receiving and processing candidate data from PSS.
 | Verify persistent volume has sufficient capacity | Storage capacity verification |
 | Handle multiple concurrent data streams | Multi-beam concurrent reception |
 
+### [pss_sdp_configuration.feature](pss_sdp_configuration.feature)
+
+Defines scenarios for configuring the PSS-SDP interface parameters and components.
+
+| Scenario | Description |
+|----------|-------------|
+| Configure PSS exporter via XML configuration file | XML-based pipeline configuration loading |
+| Configure different exporter sink types | Sink type configuration for sigproc, SPCCL, network, and SCL outputs |
+| Map channels to configured sinks | Channel-to-sink routing configuration |
+| Configure SDP receive addresses using ska-sdp-recvaddrs schema | Schema-based SDP endpoint configuration |
+| Configure host mapping for channel-based addressing | Channel-to-host address mapping |
+| Configure port mapping with increment calculation | Port allocation using start/increment pattern (3 test cases) |
+| Configure file streamer output parameters | File exporter directory and extension settings |
+| Configure network streaming endpoint | Network exporter IP and port configuration |
+| Configure sink processing threads | Thread pool configuration for parallel export |
+| Configure beam activation status | Individual beam enable/disable settings |
+| Configure pss-receive listening parameters | UDP listener interface and port configuration |
+| Configure pss-receive output storage location | Persistent volume output directory configuration |
+| Configure pss-receive output file naming pattern | File naming pattern to avoid collisions |
+| PSS and SDP configurations align for data flow | End-to-end configuration coordination verification |
+| Configure multiple independent beams with unique endpoints | Multi-beam port assignment and isolation |
+| Apply default configuration values for optional parameters | Configuration defaults and fallback behavior |
+
 ---
 
 ## Key Principles Applied
@@ -132,6 +155,23 @@ Defines scenarios for SDP receiving and processing candidate data from PSS.
 | `@resource-cleanup` | Resource cleanup scenarios |
 | `@duplicate-detection` | Duplicate data detection scenarios |
 | `@timeout-handling` | Timeout handling scenarios |
+| `@ska-sdp-recvaddrs` | SKA SDP receive address schema scenarios |
+| `@xml-configuration` | XML configuration file scenarios |
+| `@sink-configuration` | Exporter sink configuration scenarios |
+| `@channel-sink-mapping` | Channel-to-sink routing scenarios |
+| `@recvaddrs-schema` | Receive address schema scenarios |
+| `@host-mapping` | Host address mapping scenarios |
+| `@port-mapping` | Port mapping and allocation scenarios |
+| `@file-exporter-config` | File exporter configuration scenarios |
+| `@network-endpoint-config` | Network endpoint configuration scenarios |
+| `@threads-configuration` | Thread configuration scenarios |
+| `@beam-activation` | Beam activation/deactivation scenarios |
+| `@pss-receive-config` | PSS-receive component configuration scenarios |
+| `@pss-receive-storage` | PSS-receive storage configuration scenarios |
+| `@pss-receive-file-naming` | PSS-receive file naming scenarios |
+| `@config-coordination` | Configuration coordination scenarios |
+| `@multi-beam-config` | Multi-beam configuration scenarios |
+| `@default-values` | Configuration default value scenarios |
 
 ---
 
