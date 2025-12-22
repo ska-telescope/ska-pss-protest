@@ -59,7 +59,7 @@ Feature: SDP Reception of PSS Candidate Data
     And the sigma significance is extracted
     And the signal-to-noise ratio is extracted
     And the pulse width is extracted in milliseconds
-    And the start time is extracted
+    And the pulse time is extracted
 
   @XTP-TBD @volume-capacity
   Scenario: Verify persistent volume has sufficient capacity

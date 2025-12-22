@@ -21,7 +21,7 @@ Feature: PSS to SDP Candidate Data Streaming
     When the candidate is serialised for transmission
     Then the payload contains the dispersion measure field
     And the payload contains the signal-to-noise ratio field
-    And the payload contains the candidate start time field
+    And the payload contains the candidate pulse time field
     And the payload contains the pulse width field
     And the payload contains the sigma significance field
 
@@ -65,7 +65,7 @@ Feature: PSS to SDP Candidate Data Streaming
       | signal-to-noise ratio  | 8.5            |
       | pulse width            | 2.3 ms         |
       | sigma significance     | 7.2            |
-      | start time             | 58000.123 MJD  |
+      | pulse time             | 58000.123 MJD  |
 
   @XTP-TBD @performance
   Scenario: Network streaming handles high candidate rates

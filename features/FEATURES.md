@@ -11,7 +11,7 @@ Defines scenarios for streaming candidate data from PSS to SDP using network pro
 | Scenario | Description |
 |----------|-------------|
 | Stream single pulse candidate data to SDP | Verifies transmission of detected candidates to configured endpoints |
-| Transmitted data contains required candidate fields | Validates presence of DM, S/N, start time, pulse width, and sigma |
+| Transmitted data contains required candidate fields | Validates presence of DM, S/N, pulse time, pulse width, and sigma |
 | Transmitted data contains time-frequency data descriptors | Ensures time-frequency metadata is included in payloads |
 | Configure network endpoint for candidate streaming | Tests endpoint configuration with various IP/port combinations |
 | Stream candidates to multiple network endpoints | Verifies multi-endpoint transmission capability |
