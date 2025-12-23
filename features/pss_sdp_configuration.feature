@@ -64,12 +64,16 @@ Feature: PSS-SDP Interface Configuration
 
 
   @XTP-TBD @file-exporter-config
-  Scenario: Configure file streamer output parameters
+  Scenario Outline: Configure file streamer output parameters
     Given a file-based exporter configuration
-    When the output directory is set to "/output/candidates"
+    When the output directory is set to "<output_directory>"
     And the file extension is set to ".spccl"
     Then the exporter writes files to the specified directory
     And files are created with the specified extension
+
+    Examples:
+      | output_directory    |
+      | /output/candidates  |
 
   @XTP-TBD @network-endpoint-config
   Scenario: Configure network streaming endpoint
@@ -81,18 +85,27 @@ Feature: PSS-SDP Interface Configuration
     Then the network streamer connects to the specified endpoint
 
   @XTP-TBD @threads-configuration
-  Scenario: Configure sink processing threads
+  Scenario Outline: Configure sink processing threads
     Given the sinks configuration section
-    When the threads parameter is set to 2
+    When the threads parameter is set to <thread_count>
     Then the sink processing uses the configured number of threads
     And data export is parallelised appropriately
 
-  @XTP-TBD @beam-activation
-  Scenario: Configure beam activation status
-    Given a beam configuration exists
-    When the active parameter is set to true
-    Then the beam is processed by the pipeline
-    And candidate data from this beam is exported
+    Examples:
+      | thread_count |
+      | 2            |
+
+  @XTP-TBD @beam-configuration
+  Scenario Outline: Verify beam configuration is available
+    Given the pipeline configuration file is loaded
+    When checking for configured beams
+    Then <beam_count> beam(s) are detected in the configuration
+    And each beam has valid export sink settings
+
+    Examples:
+      | beam_count |
+      | 1          |
+      | 4          |
 
   @XTP-TBD @pss-receive-config
   Scenario: Configure pss-receive listening parameters
@@ -103,11 +116,15 @@ Feature: PSS-SDP Interface Configuration
     And incoming candidate data packets are accepted
 
   @XTP-TBD @pss-receive-storage
-  Scenario: Configure pss-receive output storage location
+  Scenario Outline: Configure pss-receive output storage location
     Given the pss-receive container configuration
-    When the output directory is set to "/output/candidates"
+    When the output directory is set to "<output_directory>"
     Then received candidate data is written to the configured directory
     And the persistent volume mount point is respected
+
+    Examples:
+      | output_directory    |
+      | /output/candidates  |
 
   @XTP-TBD @pss-receive-file-naming
   Scenario: Configure pss-receive output file naming pattern
@@ -125,11 +142,15 @@ Feature: PSS-SDP Interface Configuration
     And data can flow from PSS to SDP
 
   @XTP-TBD @multi-beam-config
-  Scenario: Configure multiple independent beams with unique endpoints
-    Given the configuration defines 4 pulsar search beams
-    When each beam is assigned a unique port in range 9021-9024
+  Scenario Outline: Configure multiple independent beams with unique endpoints
+    Given the configuration defines <beam_count> pulsar search beams
+    When each beam is assigned a unique port in range <start_port>-<end_port>
     Then each beam exports candidate data to its designated endpoint
     And beam data streams remain independent
+
+    Examples:
+      | beam_count | start_port | end_port |
+      | 4          | 9021       | 9024     |
 
   @XTP-TBD @default-values
   Scenario: Apply default configuration values for optional parameters

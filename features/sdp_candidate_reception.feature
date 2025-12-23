@@ -9,11 +9,15 @@ Feature: SDP Reception of PSS Candidate Data
     And the receiver is listening on the configured port
 
   @XTP-TBD @happy-path
-  Scenario: Receive single pulse candidate data from PSS
-    Given the pss-receive service is running on port 9021
+  Scenario Outline: Receive single pulse candidate data from PSS
+    Given the pss-receive service is running on port <port>
     When PSS transmits single pulse candidate data
     Then the receiver ingests the data payload
     And the candidate metadata is extracted from the payload
+
+    Examples:
+      | port |
+      | 9021 |
 
   @XTP-TBD @data-storage
   Scenario: Store received candidate metadata to persistent volume

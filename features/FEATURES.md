@@ -16,7 +16,7 @@ Defines scenarios for streaming candidate data from PSS to SDP using network pro
 | Configure network endpoint for candidate streaming | Tests endpoint configuration with various IP/port combinations |
 | Stream candidates to multiple network endpoints | Verifies multi-endpoint transmission capability |
 | Transmitted candidate field maintains integrity | Confirms each field value is preserved during transmission (5 fields tested) |
-| Network streaming handles high candidate rates | Tests performance under high candidate detection rates |
+| Network streaming handles high candidate rates | Tests performance under high candidate detection rates with <delay> max delay |
 
 ### [error_handling_resilience.feature](error_handling_resilience.feature)
 
@@ -60,7 +60,7 @@ Defines scenarios for SDP receiving and processing candidate data from PSS.
 
 | Scenario | Description |
 |----------|-------------|
-| Receive single pulse candidate data from PSS | Basic data reception on port 9021 |
+| Receive single pulse candidate data from PSS | Basic data reception on configured port (1 test case) |
 | Store received candidate metadata to persistent volume | Persistent storage of candidate data |
 | Receive SPCCL formatted candidate data | SPCCL format handling and storage |
 | SDP receiver is accessible via Kubernetes service | Kubernetes service routing verification |
@@ -82,15 +82,15 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | Configure SDP receive addresses using ska-sdp-recvaddrs schema | Schema-based SDP endpoint configuration |
 | Configure host mapping for channel-based addressing | Channel-to-host address mapping |
 | Configure port mapping with increment calculation | Port allocation using start/increment pattern (3 test cases) |
-| Configure file streamer output parameters | File exporter directory and extension settings |
+| Configure file streamer output parameters | File exporter directory and extension settings (1 test case) |
 | Configure network streaming endpoint | Network exporter IP and port configuration |
-| Configure sink processing threads | Thread pool configuration for parallel export |
-| Configure beam activation status | Individual beam enable/disable settings |
+| Configure sink processing threads | Thread pool configuration for parallel export (1 test case) |
+| Verify beam configuration is available | Check configured beams are detected (2 test cases) |
 | Configure pss-receive listening parameters | UDP listener interface and port configuration |
-| Configure pss-receive output storage location | Persistent volume output directory configuration |
+| Configure pss-receive output storage location | Persistent volume output directory configuration (1 test case) |
 | Configure pss-receive output file naming pattern | File naming pattern to avoid collisions |
 | PSS and SDP configurations align for data flow | End-to-end configuration coordination verification |
-| Configure multiple independent beams with unique endpoints | Multi-beam port assignment and isolation |
+| Configure multiple independent beams with unique endpoints | Multi-beam port assignment and isolation (1 test case) |
 | Apply default configuration values for optional parameters | Configuration defaults and fallback behavior |
 
 ---

@@ -2,7 +2,7 @@
 Feature: PSS to SDP Candidate Data Streaming
   As a pulsar search system
   I want to stream candidate data to SDP using a network streaming protocol
-  So that detected candidates are transmitted in real-time for further analysis
+  So that detected candidates are transmitted from PSS in real-time for further analysis
 
   Background:
     Given the PSS Cheetah pipeline is initialised
@@ -68,8 +68,9 @@ Feature: PSS to SDP Candidate Data Streaming
       | pulse time             | 58000.123 MJD  |
 
   @XTP-TBD @performance
+  # TODO: The 100ms delay threshold is a placeholder value pending performance requirements
   Scenario: Network streaming handles high candidate rates
     Given the pipeline is processing data at real-time rates
     When multiple candidates are detected within a short time window
     Then all candidates are queued for transmission
-    And candidates are transmitted without significant delay
+    And candidates are transmitted with no more than 100 ms delay
