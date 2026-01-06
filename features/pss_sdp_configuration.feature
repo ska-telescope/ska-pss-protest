@@ -36,12 +36,29 @@ Feature: PSS-SDP Interface Configuration
     When the pipeline processes single pulse events
     Then the events are routed to the SPCCL file exporter
 
-  @XTP-TBD @recvaddrs-schema
-  Scenario: Configure SDP receive addresses using ska-sdp-recvaddrs schema
+  @XTP-TBD @recvaddrs-schema @combined-search
+  Scenario: Configure SDP receive addresses for combined transient and FDAS search
     Given the ska-sdp-recvaddrs schema is used
-    When the PSS beam configuration is defined
+    When the PSS beam configuration is defined for combined search mode
     Then the search_beam_id identifies the pulsar search beam
-    And the function is set to pulsar search mode
+    And the function is set to combined transient and FDAS search mode
+    And both single pulse and FDAS candidate outputs are configured
+
+  @XTP-TBD @recvaddrs-schema @transient-search
+  Scenario: Configure SDP receive addresses for transient search only
+    Given the ska-sdp-recvaddrs schema is used
+    When the PSS beam configuration is defined for transient search mode
+    Then the search_beam_id identifies the pulsar search beam
+    And the function is set to transient search mode
+    And only single pulse candidate outputs are configured
+
+  @XTP-TBD @recvaddrs-schema @fdas-search
+  Scenario: Configure SDP receive addresses for FDAS search only
+    Given the ska-sdp-recvaddrs schema is used
+    When the PSS beam configuration is defined for FDAS search mode
+    Then the search_beam_id identifies the pulsar search beam
+    And the function is set to FDAS search mode
+    And only FDAS candidate outputs are configured
 
   @XTP-TBD @host-mapping
   Scenario: Configure host mapping for node-based addressing

@@ -56,7 +56,7 @@ Defines end-to-end integration scenarios verifying the complete PSS to SDP data 
 | Verify Kubernetes deployment of interface components | Deployment and service verification |
 | Process candidate data throughout an observation session | Full observation session testing |
 | Apply calibration data during candidate processing | Calibration integration verification |
-| Meet latency requirements for real-time candidate transmission | Latency budget compliance |
+| Meet latency requirements for real-time candidate transmission | Latency budget compliance (1 test case, configurable) |
 | Monitor interface health and performance | Monitoring and alerting verification |
 
 ### [sdp_candidate_reception.feature](sdp_candidate_reception.feature)
@@ -84,7 +84,9 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | Configure PSS exporter via XML configuration file | XML-based pipeline configuration loading |
 | Configure different exporter sink types | Sink type configuration for sigproc, SPCCL, network, and SCL outputs |
 | Map output streams to configured sinks | Output stream-to-sink routing configuration |
-| Configure SDP receive addresses using ska-sdp-recvaddrs schema | Schema-based SDP endpoint configuration |
+| Configure SDP receive addresses for combined transient and FDAS search | Combined search mode endpoint configuration |
+| Configure SDP receive addresses for transient search only | Transient/single pulse search mode endpoint configuration |
+| Configure SDP receive addresses for FDAS search only | FDAS periodicity search mode endpoint configuration |
 | Configure host mapping for node-based addressing | Processing node-to-host address mapping |
 | Configure port mapping with increment calculation | Port allocation using start/increment pattern (3 test cases) |
 | Configure file streamer output parameters | File exporter directory and extension settings (1 test case) |
@@ -165,6 +167,9 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | `@sink-configuration` | Exporter sink configuration scenarios |
 | `@stream-sink-mapping` | Output stream-to-sink routing scenarios |
 | `@recvaddrs-schema` | Receive address schema scenarios |
+| `@combined-search` | Combined transient and FDAS search mode scenarios |
+| `@transient-search` | Transient/single pulse search only mode scenarios |
+| `@fdas-search` | FDAS periodicity search only mode scenarios |
 | `@host-mapping` | Processing node-to-host address mapping scenarios |
 | `@port-mapping` | Port mapping and allocation scenarios |
 | `@file-exporter-config` | File exporter configuration scenarios |

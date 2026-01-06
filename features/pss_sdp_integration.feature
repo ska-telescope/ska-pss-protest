@@ -88,12 +88,16 @@ Feature: PSS-SDP End-to-End Integration
     And calibration parameters are included in candidate metadata
 
   @XTP-TBD @latency-requirements
-  Scenario: Meet latency requirements for real-time candidate transmission
-    Given real-time processing requirements are defined
+  Scenario Outline: Meet latency requirements for real-time candidate transmission
+    Given real-time processing requirements define a maximum latency of <max_latency_ms> milliseconds
     When a candidate is detected by the pipeline
-    Then the candidate is transmitted within the latency budget
-    And the SDP receiver ingests the candidate promptly
-    And end-to-end latency is within acceptable bounds
+    Then the candidate is transmitted within <transmission_budget_ms> milliseconds
+    And the SDP receiver ingests the candidate within <ingestion_budget_ms> milliseconds
+    And end-to-end latency is below <max_latency_ms> milliseconds
+
+    Examples:
+      | max_latency_ms | transmission_budget_ms | ingestion_budget_ms |
+      | 100            | 50                     | 50                  |
 
   @XTP-TBD @monitoring-integration
   Scenario: Monitor interface health and performance

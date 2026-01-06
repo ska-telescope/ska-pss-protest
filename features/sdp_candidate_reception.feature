@@ -21,7 +21,8 @@ Feature: SDP Reception of PSS Candidate Data
 
   @XTP-TBD @data-storage
   Scenario: Store received candidate metadata to persistent volume
-    Given the persistent volume is mounted at "/home/pss2sdp/receive/output"
+    #placeholder variable for mount path
+    Given the persistent volume is mounted at "/home/pss2sdp/receive/output" 
     When candidate metadata is received from PSS
     Then the metadata is written to the persistent volume
     And the data persists beyond the receiver container lifecycle
@@ -50,6 +51,7 @@ Feature: SDP Reception of PSS Candidate Data
 
   @XTP-TBD @job-completion
   Scenario: Receiver job runs until completion or timeout
+    #placeholder value for active deadline seconds
     Given the pss-receive job has an active deadline of 3600 seconds
     When the receiver is processing data
     Then the job continues running until the deadline
