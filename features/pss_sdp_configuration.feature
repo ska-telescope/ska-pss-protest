@@ -29,10 +29,10 @@ Feature: PSS-SDP Interface Configuration
       | network             | network_output       |
       | scl_candidate_data  | scl_output           |
 
-  @XTP-TBD @channel-sink-mapping
-  Scenario: Map channels to configured sinks
-    Given the channels section defines a single pulse events channel
-    And the channel references a configured SPCCL file sink
+  @XTP-TBD @stream-sink-mapping
+  Scenario: Map output streams to configured sinks
+    Given the outputs section defines a single pulse events stream
+    And the stream references a configured SPCCL file sink
     When the pipeline processes single pulse events
     Then the events are routed to the SPCCL file exporter
 
@@ -44,10 +44,10 @@ Feature: PSS-SDP Interface Configuration
     And the function is set to pulsar search mode
 
   @XTP-TBD @host-mapping
-  Scenario: Configure host mapping for channel-based addressing
+  Scenario: Configure host mapping for node-based addressing
     Given the ska-sdp-recvaddrs configuration for PSS
-    When host mapping is defined with start channel and host address
-    Then multiple channel ranges can map to different hosts
+    When host mapping is defined with processing node and host address
+    Then multiple processing nodes can map to different hosts
     And the receiver resolves host addresses correctly
 
   @XTP-TBD @port-mapping

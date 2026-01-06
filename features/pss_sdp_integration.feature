@@ -27,6 +27,22 @@ Feature: PSS-SDP End-to-End Integration
     And the SDP receiver processes all incoming candidates
     And no candidate data is lost during normal operation
 
+  @XTP-TBD @data-rate @stress
+  Scenario Outline: Interface handles maximum data rates
+    Given the CBF beamformer generates data at <data_rate> Gbps
+    When PSS processes the data at maximum throughput
+    Then candidate metadata transmission keeps pace with detection rate
+    And the SDP receiver processes all incoming candidates without backpressure
+    And CPU utilisation remains below <cpu_limit> percent
+    And memory utilisation remains below <memory_limit> percent
+    And no candidate data is lost under maximum load
+
+    Examples:
+      | data_rate | cpu_limit | memory_limit |
+      | 10        | 80        | 75           |
+      | 25        | 90        | 85           |
+      | 50        | 95        | 90           |
+
   @XTP-TBD @multi-beam
   Scenario: Handle candidate data from multiple beams
     Given multiple PSS beams are configured

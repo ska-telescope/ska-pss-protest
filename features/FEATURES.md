@@ -46,6 +46,7 @@ Defines end-to-end integration scenarios verifying the complete PSS to SDP data 
 |----------|-------------|
 | Complete single pulse candidate transmission from PSS to SDP | Full pipeline verification from detection to storage |
 | Interface handles expected data rates | Data rate and throughput verification |
+| Interface handles maximum data rates | Maximum throughput and stress testing under peak load (3 test cases) |
 | Handle candidate data from multiple beams | Multi-beam candidate processing |
 | Verify protocol compatibility between PSS and SDP | Protocol version and compatibility checks |
 | Verify Kubernetes deployment of interface components | Deployment and service verification |
@@ -78,9 +79,9 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 |----------|-------------|
 | Configure PSS exporter via XML configuration file | XML-based pipeline configuration loading |
 | Configure different exporter sink types | Sink type configuration for sigproc, SPCCL, network, and SCL outputs |
-| Map channels to configured sinks | Channel-to-sink routing configuration |
+| Map output streams to configured sinks | Output stream-to-sink routing configuration |
 | Configure SDP receive addresses using ska-sdp-recvaddrs schema | Schema-based SDP endpoint configuration |
-| Configure host mapping for channel-based addressing | Channel-to-host address mapping |
+| Configure host mapping for node-based addressing | Processing node-to-host address mapping |
 | Configure port mapping with increment calculation | Port allocation using start/increment pattern (3 test cases) |
 | Configure file streamer output parameters | File exporter directory and extension settings (1 test case) |
 | Configure network streaming endpoint | Network exporter IP and port configuration |
@@ -158,20 +159,21 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | `@ska-sdp-recvaddrs` | SKA SDP receive address schema scenarios |
 | `@xml-configuration` | XML configuration file scenarios |
 | `@sink-configuration` | Exporter sink configuration scenarios |
-| `@channel-sink-mapping` | Channel-to-sink routing scenarios |
+| `@stream-sink-mapping` | Output stream-to-sink routing scenarios |
 | `@recvaddrs-schema` | Receive address schema scenarios |
-| `@host-mapping` | Host address mapping scenarios |
+| `@host-mapping` | Processing node-to-host address mapping scenarios |
 | `@port-mapping` | Port mapping and allocation scenarios |
 | `@file-exporter-config` | File exporter configuration scenarios |
 | `@network-endpoint-config` | Network endpoint configuration scenarios |
 | `@threads-configuration` | Thread configuration scenarios |
-| `@beam-activation` | Beam activation/deactivation scenarios |
+| `@parallel-reception` | Parallel data reception scenarios |
 | `@pss-receive-config` | PSS-receive component configuration scenarios |
 | `@pss-receive-storage` | PSS-receive storage configuration scenarios |
 | `@pss-receive-file-naming` | PSS-receive file naming scenarios |
 | `@config-coordination` | Configuration coordination scenarios |
 | `@multi-beam-config` | Multi-beam configuration scenarios |
 | `@default-values` | Configuration default value scenarios |
+| `@stress` | Stress and maximum load testing scenarios |
 
 ---
 
