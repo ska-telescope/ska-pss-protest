@@ -37,6 +37,10 @@ Defines scenarios for error handling, fault tolerance, and system resilience.
 | Handle duplicate candidate data reception | Duplicate detection and filtering |
 | Handle transmission timeout | Timeout handling and recovery |
 | Validate candidate data before transmission | Pre-transmission data validation |
+| Fallback when real-time candidate transmission is lost (@placeholder) | Fallback behaviour when real-time mode is lost (TBD) |
+| Buffer candidates when network transmission is interrupted (@placeholder) | Local buffering during network interruption (TBD) |
+| Operate in degraded mode during partial system failure (@placeholder) | Degraded mode operation during partial failure (TBD) |
+| Recover to normal operation after fallback (@placeholder) | Recovery from fallback to normal operation (TBD) |
 
 ### [pss_sdp_integration.feature](pss_sdp_integration.feature)
 
@@ -174,6 +178,12 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | `@multi-beam-config` | Multi-beam configuration scenarios |
 | `@default-values` | Configuration default value scenarios |
 | `@stress` | Stress and maximum load testing scenarios |
+| `@fallback` | Fallback behaviour scenarios when normal operation fails |
+| `@real-time-loss` | Scenarios for loss of real-time processing capability |
+| `@buffering` | Data buffering during interruption scenarios |
+| `@degraded-mode` | Degraded mode operation scenarios |
+| `@recovery` | Recovery to normal operation scenarios |
+| `@placeholder` | Placeholder scenarios requiring further definition |
 
 ---
 
