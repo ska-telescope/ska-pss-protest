@@ -81,7 +81,7 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 
 | Scenario | Description |
 |----------|-------------|
-| Configure PSS exporter via XML configuration file | XML-based pipeline configuration loading |
+| Configure PSS exporter via configuration file | Configuration file loading (format TBD) |
 | Configure different exporter sink types | Sink type configuration for sigproc, SPCCL, network, and SCL outputs |
 | Map output streams to configured sinks | Output stream-to-sink routing configuration |
 | Configure SDP receive addresses for combined transient and FDAS search | Combined search mode endpoint configuration |
@@ -163,7 +163,7 @@ Defines scenarios for configuring the PSS-SDP interface parameters and component
 | `@duplicate-detection` | Duplicate data detection scenarios |
 | `@timeout-handling` | Timeout handling scenarios |
 | `@ska-sdp-recvaddrs` | SKA SDP receive address schema scenarios |
-| `@xml-configuration` | XML configuration file scenarios |
+| `@pipeline-configuration` | Pipeline configuration file scenarios |
 | `@sink-configuration` | Exporter sink configuration scenarios |
 | `@stream-sink-mapping` | Output stream-to-sink routing scenarios |
 | `@recvaddrs-schema` | Receive address schema scenarios |

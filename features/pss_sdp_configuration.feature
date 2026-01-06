@@ -8,16 +8,17 @@ Feature: PSS-SDP Interface Configuration
     Given the PSS pipeline configuration file is available
     And the SDP receive address schema is defined
 
-  @XTP-TBD @xml-configuration
-  Scenario: Configure PSS exporter via XML configuration file
-    Given an XML configuration file with beam settings exists
+  # TODO: Confirm configuration format with Ben Shaw (XML or JSON)
+  @XTP-TBD @pipeline-configuration
+  Scenario: Configure PSS exporter via configuration file
+    Given a configuration file with beam settings exists
     When the configuration specifies sinks for the beam
     Then the DataExport module loads the sink configurations
     And the exporters are initialised according to the configuration
 
   @XTP-TBD @sink-configuration
   Scenario Outline: Configure different exporter sink types
-    Given the sink_configs section of the XML configuration
+    Given the sink_configs section of the configuration
     When a sink of type "<sink_type>" is configured with id "<sink_id>"
     Then the exporter factory creates an instance of the correct type
     And the exporter is associated with the specified id
