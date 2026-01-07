@@ -8,7 +8,6 @@ Feature: PSS-SDP Interface Configuration
     Given the PSS pipeline configuration file is available
     And the SDP receive address schema is defined
 
-  # TODO: Confirm configuration format with Ben Shaw (XML or JSON)
   @XTP-TBD @pipeline-configuration
   Scenario: Configure PSS exporter via configuration file
     Given a configuration file with beam settings exists
@@ -89,12 +88,14 @@ Feature: PSS-SDP Interface Configuration
     Then the exporter writes files to the specified directory
     And files are created with the specified extension
 
+    #placeholder values
     Examples:
       | output_directory    |
       | /output/candidates  |
 
   @XTP-TBD @network-endpoint-config
   Scenario: Configure network streaming endpoint
+    #placeholder values
     Given a network exporter configuration
     When the endpoint is configured with the following settings
       | parameter  | value           |
@@ -108,7 +109,8 @@ Feature: PSS-SDP Interface Configuration
     When the threads parameter is set to <thread_count>
     Then the sink processing uses the configured number of threads
     And data export is parallelised appropriately
-
+    
+    #placeholder values
     Examples:
       | thread_count |
       | 2            |
@@ -119,7 +121,8 @@ Feature: PSS-SDP Interface Configuration
     When checking for configured beams
     Then <beam_count> beam(s) are detected in the configuration
     And each beam has valid export sink settings
-
+    
+    #placeholder values
     Examples:
       | beam_count |
       | 1          |
@@ -127,6 +130,7 @@ Feature: PSS-SDP Interface Configuration
 
   @XTP-TBD @pss-receive-config
   Scenario: Configure pss-receive listening parameters
+    #placeholder values
     Given the pss-receive deployment configuration
     When the UDP listening port is set to 9021
     And the listening interface is set to "0.0.0.0"
@@ -140,6 +144,7 @@ Feature: PSS-SDP Interface Configuration
     Then received candidate data is written to the configured directory
     And the persistent volume mount point is respected
 
+    #placeholder values
     Examples:
       | output_directory    |
       | /output/candidates  |
@@ -166,6 +171,7 @@ Feature: PSS-SDP Interface Configuration
     Then each beam exports candidate data to its designated endpoint
     And beam data streams remain independent
 
+    #placeholder values
     Examples:
       | beam_count | start_port | end_port |
       | 4          | 9021       | 9024     |

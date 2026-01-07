@@ -15,6 +15,7 @@ Feature: SDP Reception of PSS Candidate Data
     Then the receiver ingests the data payload
     And the candidate metadata is extracted from the payload
 
+    #placeholder values
     Examples:
       | port |
       | 9021 |
@@ -36,6 +37,7 @@ Feature: SDP Reception of PSS Candidate Data
 
   @XTP-TBD @kubernetes-service
   Scenario: SDP receiver is accessible via Kubernetes service
+    #placeholder values
     Given the pss-receive service is deployed in the pss namespace
     And the ClusterIP service exposes UDP port 9021
     When PSS sends data to the service DNS name "pss-receive"
@@ -69,6 +71,7 @@ Feature: SDP Reception of PSS Candidate Data
 
   @XTP-TBD @volume-capacity
   Scenario: Verify persistent volume has sufficient capacity
+    #placeholder values for storage
     Given the persistent volume claim requests 1 GiB of storage
     When candidate data is received over an extended period
     Then the storage capacity is sufficient for the observation duration

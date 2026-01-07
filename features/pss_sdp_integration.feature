@@ -37,6 +37,7 @@ Feature: PSS-SDP End-to-End Integration
     And memory utilisation remains below <memory_limit> percent
     And no candidate data is lost under maximum load
 
+    #placeholder values
     Examples:
       | data_rate | cpu_limit | memory_limit |
       | 10        | 80        | 75           |
@@ -63,6 +64,7 @@ Feature: PSS-SDP End-to-End Integration
 
   @XTP-TBD @deployment-verification
   Scenario: Verify Kubernetes deployment of interface components
+    #placeholder values
     Given the Helm charts for PSS and pss-receive are deployed
     When the deployments are verified
     Then the PSS pipeline pod is running
@@ -95,6 +97,7 @@ Feature: PSS-SDP End-to-End Integration
     And the SDP receiver ingests the candidate within <ingestion_budget_ms> milliseconds
     And end-to-end latency is below <max_latency_ms> milliseconds
 
+    #placeholder values
     Examples:
       | max_latency_ms | transmission_budget_ms | ingestion_budget_ms |
       | 100            | 50                     | 50                  |

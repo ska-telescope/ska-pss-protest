@@ -39,12 +39,19 @@ Feature: PSS to SDP Candidate Data Streaming
     When the endpoint is configured with IP address "<ip_address>" and port "<port>"
     Then the network streamer connects to the specified endpoint
     And candidates are transmitted to that network address
-
+    
+    #placeholder values
     Examples:
       | ip_address      | port |
       | 192.168.1.100   | 9021 |
       | 10.0.0.50       | 9021 |
       | 172.16.0.1      | 9022 |
+  
+  @XTP-TBD @configuration
+  Scenario: Configure local disk output for candidates
+    Given the pipeline configuration contains file sink settings
+    When the output directory is configured
+    Then candidates are written to local storage
 
   @XTP-TBD @multiple-endpoints
   Scenario: Stream candidates to multiple network endpoints
@@ -54,11 +61,13 @@ Feature: PSS to SDP Candidate Data Streaming
     And each endpoint receives identical candidate information
 
   @XTP-TBD @data-integrity
+  #placeholder values
   Scenario Outline: Transmitted candidate field maintains integrity
     Given a candidate with <field_name> of <original_value> exists
     When the candidate is transmitted to the receiver
     Then the received <field_name> matches the original value
 
+    #placeholder values
     Examples:
       | field_name             | original_value |
       | dispersion measure     | 100.5 pc/cm3   |
