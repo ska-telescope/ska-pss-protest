@@ -53,6 +53,14 @@ Feature: PSS to SDP Candidate Data Streaming
     When the output directory is configured
     Then candidates are written to local storage
 
+  @XTP-TBD @configuration @multiple-endpoints
+  Scenario: Configure concurrent local and network output
+    Given the pipeline configuration contains file sink settings
+    And the pipeline configuration contains network sink settings
+    When the pipeline processes candidates
+    Then candidates are written to local storage
+    And candidates are streamed to the configured network endpoint
+
   @XTP-TBD @multiple-endpoints
   Scenario: Stream candidates to multiple network endpoints
     Given multiple network endpoints are configured in the sink configuration
