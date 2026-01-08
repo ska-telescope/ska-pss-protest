@@ -1,0 +1,93 @@
+@pss-sdp-interface @streaming @network
+Feature: PSS to SDP Candidate Data Streaming
+  As a pulsar search system
+  I want to stream candidate data to SDP using a network streaming protocol
+  So that detected candidates are transmitted from PSS in real-time for further analysis
+
+  Background:
+    Given the PSS Cheetah pipeline is initialised
+    And the network exporter is configured with a valid endpoint
+
+  @XTP-TBD @happy-path
+  Scenario: Stream single pulse candidate data to SDP
+    Given single pulse candidates have been detected by the pipeline
+    When the SPCCL data is sent to the configured network endpoint
+    Then the candidate data is transmitted to the receiver
+    And the data payload contains valid candidate metadata
+
+  @XTP-TBD @happy-path
+  Scenario: Transmitted data contains required candidate fields
+    Given a single pulse candidate with known properties exists
+    When the candidate is serialised for transmission
+    Then the payload contains the dispersion measure field
+    And the payload contains the signal-to-noise ratio field
+    And the payload contains the candidate pulse time field
+    And the payload contains the pulse width field
+    And the payload contains the sigma significance field
+
+  @XTP-TBD @happy-path
+  Scenario: Transmitted data contains time-frequency data descriptors
+    Given a single pulse candidate with associated time-frequency data exists
+    When the candidate is serialised for transmission
+    Then the payload contains the time-frequency data descriptor
+    And the payload contains the frequency-time data descriptor
+    And the payload contains channel metadata including frequency and width
+
+  @XTP-TBD @configuration
+  Scenario Outline: Configure network endpoint for candidate streaming
+    Given the pipeline configuration contains network sink settings
+    When the endpoint is configured with IP address "<ip_address>" and port "<port>"
+    Then the network streamer connects to the specified endpoint
+    And candidates are transmitted to that network address
+    
+    #placeholder values
+    Examples:
+      | ip_address      | port |
+      | 192.168.1.100   | 9021 |
+      | 10.0.0.50       | 9021 |
+      | 172.16.0.1      | 9022 |
+  
+  @XTP-TBD @configuration
+  Scenario: Configure local disk output for candidates
+    Given the pipeline configuration contains file sink settings
+    When the output directory is configured
+    Then candidates are written to local storage
+
+  @XTP-TBD @configuration @multiple-endpoints
+  Scenario: Configure concurrent local and network output
+    Given the pipeline configuration contains file sink settings
+    And the pipeline configuration contains network sink settings
+    When the pipeline processes candidates
+    Then candidates are written to local storage
+    And candidates are streamed to the configured network endpoint
+
+  @XTP-TBD @multiple-endpoints
+  Scenario: Stream candidates to multiple network endpoints
+    Given multiple network endpoints are configured in the sink configuration
+    When single pulse candidates are detected
+    Then the candidate data is transmitted to all configured endpoints
+    And each endpoint receives identical candidate information
+
+  @XTP-TBD @data-integrity
+  #placeholder values
+  Scenario Outline: Transmitted candidate field maintains integrity
+    Given a candidate with <field_name> of <original_value> exists
+    When the candidate is transmitted to the receiver
+    Then the received <field_name> matches the original value
+
+    #placeholder values
+    Examples:
+      | field_name             | original_value |
+      | dispersion measure     | 100.5 pc/cm3   |
+      | signal-to-noise ratio  | 8.5            |
+      | pulse width            | 2.3 ms         |
+      | sigma significance     | 7.2            |
+      | pulse time             | 58000.123 MJD  |
+
+  @XTP-TBD @performance
+  # TODO: The 100ms delay threshold is a placeholder value pending performance requirements
+  Scenario: Network streaming handles high candidate rates
+    Given the pipeline is processing data at real-time rates
+    When multiple candidates are detected within a short time window
+    Then all candidates are queued for transmission
+    And candidates are transmitted with no more than 100 ms delay
