@@ -1,4 +1,10 @@
 # Changelog
+## 5.2.8
+- Adding an option of `injection_recovery_factor` in FDAS validator to account for lesser S/N injection into the test vector
+
+## 5.2.7
+- Added BDD testing docs
+
 ## 5.2.6
 - Changed configuration file to export OCLD files
 - Used the OCLD reader to read the OCLD files and validate the metadata 
