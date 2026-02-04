@@ -200,7 +200,12 @@ class FdasScl:
         ocld_reader.load_metadata()
         return ocld_reader.get_metadata_df()
 
-    def from_vector(self, vector: str, vector_header: dict) -> list:
+    def from_vector(
+        self,
+        vector: str,
+        vector_header: dict,
+        injection_recovery_factor: float = 0.72,
+    ) -> list:
         """
         Extract parameters of the pulsar using a test
         vector filename. These will be used to validate
@@ -231,7 +236,7 @@ class FdasScl:
         width = float(basename[3]) * period  # milliseconds
         disp = float(basename[4])
         accel = float(basename[5])
-        sig_fold = float(basename[7])
+        sig_fold = float(basename[7]) * injection_recovery_factor
 
         # Set expected period derivative from acceleration parameter
         pdot = -accel * period / 3e8

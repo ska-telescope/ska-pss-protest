@@ -237,13 +237,13 @@ class SclTests:
 
         period = 1.0 / 500.0 * 1000
         width = 0.2 * period
-        candidate.from_vector(vector_a, source_properties)
-        assert candidate.expected == [period, 0, 1.0, width, 50.0]
+        candidate.from_vector(vector_a, source_properties, 0.8)
+        assert candidate.expected == [period, 0, 1.0, width, 50.0 * 0.8]
 
         period = 1.0 / 500.00115818617536 * 1000
         width = 0.05 * period
-        candidate.from_vector(vector_b, source_properties)
-        assert candidate.expected == [period, 0, 1.0, width, 50.0]
+        candidate.from_vector(vector_b, source_properties, 0.8)
+        assert candidate.expected == [period, 0, 1.0, width, 50.0 * 0.8]
         assert candidate.expected != [period, 0, 2.0, width, 500.0]
 
     def test_search_using_dummy_ruleset(self):
