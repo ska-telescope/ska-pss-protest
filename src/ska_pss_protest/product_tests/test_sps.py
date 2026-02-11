@@ -143,9 +143,20 @@ def set_fof_clustering_config(config):
     # Set SpCluster parameters
     config("sps_clustering/active", "true")
     config("sps_clustering/fof_clustering/active", "true")
-    config("sps_clustering/fof_clustering/time_tolerance", "100.0")
-    config("sps_clustering/fof_clustering/dm_thresh", "50.0")
-    config("sps_clustering/fof_clustering/pulse_width_tolerance", "5.0")
+    config("sps_clustering/fof_clustering/time_tolerance", "10.0")
+    config("sps_clustering/fof_clustering/dm_thresh", "10.0")
+    config("sps_clustering/fof_clustering/width_matching_factor", "4.0")
+
+@given(
+    "A cheetah configuration to cluster SPS candidate metadata using FOFW clustering algorithm"
+)
+def set_fofw_clustering_config(config):
+    # Set SpCluster parameters
+    config("sps_clustering/active", "true")
+    config("sps_clustering/fofw_clustering/active", "true")
+    config("sps_clustering/fofw_clustering/min_linking_len", "10.0")
+    config("sps_clustering/fofw_clustering/max_linking_len", "250.0")
+    config("sps_clustering/fofw_clustering/scaling_factor", "0.7")
 
 
 @given(

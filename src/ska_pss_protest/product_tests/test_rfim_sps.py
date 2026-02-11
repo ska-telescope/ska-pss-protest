@@ -106,7 +106,7 @@ def set_source_sink(context, config, pytestconfig, conf, outdir):
     config("sps_clustering/fof_clustering/active", "true")
     config("sps_clustering/fof_clustering/time_tolerance", "100.0")
     config("sps_clustering/fof_clustering/dm_thresh", "50.0")
-    config("sps_clustering/fof_clustering/pulse_width_tolerance", "5.0")
+    config("sps_clustering/fof_clustering/width_matching_factor", "4.0")
 
     config("spsift/active", "true")
     config("spsift/thresholding/active", "true")
