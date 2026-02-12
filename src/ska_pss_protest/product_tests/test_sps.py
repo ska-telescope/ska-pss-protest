@@ -147,6 +147,7 @@ def set_fof_clustering_config(config):
     config("sps_clustering/fof_clustering/dm_thresh", "10.0")
     config("sps_clustering/fof_clustering/width_matching_factor", "4.0")
 
+
 @given(
     "A cheetah configuration to cluster SPS candidate metadata using FOFW clustering algorithm"
 )
