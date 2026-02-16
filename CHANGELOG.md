@@ -1,4 +1,7 @@
 # Changelog
+## 5.2.9
+- Added test suit and config file for new 'fofw' clustering method.
+
 ## 5.2.8
 - Adding an option of `injection_recovery_factor` in FDAS validator to account for lesser S/N injection into the test vector
 
