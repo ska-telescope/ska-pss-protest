@@ -1,4 +1,7 @@
 # Changelog
+## 5.2.10
+- Modifying FDAS test to use updated FOF clustering config
+
 ## 5.2.9
 - Added test suit and config file for new 'fofw' clustering method.
 
