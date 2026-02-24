@@ -264,12 +264,17 @@
     <active>false</active>
     <fof_clustering>
       <active>false</active>
-      <number_of_threads>1</number_of_threads>
-      <time_tolerance>100</time_tolerance>
-      <dm_thresh>100</dm_thresh>
-      <pulse_width_tolerance>3</pulse_width_tolerance>
-      <linking_length>1.73</linking_length>
+      <time_tolerance>10</time_tolerance>
+      <dm_thresh>10</dm_thresh>
+      <linking_length>1.4</linking_length>
+      <width_matching_factor>4.0</width_matching_factor>
     </fof_clustering>
+    <fofw_clustering>
+      <active>false</active>
+      <min_linking_len>10</min_linking_len>
+      <max_linking_len>250</max_linking_len>
+      <scaling_factor>0.7</scaling_factor>
+    </fofw_clustering>
     <hdbscan_clustering>
       <active>false</active>
       <minimum_cluster_size>15</minimum_cluster_size>
