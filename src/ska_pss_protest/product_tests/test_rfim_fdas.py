@@ -11,7 +11,13 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, FdasScl, VectorPull, VHeader, DedispersionPlanSelect
+from ska_pss_protest import (
+    Cheetah,
+    DedispersionPlanSelect,
+    FdasScl,
+    VectorPull,
+    VHeader,
+)
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -173,7 +179,7 @@ def set_rfim_iqrm(config, threshold, radius):
     config("rfim/rfim_iqrmcpu/metric", "2")
 
 
-@when("A FDAS pipeline runs using {dedispersion_plan}")
+@when(parsers.parse("A FDAS pipeline runs using {dedispersion_plan}"))
 def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Set dedispersion buffer length and

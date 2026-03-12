@@ -163,7 +163,7 @@ def set_fdas_param(config, context):
     config("fldo/cpu/active", "true")
 
 
-@when("A FDAS pipeline runs using {dedispersion_plan}")
+@when(parsers.parse("A FDAS pipeline runs using {dedispersion_plan}"))
 def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Set dedispersion buffer length and

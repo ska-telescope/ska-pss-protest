@@ -189,7 +189,7 @@ def set_thresholding_sift_config(config):
     config("spsift/thresholding/pulse_width_threshold", "1100.0")
 
 
-@when("An SPS pipeline runs using {dedispersion_plan}")
+@when(parsers.parse("An SPS pipeline runs using {dedispersion_plan}"))
 def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Add SpCcl output directory to config and

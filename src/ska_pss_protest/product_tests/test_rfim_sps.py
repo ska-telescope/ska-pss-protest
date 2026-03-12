@@ -12,7 +12,13 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, SpCcl, VectorPull, VHeader, DedispersionPlanSelect
+from ska_pss_protest import (
+    Cheetah,
+    DedispersionPlanSelect,
+    SpCcl,
+    VectorPull,
+    VHeader,
+)
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -159,7 +165,7 @@ def set_rfim_iqrm_zdot(config, threshold, radius):
     config("rfim/rfim_zdot/active", "true")
 
 
-@when("An SPS pipeline runs using {dedispersion_plan}")
+@when(parsers.parse("An SPS pipeline runs using {dedispersion_plan}"))
 def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Add SpCcl output directory to config and
