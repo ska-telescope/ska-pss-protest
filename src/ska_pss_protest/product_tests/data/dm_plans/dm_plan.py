@@ -159,13 +159,14 @@ class DedispersionPlanSelect:
             try:
                 with open(self.ddplan_file, "r") as f:
                     self.storage = json.load(f)
-            except (json.JSONDecodeError, IOError):
+            except (json.JSONDecodeError, IOError) as e:
                 print(
                     "Warning: Could not read file. Starting with empty registry."
                 )
                 self.storage = {}
+                raise IOError from e
         else:
-            self.storage = {}
+            raise FileNotFoundError
 
     def list_labels(self) -> list:
         """
