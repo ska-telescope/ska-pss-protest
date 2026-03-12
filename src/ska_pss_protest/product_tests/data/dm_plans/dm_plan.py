@@ -86,12 +86,8 @@ class DedispersionPlanSelect:
         if not isinstance(data, dict):
             raise ValueError(f"Expected a dict, got {type(data).__name__}")
 
-        try:
-            assert "plan" in data.keys()
-        except ValueError:
-            raise ValueError(
-                "The data provided is not in right format, it does not contain 'plan' key"
-            )
+        if "plan" not in data.keys():
+            raise ValueError("Plan not found in the list")
 
         self.storage[label] = data
         self.save_to_file()
@@ -140,7 +136,7 @@ class DedispersionPlanSelect:
             A list of dictionaries defining the dedispersion plan
         """
 
-        if not (label in self.storage.keys()):
+        if label not in self.storage.keys():
             raise KeyError
 
         return self.storage.get(label)["plan"]
@@ -183,40 +179,33 @@ def user_inputs():
     Function to ask user to input dedispersion plan
     """
     plan_list = []
-    unique_id = input("Unique ID for dedispersion plan:").strip().lower()
+    unique_id_name = input("Unique ID for dedispersion plan:").strip().lower()
 
     while True:
-        try:
-            start_raw = input("\nStart: ").strip().lower()
-            if start_raw == "done":
-                break
+        start_raw = input("\nStart: ").strip().lower()
+        if start_raw == "done":
+            break
 
-            end_raw = input("\nend: ").strip().lower()
-            if end_raw == "done":
-                break
+        end_raw = input("\nend: ").strip().lower()
+        if end_raw == "done":
+            break
 
-            step_raw = input("\nStep: ").strip().lower()
-            if step_raw == "done":
-                break
+        step_raw = input("\nStep: ").strip().lower()
+        if step_raw == "done":
+            break
 
-            plan_list.append(
-                {
-                    "start": float(start_raw),
-                    "end": float(end_raw),
-                    "step": float(step_raw),
-                }
-            )
-        except ValueError:
-            raise ValueError
+        plan_list.append(
+            {
+                "start": float(start_raw),
+                "end": float(end_raw),
+                "step": float(step_raw),
+            }
+        )
 
-    return unique_id, plan_list
+    return unique_id_name, plan_list
 
 
 if __name__ == "__main__":
-    """
-    Entry is using only dm_plan to adding and viewing
-    """
-
     parser = argparse.ArgumentParser(description="Dedispersion plan manager")
 
     group = parser.add_argument(
@@ -244,5 +233,5 @@ if __name__ == "__main__":
             print(f"- {plan_id}")
 
     if args.add:
-        label, plan = user_inputs()
-        dd_plan.add(label=label, data={"plan": plan})
+        unique_id, plan = user_inputs()
+        dd_plan.add(label=unique_id, data={"plan": plan})
