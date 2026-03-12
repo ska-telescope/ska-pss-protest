@@ -170,31 +170,6 @@
       <ideal_rms>7.0</ideal_rms>
       <threshold>5.0</threshold>
     </rfiexcision>
-    <dedispersion>
-      <start>0.0</start>
-      <end>100.0</end>
-      <step>0.1</step>
-    </dedispersion>
-    <dedispersion>
-      <start>100.0</start>
-      <end>300.0</end>
-      <step>0.2</step>
-    </dedispersion>
-    <dedispersion>
-      <start>300.0</start>
-      <end>700.0</end>
-      <step>0.4</step>
-    </dedispersion>
-    <dedispersion>
-      <start>700.0</start>
-      <end>1500.0</end>
-      <step>0.8</step>
-    </dedispersion>
-    <dedispersion>
-      <start>1500.0</start>
-      <end>3100.0</end>
-      <step>1.6</step>
-    </dedispersion>
   </ddtr>
   <empty>
     <exit_count>0</exit_count>

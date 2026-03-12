@@ -18,7 +18,14 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, Filterbank, SpCcl, VectorPull, VHeader
+from ska_pss_protest import (
+    Cheetah,
+    DedispersionPlanSelect,
+    Filterbank,
+    SpCcl,
+    VectorPull,
+    VHeader,
+)
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -182,8 +189,8 @@ def set_thresholding_sift_config(config):
     config("spsift/thresholding/pulse_width_threshold", "1100.0")
 
 
-@when("An SPS pipeline runs")
-def run_cheetah(context, config, pytestconfig):
+@when("An SPS pipeline runs using {dedispersion_plan}")
+def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Add SpCcl output directory to config and
     run cheetah
@@ -197,7 +204,17 @@ def run_cheetah(context, config, pytestconfig):
     context["dd_samples"] = 131072
     root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
 
-    # read the root tree for trial widths
+    dd_plan = DedispersionPlanSelect()
+    if dedispersion_plan not in dd_plan.list_labels():
+        raise ValueError
+
+    for segment in dd_plan.select(dedispersion_plan):
+        dedispersion = et.Element("dedispersion")
+
+        for key, value in segment.items():
+            child = et.SubElement(dedispersion, key)
+            child.text = str(value)
+        root_tree.find("ddtr").append(dedispersion)
 
     widths_element = root_tree.find("sps/klotski/widths")
     if widths_element is not None and widths_element.text:

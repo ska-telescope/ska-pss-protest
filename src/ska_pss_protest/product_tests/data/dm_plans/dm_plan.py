@@ -97,7 +97,7 @@ class DedispersionPlanSelect:
         self.save_to_file()
 
     @staticmethod
-    def list_to_xml(root, dd_plan_list: list):
+    def list_to_xml(dd_plan_list: list):
         """
         Converts and slots in the list of DDPlan into the element tree of dedispersion
         Paramters
@@ -107,20 +107,23 @@ class DedispersionPlanSelect:
 
         dd_plan_list: list
             A list of dictionaries defining the dedisersion plan
-            must contain 'start', 'stop' and 'step' as keys in every dictionary
+            must contain 'start', 'end' and 'step' as keys in every dictionary
 
         Returns
         ----------------
         ElementTree.SubElement
             XML Element Tree with updated dedispersion plan
         """
+        root = ElementTree.Element("ddtr")
         for element in dd_plan_list:
             dedispersion = ElementTree.SubElement(root, "dedispersion")
 
             for key, value in element.items():
                 child = ElementTree.SubElement(dedispersion, key)
                 child.text = str(value)
+            root.append(dedispersion)
 
+        # print(ElementTree.tostring(root))
         return root
 
     def select(self, label: str) -> list:
@@ -189,8 +192,8 @@ def user_inputs():
             if start_raw == "done":
                 break
 
-            stop_raw = input("\Stop: ").strip().lower()
-            if stop_raw == "done":
+            end_raw = input("\nend: ").strip().lower()
+            if end_raw == "done":
                 break
 
             step_raw = input("\nStep: ").strip().lower()
@@ -200,7 +203,7 @@ def user_inputs():
             plan_list.append(
                 {
                     "start": float(start_raw),
-                    "stop": float(stop_raw),
+                    "end": float(end_raw),
                     "step": float(step_raw),
                 }
             )
