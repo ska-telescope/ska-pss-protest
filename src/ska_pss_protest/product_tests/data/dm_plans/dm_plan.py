@@ -88,9 +88,9 @@ class DedispersionPlanSelect:
 
         try:
             assert "plan" in data.keys()
-        except:
+        except ValueError:
             raise ValueError(
-                f"The data provided is not in right format, it does not contain 'plan' key"
+                "The data provided is not in right format, it does not contain 'plan' key"
             )
 
         self.storage[label] = data
@@ -123,7 +123,6 @@ class DedispersionPlanSelect:
                 child.text = str(value)
             root.append(dedispersion)
 
-        # print(ElementTree.tostring(root))
         return root
 
     def select(self, label: str) -> list:
@@ -218,7 +217,7 @@ if __name__ == "__main__":
     Entry is using only dm_plan to adding and viewing
     """
 
-    parser = argparse.ArgumentParser(description=f"Dedispersion plan manager")
+    parser = argparse.ArgumentParser(description="Dedispersion plan manager")
 
     group = parser.add_argument(
         "--list", action="store_true", help="List all the available DM plans"
