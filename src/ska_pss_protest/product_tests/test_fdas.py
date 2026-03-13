@@ -185,6 +185,8 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
             child = et.SubElement(dedispersion, key)
             child.text = str(value)
         root_tree.find("ddtr").append(dedispersion)
+    
+    root_tree.write(context["config_path"])
 
     # Launch cheetah with our configuration
     cheetah = Cheetah(
