@@ -175,8 +175,6 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
 
     dd_plan = DedispersionPlanSelect()
-    if dedispersion_plan not in dd_plan.list_labels():
-        raise ValueError
 
     for segment in dd_plan.select(dedispersion_plan):
         dedispersion = et.Element("dedispersion")

@@ -137,7 +137,9 @@ class DedispersionPlanSelect:
         """
 
         if label not in self.storage.keys():
-            raise KeyError
+            raise KeyError(
+                f"Plan not found. Available plans are: {self.list_labels()}"
+            )
 
         return self.storage.get(label)["plan"]
 
