@@ -11,7 +11,13 @@ from xml.etree import ElementTree as et
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 
-from ska_pss_protest import Cheetah, FdasScl, VectorPull, VHeader
+from ska_pss_protest import (
+    Cheetah,
+    DedispersionPlanSelect,
+    FdasScl,
+    VectorPull,
+    VHeader,
+)
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -173,8 +179,8 @@ def set_rfim_iqrm(config, threshold, radius):
     config("rfim/rfim_iqrmcpu/metric", "2")
 
 
-@when("A FDAS pipeline runs")
-def run_cheetah(context, config, pytestconfig):
+@when(parsers.parse("A FDAS pipeline runs using {dedispersion_plan}"))
+def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     Set dedispersion buffer length and
     run cheetah pipeline
@@ -182,7 +188,19 @@ def run_cheetah(context, config, pytestconfig):
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
-    config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+    root_tree = config("ddtr/dedispersion_samples", str(context["dd_samples"]))
+
+    dd_plan = DedispersionPlanSelect()
+
+    for segment in dd_plan.select(dedispersion_plan):
+        dedispersion = et.Element("dedispersion")
+
+        for key, value in segment.items():
+            child = et.SubElement(dedispersion, key)
+            child.text = str(value)
+        root_tree.find("ddtr").append(dedispersion)
+
+    root_tree.write(context["config_path"])
 
     # Launch cheetah with our configuration
     cheetah = Cheetah(

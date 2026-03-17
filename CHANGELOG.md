@@ -1,4 +1,10 @@
 # Changelog
+## 6.0.0
+- Adding a class to manage and select dedispersion plan to run the test
+- Removing existing dedispersion plan from configuration file templates
+- A JSON file in `product_tests/data/dm_plans` to store a set of dedispersion plans
+- Adding documentation about the dedispersion plan manager
+
 ## 5.2.10
 - Modifying FDAS test to use updated FOF clustering config
 
