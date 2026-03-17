@@ -71,7 +71,7 @@ The script can be executed directly from the terminal to manage plans interactiv
 ### 1. List Available Plans
 
 ```bash
-python dedispersion_manager.py --list
+python src/ska_pss_protest/product_tests/data/dm_plans/dm_plan.py --list
 
 ```
 
@@ -80,14 +80,14 @@ python dedispersion_manager.py --list
 This triggers an interactive prompt to enter a Unique ID and DM ranges (start, end, step). Type `done` at the "Start" prompt to finish.
 
 ```bash
-python dedispersion_manager.py --add
+python src/ska_pss_protest/product_tests/data/dm_plans/dm_plan.py --add
 
 ```
 
 ### 3. Specify a Custom Storage File
 
 ```bash
-python dedispersion_manager.py --file path/to/my_plans.json --list
+python src/ska_pss_protest/product_tests/data/dm_plans/dm_plan.py --file path/to/my_plans.json --list
 
 ```
 
@@ -135,5 +135,3 @@ The `list_to_xml` method produces the following hierarchy:
 ```
 
 ---
-
-**Would you like me to generate a README.md file specifically for a GitHub repository including installation instructions for this script?**
