@@ -128,13 +128,12 @@ def set_sps_param(config, context):
     config("spsift/thresholding/dm_thresh", "5.0")
     config("spsift/thresholding/pulse_width_threshold", "1000.0")
 
-
 @given(
-    "A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata"
+    "A cheetah configuration to configure FPGA-FDAS pipeline and export the FDAS candidate metadata"
 )
 def set_fdas_param(config, context):
     """
-    Configure the config file to set FDAS pipeline parameters
+    Configure the config file to set FPGA-FDAS pipeline parameters
     """
     # Set output location for candidate filterbanks
     config("beams/beam/sinks/channels/search_events/active", "true")
@@ -151,16 +150,81 @@ def set_fdas_param(config, context):
     )
 
     # Configure PSBC and FDAS parameters
-    config("psbc/dump_time", "540")
+    config("psbc/dump_time", "570")
+    config("acceleration/fdas/active", "true")
+    config("acceleration/fdas/intel_fpga/active", "true")
+    config("acceleration/fdas/intel_fpga/filters_filename", "/opt/pss-fdas-fpga/etc/template.dat")
+    config("acceleration/fdas/intel_fpga/hsum_filename", "/opt/pss-fdas-fpga/etc/config_0.3Hz_start.txt")
+    # The HSUM config file and filters are stored in ds-psi-worker-1b for time being
+
+    # Configure SIFT and FLDO parameters
+    config("sift/strong_sift/active", "true")
+    config("sift/strong_sift/num_candidate_harmonics", "8")
+    config("sift/strong_sift/match_factor", "0.001")
+    config("fldo/cpu/active", "true")
+
+@given(
+    "A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata"
+)
+def set_fdas_param(config, context):
+    """
+    Configure the config file to set CPU-FDAS pipeline parameters
+    """
+    # Set output location for candidate filterbanks
+    config("beams/beam/sinks/channels/search_events/active", "true")
+    config("beams/beam/sinks/channels/ocld/active", "true")
+
+    # Set output location for candidate metadata files
+    config(
+        "beams/beam/sinks/sink_configs/scl_files/dir",
+        context["candidate_dir"],
+    )
+    config(
+        "beams/beam/sinks/sink_configs/ocld_files/dir",
+        context["candidate_dir"],
+    )
+
+    # Configure PSBC and FDAS parameters
+    config("psbc/dump_time", "570")
     config("acceleration/fdas/active", "true")
     config("acceleration/fdas/labyrinth/active", "true")
     config("acceleration/fdas/labyrinth/threshold", "8.0")
 
     # Configure SIFT and FLDO parameters
-    config("sift/simple_sift/active", "true")
-    config("sift/simple_sift/num_candidate_harmonics", "8")
-    config("sift/simple_sift/match_factor", "0.001")
+    config("sift/strong_sift/active", "true")
+    config("sift/strong_sift/num_candidate_harmonics", "8")
+    config("sift/strong_sift/match_factor", "0.001")
+
+def subband_calculator(nchan: int, ratio: int = 80) -> int:
+    """
+    Calculates the number of subbands to set up FLDO such a way that
+    the number of subbands is ~ 80 times smaller than the number of channels
+    but is also a factor of total number of channels
+    """
+
+    if nchan <= 0:
+        return 0
+
+    target = nchan // ratio
+    factors = [i for i in range(1, nchan + 1) if nchan % i == 0]
+    best_fit = min(factors, key=lambda x: abs(x - target))
+
+    return best_fit   
+
+@given(
+    "A cheetah configuration to set up FLDO module"
+)
+def set_fldo_parameters(config, context):
+    """
+    Function to set up FLDO parameters
+    """
+
     config("fldo/cpu/active", "true")
+    config("fldo/cpu/number_of_frequency_channels", str(context["vector_header"].nchans()))
+    config("fldo/cpu/number_of_subints", "16")
+    config("fldo/cpu/number_of_subbands", str(subband_calculator(context["vector_header"].nchans())))
+    config("fldo/cpu/number_of_phase_bins", "128")
+    config("fldo/cpu/number_of_threads", "8")
 
 
 @when(parsers.parse("A FDAS pipeline runs using {dedispersion_plan}"))
