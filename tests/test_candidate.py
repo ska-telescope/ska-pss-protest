@@ -129,13 +129,12 @@ class CandidateTests:
         parser = Filterbank(cand_dir)
         parser.get_headers()
         assert len(parser.headers) == 2
-        for header in parser.headers:
-            assert isinstance(header, VHeader)
-            assert header.fch1() == 1670.0
-            assert header.nchans() == 16
-            assert header.nbits() == 8
-            assert header.chbw() == -20.0
-            assert header.tsamp() == 6.4e-05
+        for fb in parser.headers:
+            assert fb.header.fch1 == 1670.0
+            assert fb.header.nchans == 16
+            assert fb.header.nbits == 8
+            assert fb.header.foff == -20.0
+            assert fb.header.tsamp == 6.4e-05
 
     def test_compare_data_chunk_size(self):
         """
