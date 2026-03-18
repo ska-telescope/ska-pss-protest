@@ -186,6 +186,11 @@
         <active>false</active>
         <threshold>8.0</threshold>
       </labyrinth>
+      <intel_fpga>
+        <active>false</active>
+        <filters_filename>/path/to/conv_filters</filters_filename>
+        <hsum_filename>/path/to/hsum_config_file</hsum_filename>
+      </intel_fpga>
     </fdas>
   </acceleration>
   <sift>
