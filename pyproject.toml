@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ska_pss_protest"
-version = "5.2.10"
+version = "5.2.11"
 description = "The SKA PSS Product Testing Framework"
 authors = ["SKA PSS Developers"]
 license = "BSD-3-Clause"
@@ -22,6 +22,7 @@ protest = 'ska_pss_protest.protest:main'
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-pss-cand-reader = "^0.0.0"
+ska-pss-cand-viewer = "^0.0.0"
 numpy = "^1.26.4"
 requests = ">=2.31.0"
 pytest-mock = ">=3.12.0"
