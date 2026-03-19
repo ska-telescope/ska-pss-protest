@@ -10,8 +10,9 @@ from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
+from ska_pss_cand_reader import FilterbankFile
 
-from ska_pss_protest import Cheetah, FdasScl, VectorPull, VHeader
+from ska_pss_protest import Cheetah, FdasScl, VectorPull
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -65,7 +66,7 @@ def pull_test_vector_using_name(context, pytestconfig, test_vector):
     request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
     request.from_name(test_vector)
 
-    vector_header = VHeader(request.local_path)
+    vector_header = FilterbankFile.from_file(request.local_path)
 
     # Pass parameter from vector to context
     context["test_vector"] = request
@@ -209,7 +210,8 @@ def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):
     # Load candidate metadata
     scl = FdasScl(context["candidate_dir"])
     scl.from_vector(
-        context["test_vector"].local_path, context["vector_header"].allpars()
+        context["test_vector"].local_path,
+        context["vector_header"].all_parameters(),
     )
 
     scl.search_tol(tol_settings)

@@ -54,7 +54,6 @@ import logging
 import os
 
 import numpy as np
-
 from ska_pss_cand_reader import FilterbankFile
 
 np.set_printoptions(precision=17)
@@ -201,8 +200,8 @@ class SpCcl:
         timestamps = []
         # Extract parameters from vector header
         fb = FilterbankFile.from_file(fil)
-        start_time = vector.header.tstart  # MJD
-        end_time = start_time + (fb.duration() / 86400)  # MJD
+        start_time = fb.header.tstart  # MJD
+        end_time = start_time + (fb.duration / 86400)  # MJD
         samples_per_period = 1 / (freq * fb.header.tsamp)
 
         # A fiducial pulse is placed at PEPOCH (which is the

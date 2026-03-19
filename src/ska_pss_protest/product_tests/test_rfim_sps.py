@@ -11,8 +11,9 @@ from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
+from ska_pss_cand_reader import FilterbankFile
 
-from ska_pss_protest import Cheetah, SpCcl, VectorPull, VHeader
+from ska_pss_protest import Cheetah, SpCcl, VectorPull
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
@@ -70,7 +71,7 @@ def pull_test_vector(context, pytestconfig, vtype, freq, dm, width, sn, rfi):
         vectype=vtype, freq=freq, duty=width, disp=dm, sig=sn, rfi=rfi
     )
 
-    vector_header = VHeader(test_vector.local_path)
+    vector_header = FilterbankFile.from_file(test_vector.local_path)
 
     # Pass parameter from vector to context
     context["test_vector"] = test_vector
@@ -225,12 +226,12 @@ def validate_candidate_metadate(context, pytestconfig, teardown):
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
 
     spccl.compare_widthstep(
-        context["vector_header"].allpars(),
+        context["vector_header"].all_parameters(),
         context["trial_width"],
         context["dm_plan"],
     )
     if pytestconfig.getoption("keep"):
-        spccl.summary_export(context["vector_header"].allpars())
+        spccl.summary_export(context["vector_header"].all_parameters())
 
     assert len(spccl.detections) == len(spccl.expected)
     assert len(spccl.non_detections) == 0

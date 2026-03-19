@@ -21,7 +21,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2024 SKA Observatory                                         |
+| Copyright 2026 SKA Observatory                                         |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |
@@ -51,7 +51,7 @@ from pathlib import Path
 import pytest
 from pytest import mark
 
-from ska_pss_protest import Filterbank, VHeader
+from ska_pss_protest import Filterbank
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -117,11 +117,11 @@ class CandidateTests:
     def test_get_header(self):
         """
         Tests that the get_header() method returns a list of
-        VHeader objects each corresponding to one of several
+        FilterbankFile objects each corresponding to one of several
         (in this test, two) candidate filterbank files.
 
         Note: Some header parameters that exist in an input
-        test vector  (e.g, telescope_id, accessed by VHeader
+        test vector  (e.g, telescope_id, accessed by FilterbankFile
         method telescope_id()), are not set by the cheetah
         pipeline when it exports the candidate filterbanks.
         """

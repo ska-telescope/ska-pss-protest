@@ -38,7 +38,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2024 SKA Observatory                                         |
+| Copyright 2026 SKA Observatory                                         |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |
@@ -64,7 +64,6 @@ import logging
 import os
 
 import numpy as np
-
 from ska_pss_cand_reader import FilterbankFile
 
 logging.basicConfig(
@@ -242,9 +241,9 @@ class Filterbank:
             cand_raw = np.fromfile(
                 this_candidate, dtype=np.uint8, count=nbytes
             )
-            cand_channelised = cand_raw.reshape(-1, header.header.nchans).astype(
-                np.uint8
-            )
+            cand_channelised = cand_raw.reshape(
+                -1, header.header.nchans
+            ).astype(np.uint8)
             if cand_raw.shape[0] == 0:
                 pass
 
