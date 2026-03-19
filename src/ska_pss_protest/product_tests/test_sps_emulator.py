@@ -13,8 +13,9 @@ from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, scenarios, then, when
+from ska_pss_cand_reader import FilterbankFile
 
-from ska_pss_protest import Cheetah, SpCcl, VectorPull, VHeader
+from ska_pss_protest import Cheetah, SpCcl, VectorPull
 
 # pylint: disable=W0621,W0212
 
@@ -122,7 +123,8 @@ def count_cands(context, get_vector):
     Call candidate parser and check number of candidates
     """
     expected_ncands = (
-        float(context["rate"]) * VHeader(get_vector.local_path).duration()
+        float(context["rate"])
+        * FilterbankFile.from_file(get_vector.local_path).duration
     )
     candidate = SpCcl(context["candidate_dir"])
     assert len(candidate.cands) == expected_ncands

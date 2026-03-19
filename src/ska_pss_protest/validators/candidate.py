@@ -21,10 +21,10 @@
 | <extension> is the file extension of the files in <candidate_directory>|
 | (default is .fil).                                                     |
 |                                                                        |
-| candidates.get_header() will return a list of VHeader objects.         |
-| see protest/fil.py for information on the VHeader class (its basic     |
-| purpose is to explore the header (and other) properties of a           |
-| filterbank file). The header properties of all of the candidate        |
+| candidates.get_header() will return a list of objects.                 |
+| see protest/fil.py for information on the VHeader class to explore     |
+| the header (and other) properties of a filterbank file).               |
+| The header properties of all of the candidate                          |
 | filterbanks can be compared with those associated with the input data  |
 | (typically a PSS test vector).                                         |
 |                                                                        |
@@ -38,7 +38,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2024 SKA Observatory                                         |
+| Copyright 2026 SKA Observatory                                         |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |
@@ -64,8 +64,7 @@ import logging
 import os
 
 import numpy as np
-
-from ska_pss_protest import VHeader
+from ska_pss_cand_reader import FilterbankFile
 
 logging.basicConfig(
     format="1|%(asctime)s|%(levelname)s\
@@ -133,7 +132,7 @@ class Filterbank:
 
     def get_headers(self) -> list:
         """
-        Provides a list of VHeader objects, each of which
+        Provides a list of objects, each of which
         contains header parameters for candidate filterbank
         files found in self.cand_dir
 
@@ -145,7 +144,7 @@ class Filterbank:
         """
         self.headers = []
         for this_file in self.files:
-            this_header = VHeader(this_file)
+            this_header = FilterbankFile.from_file(this_file)
             self.headers.append(this_header)
         return self.headers
 
@@ -165,8 +164,9 @@ class Filterbank:
         )
 
         json_str = []
-        for header in headers:
-            json_str.append(header.allpars(conv=True))
+        for fb in headers:
+            params = fb.all_parameters()
+            json_str.append(params)
 
         with open(header_filename, "w") as json_out:
             json.dump(json_str, json_out, indent=4)
@@ -211,25 +211,25 @@ class Filterbank:
         header = headers[0]
 
         # Get truth header size, open file, and seek to that position in stream
-        truth_header = VHeader(truth_vector)
+        truth_header = FilterbankFile.from_file(truth_vector)
         truth = open(truth_vector, "rb")
-        truth.seek(truth_header.header_size())
+        truth.seek(truth_header.header.header_size)
 
         # Get candidate header size, open file,
         # and seek to that position in stream
-        candidate_header_size = header.header_size()
+        candidate_header_size = header.header.header_size
         this_candidate = open(self.files[0], "rb")
         this_candidate.seek(candidate_header_size)
 
         # Check number of channels match  between files
-        if header.nchans() != truth_header.nchans():
+        if header.header.nchans != truth_header.header.nchans:
             raise IndexError(
                 "Filterbanks have different numbers of channels. {} vs. {}".format(  # noqa
-                    header.nchans(), truth_header.nchans()
+                    header.header.nchans, truth_header.header.nchans
                 )
             )
 
-        nbytes = int(chunk_size * header.nchans())
+        nbytes = int(chunk_size * header.header.nchans)
 
         cand_samples = 0
         truth_samples = 0
@@ -241,15 +241,15 @@ class Filterbank:
             cand_raw = np.fromfile(
                 this_candidate, dtype=np.uint8, count=nbytes
             )
-            cand_channelised = cand_raw.reshape(-1, header.nchans()).astype(
-                np.uint8
-            )
+            cand_channelised = cand_raw.reshape(
+                -1, header.header.nchans
+            ).astype(np.uint8)
             if cand_raw.shape[0] == 0:
                 pass
 
             truth_raw = np.fromfile(truth, dtype=np.uint8, count=nbytes)
             truth_channelised = truth_raw.reshape(
-                -1, truth_header.nchans()
+                -1, truth_header.header.nchans
             ).astype(np.uint8)
             if truth_raw.shape[0] == 0:
                 break
