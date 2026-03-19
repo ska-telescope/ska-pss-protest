@@ -2207,14 +2207,14 @@ reference = "ska-nexus"
 
 [[package]]
 name = "ska-pss-cand-viewer"
-version = "0.0.0"
+version = "1.0.2"
 description = "The SKA PSS Candidate Viewer"
 optional = false
 python-versions = ">=3.10,<4.0"
 groups = ["main"]
 files = [
-    {file = "ska_pss_cand_viewer-0.0.0-py3-none-any.whl", hash = "sha256:2ebe490fea9387a22a7889b22d3a9769ac0b6acbe0535f0a93cabe4eed1c4fb8"},
-    {file = "ska_pss_cand_viewer-0.0.0.tar.gz", hash = "sha256:f65dbef5271457cfc0e94aa3a5754f2d8197cc7634d62a9a3bbd62ee6bb4fa14"},
+    {file = "ska_pss_cand_viewer-1.0.2-py3-none-any.whl", hash = "sha256:d23bfb2d5f50bc6d9381e8322f24d67dbba2e4a54c6aa522ec289c5db91fb521"},
+    {file = "ska_pss_cand_viewer-1.0.2.tar.gz", hash = "sha256:1da88d2e8d8f1ee10b2b38c97cdc30ef0a6a7ea21525b47e5523a3483cf6fa2e"},
 ]
 
 [package.dependencies]
@@ -2227,7 +2227,7 @@ pytest-html = ">=4.1.1,<5.0.0"
 pytest-mock = ">=3.12.0,<4.0.0"
 pytest-repeat = ">=0.9.3,<0.10.0"
 requests = ">=2.31.0,<3.0.0"
-ska-pss-protest = ">=5.2.0,<6.0.0"
+ska-pss-cand-reader = ">=0.0.0,<0.0.1"
 ska-ser-log-transactions = ">=0.2.2,<0.3.0"
 ska-ser-logging = ">=0.4.3,<0.5.0"
 
@@ -2687,4 +2687,4 @@ reference = "PyPI-public"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "7644144db33869ce8a3a27a1903e5a43905e51be4a3054e53745ad6fc3e53c7c"
+content-hash = "eea9e2c853172786dbcc604dde27c34ae88e4997d09e4242e09b6d50d825bb23"

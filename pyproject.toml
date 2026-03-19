@@ -22,7 +22,7 @@ protest = 'ska_pss_protest.protest:main'
 [tool.poetry.dependencies]
 python = "^3.10"
 ska-pss-cand-reader = "^0.0.0"
-ska-pss-cand-viewer = "^0.0.0"
+ska-pss-cand-viewer = "^1.0.0"
 numpy = "^1.26.4"
 requests = ">=2.31.0"
 pytest-mock = ">=3.12.0"
