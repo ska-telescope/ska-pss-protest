@@ -7,10 +7,10 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
-        When A FDAS pipeline runs
+        When A FDAS pipeline runs using <dedispersion_plan>
         Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
 
         Examples:
-        | test_vector                                                       |   tol_settings    |
-        | FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_123123.fil   |   basic           |
+        | test_vector                                                               |   tol_settings    | dedispersion_plan |
+        | FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_123123.fil   |   basic           | generic           |
 

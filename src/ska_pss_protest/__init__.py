@@ -3,6 +3,7 @@ __init__.py
 """
 
 from .executors import Cheetah, LogParse  # noqa
+from .product_tests.data.dm_plans.dm_plan import DedispersionPlanSelect  # noqa
 from .requesters import VectorPull  # noqa
 from .utils import OcldReader  # noqa
 from .validators import (  # noqa
