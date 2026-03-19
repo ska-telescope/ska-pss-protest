@@ -13,17 +13,12 @@ import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
 from ska_pss_cand_reader import FilterbankFile
 
-<<<<<<< HEAD
-from ska_pss_protest import Cheetah, SpCcl, VectorPull
-=======
 from ska_pss_protest import (
     Cheetah,
     DedispersionPlanSelect,
     SpCcl,
     VectorPull,
-    VHeader,
 )
->>>>>>> origin
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
 
