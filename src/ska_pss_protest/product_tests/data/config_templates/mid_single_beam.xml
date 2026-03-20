@@ -196,11 +196,11 @@
   <sift>
     <pool-id>default</pool-id>
     <priority>2</priority>
-    <simple_sift>
+    <strong_sift>
       <active>false</active>
       <num_candidate_harmonics>8</num_candidate_harmonics>
       <match_factor>0.001</match_factor>
-    </simple_sift>
+    </strong_sift>
   </sift>
   <fldo>
     <pool-id>default</pool-id>
@@ -209,8 +209,8 @@
       <active>false</active>
       <number_of_frequency_channels>4096</number_of_frequency_channels>
       <number_of_subints>16</number_of_subints>
-      <number_of_subbands>64</number_of_subbands>
-      <number_of_phase_bins>128</number_of_phase_bins>
+      <number_of_subbands>32</number_of_subbands>
+      <number_of_phase_bins>64</number_of_phase_bins>
       <number_of_threads>8</number_of_threads>
     </cpu>
   </fldo>
