@@ -15,8 +15,9 @@ from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
+from ska_pss_cand_reader import FilterbankFile
 
-from ska_pss_protest import Cheetah, Filterbank, VectorPull, VHeader
+from ska_pss_protest import Cheetah, Filterbank, VectorPull
 
 # pylint: disable=W0621,W0212
 
@@ -80,7 +81,9 @@ def set_sink(config, context, outdir, conf, pytestconfig):
     """
     Configure data sink
     """
-    spectra_per_file = str(VHeader(context["vector_path"]).nspectra())
+    spectra_per_file = str(
+        FilterbankFile.from_file(context["vector_path"]).nspectra
+    )
     outdir = outdir(pytestconfig.getoption("outdir"))
     config_path = conf(outdir)
     config("beams/beam/sinks/sink_configs/sigproc/dir", outdir)
@@ -123,16 +126,16 @@ def validate_exported_data(context, pytestconfig, teardown):
     # to those in the test vector
     candidates.get_headers()
     assert len(candidates.headers) == 1
-    header = candidates.headers[0]
-    input_header = VHeader(context["vector_path"])
-    assert header.fch1() == input_header.fch1()
-    assert header.nchans() == input_header.nchans()
-    assert header.nbits() == input_header.nbits()
-    assert header.chbw() == input_header.chbw()
-    assert header.tsamp() == input_header.tsamp()
-    assert header.nspectra() == input_header.nspectra()
-    assert header.start_time() == input_header.start_time()
-    assert header.duration() == input_header.duration()
+    fb = candidates.headers[0]
+    input_fb = FilterbankFile.from_file(context["vector_path"])
+    assert fb.header.fch1 == input_fb.header.fch1
+    assert fb.header.nchans == input_fb.header.nchans
+    assert fb.header.nbits == input_fb.header.nbits
+    assert fb.header.foff == input_fb.header.foff
+    assert fb.header.tsamp == input_fb.header.tsamp
+    assert fb.nspectra == input_fb.nspectra
+    assert fb.header.tstart == input_fb.header.tstart
+    assert fb.duration == input_fb.duration
 
     # Run bitwise search through filterbanks
     # and compare values
