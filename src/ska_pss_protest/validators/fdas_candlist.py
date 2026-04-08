@@ -440,7 +440,7 @@ class FdasScl:
             ]
 
         sifted_cands = cands.query(
-            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1]"
+            "@rules.period_tol[0] <= period <= @rules.period_tol[1] & @rules.pdot_tol[0] <= pdot <= @rules.pdot_tol[1] &  @rules.dm_tol[0] <= dm <= @rules.dm_tol[1] & sn >= @rules.sn_tol"
         )
         if not sifted_cands.empty:
             # If we have any candidates left, sort them by S/N

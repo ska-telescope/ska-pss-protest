@@ -1,7 +1,7 @@
 Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
     @product @cpu @fdas @nasm @all @testvector @mid @labyrinth @overnight @nonaccelerated
-    Scenario Outline: Detecting non-accelerated pulsars
+    Scenario Outline: Detecting non-accelerated pulsars using a smaller set of test vectors
         Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
         And A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata
@@ -16,7 +16,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         | FLDO-MID_336a2a6_54.0_0.1_100_0.0_Gaussian_50.0_0000_0.0_0.0_123123.fil   |   basic           | short             |
 
     @product @cpu @fdas @nasm @all @testvector @mid @labyrinth @nonaccelerated @fortnight
-    Scenario Outline: Detecting non-accelerated pulsars
+    Scenario Outline: Detecting non-accelerated pulsars using a larger set of test vectors
         Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
         And A cheetah configuration to configure CPU-FDAS pipeline and export the FDAS candidate metadata
@@ -33,8 +33,8 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         | FDAS-ACC-MID_b78c926_50_0.3_10_0.0_Gaussian_27.0_0000_0.0_0.0_XXXX.fil    |   basic           |       short       |
         | FDAS-ACC-MID_b78c926_200_0.05_10_0.0_Gaussian_27.0_0000_0.0_0.0_XXXX.fil  |   basic           |       short       |
 
-    @product @fdas @fpga @all @testvector @mid @short @accelerated @overnight
-    Scenario Outline: Detecting pulsars
+    @product @fdas @fpga @all @testvector @mid @accelerated @overnight
+    Scenario Outline: Detecting accelerated pulsars using a smaller set of test vectors
         Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
         And A cheetah configuration to configure FPGA-FDAS pipeline and export the FDAS candidate metadata
@@ -48,8 +48,8 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         | test_vector                                                               |   tol_settings    | dedispersion_plan |
         | FDAS-ACC-MID_b78c926_20_0.05_10_50.0_Gaussian_27.0_0000_0.0_0.0_XXXX.fil  |   basic           | short             |
 
-    @product @fdas @fpga @all @testvector @mid @short @accelerated @fortnight
-    Scenario Outline: Detecting pulsars
+    @product @fdas @fpga @all @testvector @mid @accelerated @fortnight
+    Scenario Outline: Detecting accelerated pulsars using a larger set of test vectors
         Given A 600 second duration <test_vector> containing a pulsar
         And A cheetah configuration to ingest the test vector
         And A cheetah configuration to configure FPGA-FDAS pipeline and export the FDAS candidate metadata
@@ -62,5 +62,5 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         Examples:
         | test_vector                                                                   |   tol_settings    | dedispersion_plan |
         | FDAS-ACC-MID_b78c926_20_0.05_10_50.0_Gaussian_27.0_0000_0.0_0.0_XXXX.fil      |       basic       |       short       |
-        | FDAS-ACC-MID_b78c926_200_0.05_100_350.0_Gaussian_14.0_0000_0.0_0.0_XXXX.fil   |       basic       |       short       |
+        | FDAS-ACC-MID_b78c926_200_0.3_100_350.0_Gaussian_65.0_0000_0.0_0.0_XXXX.fil    |       basic       |       short       |
 
