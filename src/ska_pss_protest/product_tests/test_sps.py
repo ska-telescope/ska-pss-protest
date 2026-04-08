@@ -17,6 +17,7 @@ from xml.etree import ElementTree as et
 
 import pytest
 from pytest_bdd import given, parsers, scenarios, then, when
+from ska_pss_cand_reader import FilterbankFile
 
 from ska_pss_protest import (
     Cheetah,
@@ -24,7 +25,6 @@ from ska_pss_protest import (
     Filterbank,
     SpCcl,
     VectorPull,
-    VHeader,
 )
 
 # pylint: disable=W0621,W0212,C0116,C0103,C0301
@@ -79,7 +79,7 @@ def pull_test_vector(context, pytestconfig, vector_type, freq, dm, width, sn):
         vectype=vector_type, freq=freq, duty=width, disp=dm, sig=sn
     )
 
-    vector_header = VHeader(test_vector.local_path)
+    vector_header = FilterbankFile.from_file(test_vector.local_path)
 
     # Pass parameter from vector to context
     context["test_vector"] = test_vector
@@ -101,7 +101,7 @@ def pull_test_vector_using_name(context, pytestconfig, test_vector):
     request = VectorPull(cache_dir=pytestconfig.getoption("cache"))
     request.from_name(test_vector)
 
-    vector_header = VHeader(request.local_path)
+    vector_header = FilterbankFile.from_file(request.local_path)
 
     # Pass parameter from vector to context
     context["test_vector"] = request
@@ -263,19 +263,18 @@ def validate_exported_candidates(context, pytestconfig):
     candidates.get_headers()
 
     # Get header info from test vector
-    input_header = context["vector_header"]
+    input_fb = context["vector_header"]
 
     # Compare expected common properties candidate vectors with input vector
-    for header in candidates.headers:
-        assert isinstance(header, VHeader)
-        assert header.fch1() == input_header.fch1()
-        assert header.nspectra() <= input_header.nspectra()
-        assert header.nchans() == input_header.nchans()
-        assert header.nbits() == input_header.nbits()
-        assert header.chbw() == input_header.chbw()
-        assert header.tsamp() == input_header.tsamp()
-        assert header.start_time() >= input_header.start_time()
-        assert header.duration() <= input_header.duration()
+    for fb in candidates.headers:
+        assert fb.header.fch1 == input_fb.header.fch1
+        assert fb.nspectra <= input_fb.nspectra
+        assert fb.header.nchans == input_fb.header.nchans
+        assert fb.header.nbits == input_fb.header.nbits
+        assert fb.header.foff == input_fb.header.foff
+        assert fb.header.tsamp == input_fb.header.tsamp
+        assert fb.header.tstart >= input_fb.header.tstart
+        assert fb.duration <= input_fb.duration
 
     # Replace candidate files with header info only
     if pytestconfig.getoption("reduce"):
@@ -291,7 +290,7 @@ def validate_candidate_metadata(context, pytestconfig, teardown):
     # Generate list of expected candidates
     spccl.from_vector(context["test_vector"].local_path, context["dd_samples"])
     spccl.compare_widthstep(
-        context["vector_header"].allpars(),
+        context["vector_header"].all_parameters(),
         context["trial_width"],
         context["dm_plan"],
     )

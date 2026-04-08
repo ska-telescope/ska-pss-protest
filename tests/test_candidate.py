@@ -21,7 +21,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2024 SKA Observatory                                         |
+| Copyright 2026 SKA Observatory                                         |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |
@@ -51,7 +51,7 @@ from pathlib import Path
 import pytest
 from pytest import mark
 
-from ska_pss_protest import Filterbank, VHeader
+from ska_pss_protest import Filterbank
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -117,11 +117,11 @@ class CandidateTests:
     def test_get_header(self):
         """
         Tests that the get_header() method returns a list of
-        VHeader objects each corresponding to one of several
+        FilterbankFile objects each corresponding to one of several
         (in this test, two) candidate filterbank files.
 
         Note: Some header parameters that exist in an input
-        test vector  (e.g, telescope_id, accessed by VHeader
+        test vector  (e.g, telescope_id, accessed by FilterbankFile
         method telescope_id()), are not set by the cheetah
         pipeline when it exports the candidate filterbanks.
         """
@@ -129,13 +129,12 @@ class CandidateTests:
         parser = Filterbank(cand_dir)
         parser.get_headers()
         assert len(parser.headers) == 2
-        for header in parser.headers:
-            assert isinstance(header, VHeader)
-            assert header.fch1() == 1670.0
-            assert header.nchans() == 16
-            assert header.nbits() == 8
-            assert header.chbw() == -20.0
-            assert header.tsamp() == 6.4e-05
+        for fb in parser.headers:
+            assert fb.header.fch1 == 1670.0
+            assert fb.header.nchans == 16
+            assert fb.header.nbits == 8
+            assert fb.header.foff == -20.0
+            assert fb.header.tsamp == 6.4e-05
 
     def test_compare_data_chunk_size(self):
         """

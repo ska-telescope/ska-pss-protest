@@ -54,8 +54,7 @@ import logging
 import os
 
 import numpy as np
-
-from ska_pss_protest import VHeader
+from ska_pss_cand_reader import FilterbankFile
 
 np.set_printoptions(precision=17)
 
@@ -200,10 +199,10 @@ class SpCcl:
         """
         timestamps = []
         # Extract parameters from vector header
-        vector = VHeader(fil)
-        start_time = vector.start_time()  # MJD
-        end_time = start_time + (vector.duration() / 86400)  # MJD
-        samples_per_period = 1 / (freq * vector.tsamp())
+        fb = FilterbankFile.from_file(fil)
+        start_time = fb.header.tstart  # MJD
+        end_time = start_time + (fb.duration / 86400)  # MJD
+        samples_per_period = 1 / (freq * fb.header.tsamp)
 
         # A fiducial pulse is placed at PEPOCH (which is the
         # midpoint of the observation). ft_inject_pulsar assumes
@@ -215,12 +214,12 @@ class SpCcl:
 
         # Convert into a fiducial time
         fiducial_time = (
-            (fiducial_sample * vector.tsamp()) / 86400
+            (fiducial_sample * fb.header.tsamp) / 86400
         ) + start_time  # MJD
 
         # Compute DM offset
         dm_offset = (
-            (4.15e6 * ((vector.fch1()) ** (-2)) * disp) / 1000 / 86400
+            (4.15e6 * ((fb.header.fch1) ** (-2)) * disp) / 1000 / 86400
         )  # days
         fiducial_time = fiducial_time + dm_offset
 
@@ -282,7 +281,7 @@ class SpCcl:
 
         logging.info("Extracting pulse data from {}".format(vector))
 
-        header = VHeader(vector)
+        fb = FilterbankFile.from_file(vector)
 
         # Split path and extension from vector filename
         basename = os.path.splitext(os.path.basename(vector))[0].split("_")
@@ -295,7 +294,7 @@ class SpCcl:
 
         # Folded S/N and S/N per pulse
         sig_fold = float(basename[7])
-        sig_pp = sig_fold * np.sqrt(period / header.duration())
+        sig_pp = sig_fold * np.sqrt(period / fb.duration)
 
         # Get list of timestamps
         timestamps = self._get_timestamps(vector, freq, disp)
@@ -305,10 +304,10 @@ class SpCcl:
         # reject_last. By doing this, ProTest will not expect them.
         if reject_last:
             # Convert number of samples into a number of days
-            reject_window = (reject_last * header.tsamp()) / 86400
+            reject_window = (reject_last * fb.header.tsamp) / 86400
 
             # Compute MJD of end of scan
-            scan_end = header.start_time() + (header.duration() / 86400)
+            scan_end = fb.header.tstart + (fb.duration / 86400)
 
             # Compute the epoch after which candidates are not considered
             reject_after = scan_end - reject_window
@@ -375,7 +374,7 @@ class SpCcl:
         tolerances, as defined in the WidthTol class. This
         method requires information about the observing band and the
         frequency of the pulse in the test vector. These can be provided
-        as a dictionary using the VHeader() method allpars().
+        as a dictionary.
         Further info in WidthTol() class below.
 
         Parameters

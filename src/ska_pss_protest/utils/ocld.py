@@ -14,7 +14,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2025 University of Manchester                                |
+| Copyright 2026 University of Manchester                                |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |

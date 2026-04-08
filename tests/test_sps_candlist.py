@@ -24,7 +24,7 @@
 **************************************************************************
 | License:                                                               |
 |                                                                        |
-| Copyright 2024 SKA Observatory                                         |
+| Copyright 2026 SKA Observatory                                         |
 |                                                                        |
 |Redistribution and use in source and binary forms, with or without      |
 |modification, are permitted provided that the following conditions are  |
@@ -53,8 +53,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 from pytest import mark
+from ska_pss_cand_reader import FilterbankFile
 
-from ska_pss_protest import SpCcl, VectorPull, VHeader, WidthTol
+from ska_pss_protest import SpCcl, VectorPull, WidthTol
 
 # pylint: disable=R1732,W1514,E1120,W0621
 
@@ -242,16 +243,16 @@ class SpCclTests:
         assert len(exp) == len(candidate.cands)
 
         # Read parameters from filterbank
-        fil = VHeader(get_vector.local_path)
-        pars = fil.allpars()
+        fil = FilterbankFile.from_file(get_vector.local_path)
+        pars = fil.all_parameters()
         npulses = fil.duration() * pars["freq"]
         sn_pp = pars["sig"] / np.sqrt(npulses)
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        dm_offset = 4.15e6 * (1 / fil.header.fch1) ** 2.0 * pars["disp"]
         arrival_time = (
-            fil.start_time()
+            fil.header.tstart
             + (((1 / pars["freq"]) / 86400) / 2)
             + (dm_offset / 1000 / 86400)
         )
@@ -278,7 +279,7 @@ class SpCclTests:
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
             # Check the fiducial pulse timestamp (compared with calculations)
-            if arrival_time == pytest.approx(exp[i][0], fil.tsamp()):
+            if arrival_time == pytest.approx(exp[i][0], fil.header.tsamp):
                 fiducial_detected = True
         assert fiducial_detected is True
 
@@ -307,16 +308,16 @@ class SpCclTests:
         assert len(exp) == len(candidate.cands)
 
         # Read parameters from filterbank
-        fil = VHeader(get_high_dm_vector.local_path)
-        pars = fil.allpars()
+        fil = FilterbankFile.from_file(get_high_dm_vector.local_path)
+        pars = fil.all_parameters()
         npulses = fil.duration() * pars["freq"]
         sn_pp = pars["sig"] / np.sqrt(npulses)
 
         # Comute the DM offset expected and use that to infer
         # the arrival time of the fiducial pulse in the test vector
-        dm_offset = 4.15e6 * (1 / fil.fch1()) ** 2.0 * pars["disp"]
+        dm_offset = 4.15e6 * (1 / fil.header.fch1) ** 2.0 * pars["disp"]
         arrival_time = (
-            fil.start_time()
+            fil.header.tstart
             + (((1 / pars["freq"]) / 86400) / 2)
             + (dm_offset / 1000 / 86400)
         )
@@ -343,7 +344,7 @@ class SpCclTests:
             # Check all the timestamps (compared with file)
             assert candidate.cands[i][0] == exp[i][0]
             # Check the fiducial pulse timestamp (compared with calculations)
-            if arrival_time == pytest.approx(exp[i][0], fil.tsamp()):
+            if arrival_time == pytest.approx(exp[i][0], fil.header.tsamp):
                 fiducial_detected = True
         assert fiducial_detected is True
 
@@ -406,7 +407,7 @@ class SpCclTests:
     def test_compare_dm_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_dm() using
-        source properties computed using header reader VHeader().
+        source properties computed using header reader FilterbankFile().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = SpCcl(spccl_dir)
@@ -438,7 +439,9 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
+            FilterbankFile.from_file(get_vector.local_path).all_parameters(),
+            widths_list,
+            dm_plan,
         )
 
         assert len(candidate.detections) == len(candidate.expected)
@@ -591,7 +594,7 @@ class SpCclTests:
     def test_compare_widthstep_within_tol_using_vector(self, get_vector):
         """
         Tests that candidates are recovered by compare_widthstep() using
-        source properties computed using header reader VHeader().
+        source properties computed using header reader FilterbankFile().
         """
         spccl_dir = os.path.join(DATA_DIR, "spccl_2/lowdm")
         candidate = SpCcl(spccl_dir)
@@ -623,7 +626,9 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
+            FilterbankFile(get_vector.local_path).all_parameters(),
+            widths_list,
+            dm_plan,
         )
         assert len(candidate.detections) == len(candidate.expected)
         assert len(candidate.non_detections) == 0
@@ -817,9 +822,13 @@ class SpCclTests:
             15000,
         ]
         candidate.compare_widthstep(
-            VHeader(get_vector.local_path).allpars(), widths_list, dm_plan
+            FilterbankFile.from_file(get_vector.local_path).all_parameters(),
+            widths_list,
+            dm_plan,
         )
-        candidate.summary_export(VHeader(get_vector.local_path).allpars())
+        candidate.summary_export(
+            FilterbankFile.from_file(get_vector.local_path).all_parameters()
+        )
         assert os.path.isfile(os.path.join(spccl_dir, "summary.txt"))
         with open(os.path.join(spccl_dir, "summary.txt"), "r") as fp:
             lines = len(fp.readlines())
