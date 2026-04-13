@@ -208,7 +208,10 @@ def subband_calculator(nchan: int, ratio: int = 80) -> int:
     """
     Calculates the number of subbands to set up FLDO such a way that
     the number of subbands is ~ 80 times smaller than the number of channels
-    but is also a factor of total number of channels
+    but is also a factor of total number of channels.
+    The number 80, was arbitrarily chosen based on the expected number of channels
+    for the test vector and the typical number of subbands used in FDAS.
+    This can be adjusted as needed for different test vectors or configurations.
     """
 
     if nchan <= 0:

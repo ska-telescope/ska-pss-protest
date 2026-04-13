@@ -9,7 +9,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A IQRM RFIM enabled with threshold of <threshold> and radius of <radius>
 
         When A FDAS pipeline runs using <dedispersion_plan>
-        Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
+        Then A FDAS candidates metadata file is produced which is validated using <tol_settings> tolerances
 
         Examples:
         | test_vector                                                               |   threshold   |   radius  |   tol_settings    | dedispersion_plan |

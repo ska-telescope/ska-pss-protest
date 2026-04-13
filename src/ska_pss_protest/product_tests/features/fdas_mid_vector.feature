@@ -9,7 +9,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
         When A FDAS pipeline runs using <dedispersion_plan>
-        Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
+        Then A FDAS candidates metadata file is produced which is validated using <tol_settings> tolerances
 
         Examples:
         | test_vector                                                               |   tol_settings    | dedispersion_plan |
@@ -24,7 +24,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
         When A FDAS pipeline runs using <dedispersion_plan>
-        Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
+        Then A FDAS candidates metadata file is produced which is validated using <tol_settings> tolerances
 
         Examples:
         | test_vector                                                               |   tol_settings    | dedispersion_plan |
@@ -42,7 +42,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
         When A FDAS pipeline runs using <dedispersion_plan>
-        Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
+        Then A FDAS candidates metadata file is produced which is validated using <tol_settings> tolerances
 
         Examples:
         | test_vector                                                               |   tol_settings    | dedispersion_plan |
@@ -57,7 +57,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
         And A cheetah configuration to configure SPS pipeline and export the SPS candidate metadata
 
         When A FDAS pipeline runs using <dedispersion_plan>
-        Then A FDAS candidates metadata file is produced which is validate using <tol_settings> tolerances
+        Then A FDAS candidates metadata file is produced which is validated using <tol_settings> tolerances
 
         Examples:
         | test_vector                                                                   |   tol_settings    | dedispersion_plan |
