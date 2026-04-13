@@ -1,4 +1,11 @@
 # Changelog
+## 6.0.2
+- Modifying FDAS product tests to run FPGA-FDAS pipeline
+- Adding and reorganising product test suites for FPGA-FDAS product tests
+
+## 6.0.1
+- Using the `ska-pss-cand-reader` to read filterbank files instead of `VHeader` class
+
 ## 6.0.0
 - Adding a class to manage and select dedispersion plan to run the test
 - Removing existing dedispersion plan from configuration file templates

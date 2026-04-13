@@ -239,7 +239,7 @@ class FdasScl:
         sig_fold = float(basename[7]) * injection_recovery_factor
 
         # Set expected period derivative from acceleration parameter
-        pdot = -accel * period / 3e8
+        pdot = -accel * period * 1e-3 / 3e8
 
         self.expected = [period, pdot, disp, width, sig_fold]
 
@@ -575,14 +575,14 @@ class FdasTolBasic:
         """
         Convert acceleration (m/s/s) to pdot (s/s)
         """
-        return period * -accel / 3e8
+        return period * accel / 3e8
 
     @staticmethod
     def _pdot_to_accel(pdot: float, period: float) -> float:
         """
         Convert pdot (s/s) to acceleration (m/s/s)
         """
-        return pdot * 3e8 / -period
+        return pdot * 3e8 / period
 
     def calc_tols(self) -> None:
         """
@@ -595,6 +595,11 @@ class FdasTolBasic:
         self.width_tol = self.width(self.expected[3])
         self.sn_tol = self.sn(self.expected[4])
         logging.info("EXPECTED: {}".format(self.expected))
+        logging.info("Period tolerance: {}".format(self.period_tol))
+        logging.info("P-dot tolerance: {}".format(self.pdot_tol))
+        logging.info("DM tolerance: {}".format(self.dm_tol))
+        logging.info("Width tolerance: {}".format(self.width_tol))
+        logging.info("S/N tolerance: {}".format(self.sn_tol))
 
     def period(self, this_period: float) -> list[float]:
         """
@@ -641,7 +646,7 @@ class FdasTolBasic:
         pdot_high = self._accel_to_pdot(a_low, 1 / freq)
         pdot_low = self._accel_to_pdot(a_high, 1 / freq)
 
-        return [pdot_low, pdot_high]
+        return sorted([pdot_low, pdot_high])
 
     def dm(self, this_dm: float, wint: float) -> list[float]:
         """
