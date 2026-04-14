@@ -233,12 +233,12 @@ def set_fldo_parameters(config, context):
     config("fldo/cpu/active", "true")
     config(
         "fldo/cpu/number_of_frequency_channels",
-        str(context["vector_header"].nchans()),
+        str(context["vector_header"].nchans),
     )
     config("fldo/cpu/number_of_subints", "16")
     config(
         "fldo/cpu/number_of_subbands",
-        str(subband_calculator(context["vector_header"].nchans())),
+        str(subband_calculator(context["vector_header"].nchans)),
     )
     config("fldo/cpu/number_of_phase_bins", "64")
     config("fldo/cpu/number_of_threads", "8")
