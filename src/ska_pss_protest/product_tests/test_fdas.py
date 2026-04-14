@@ -281,7 +281,7 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
 
 @then(
     parsers.parse(
-        "A FDAS candidates metadata file is produced which is validate using {tol_settings} tolerances"
+        "A FDAS candidates metadata file is produced which is validated using {tol_settings} tolerances"
     )
 )
 def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):
