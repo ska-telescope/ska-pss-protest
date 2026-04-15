@@ -233,12 +233,12 @@ def set_fldo_parameters(config, context):
     config("fldo/cpu/active", "true")
     config(
         "fldo/cpu/number_of_frequency_channels",
-        str(context["vector_header"].nchans()),
+        str(context["vector_header"].nchans),
     )
     config("fldo/cpu/number_of_subints", "16")
     config(
         "fldo/cpu/number_of_subbands",
-        str(subband_calculator(context["vector_header"].nchans())),
+        str(subband_calculator(context["vector_header"].nchans)),
     )
     config("fldo/cpu/number_of_phase_bins", "64")
     config("fldo/cpu/number_of_threads", "8")
@@ -281,7 +281,7 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
 
 @then(
     parsers.parse(
-        "A FDAS candidates metadata file is produced which is validate using {tol_settings} tolerances"
+        "A FDAS candidates metadata file is produced which is validated using {tol_settings} tolerances"
     )
 )
 def validate_fdas_candidates(context, pytestconfig, teardown, tol_settings):

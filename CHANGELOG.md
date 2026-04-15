@@ -1,4 +1,7 @@
 # Changelog
+## 6.0.3
+- Bugfix of statement in FDAS product test leading to calling of an `int` object
+
 ## 6.0.2
 - Modifying FDAS product tests to run FPGA-FDAS pipeline
 - Adding and reorganising product test suites for FPGA-FDAS product tests
