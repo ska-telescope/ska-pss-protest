@@ -235,7 +235,7 @@ def set_fldo_parameters(config, context):
         "fldo/cpu/number_of_frequency_channels",
         str(context["vector_header"].nchans),
     )
-    config("fldo/cpu/number_of_subints", "64")
+    config("fldo/cpu/number_of_subints", "16")
     config(
         "fldo/cpu/number_of_subbands",
         str(subband_calculator(context["vector_header"].nchans)),
