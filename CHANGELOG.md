@@ -1,7 +1,4 @@
 # Changelog
-## 6.0.4
-- Increasing the number of subints for FLDO module in FDAS tests and default template
-
 ## 6.0.3
 - Bugfix of statement in FDAS product test leading to calling of an `int` object
 
