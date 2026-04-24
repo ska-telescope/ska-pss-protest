@@ -61,7 +61,7 @@ Feature: Tests of detection capability of CPU-based FDAS pipeline.
 
         Examples:
         | test_vector                                                                   |   tol_settings    | dedispersion_plan |
-        | FDAS-ACC-MID_b78c926_200_0.05_100_350.0_Gaussian_65.0_0000_0.0_0.0_123123.fil |       basic       |       short       |
+        | FDAS-ACC-MID_b78c926_2_0.01_100_350.0_Gaussian_65.0_0000_0.0_0.0_123123.fil   |       basic       |       short       |
         | FDAS-ACC-MID_b78c926_20_0.05_10_50.0_Gaussian_27.0_0000_0.0_0.0_123123.fil    |       basic       |       short       |
         
 
