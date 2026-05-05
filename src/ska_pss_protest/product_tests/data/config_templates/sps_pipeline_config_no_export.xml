@@ -141,7 +141,7 @@
          <window>0</window>
       </rfim_sum_threshold>
    </rfim>
-   <sps>
+   <spdt>
       <pool-id>cpu_pool</pool-id>
       <priority>0</priority>
       <threshold>8.0</threshold>
@@ -157,7 +157,7 @@
          <end>10</end>
          <step>1</step>
       </dedispersion>
-   </sps>
+   </spdt>
    <sps_clustering>
       <active>false</active>
       <time_tolerance>100</time_tolerance>

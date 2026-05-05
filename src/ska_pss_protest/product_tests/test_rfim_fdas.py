@@ -112,8 +112,8 @@ def set_sps_param(config, context):
     # Configure DDTR and SPS parameters
     config("ddtr/klotski/active", "true")
     config("ddtr/klotski/precise", "false")
-    config("sps/klotski/active", "true")
-    config("sps/threshold", "6.0").write(context["config_path"])
+    config("spdt/klotski/active", "true")
+    config("spdt/threshold", "6.0").write(context["config_path"])
 
     # Set SpCluster parameters
     config("sps_clustering/active", "true")

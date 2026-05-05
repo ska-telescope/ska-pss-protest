@@ -84,7 +84,7 @@ def set_rate(context, config):
     """
     rate = "1"
     context["rate"] = rate
-    config("sps/emulator/candidate_rate", rate)
+    config("spdt/emulator/candidate_rate", rate)
     config("ddtr/dedispersion_samples", "156250")
 
 

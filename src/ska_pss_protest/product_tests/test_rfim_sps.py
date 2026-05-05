@@ -173,7 +173,7 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     """
     config("ddtr/klotski/active", "true")
     config("ddtr/klotski/precise", "false")
-    config("sps/klotski/active", "true")
+    config("spdt/klotski/active", "true")
 
     # Set number of samples in dedispersion buffer
     context["dd_samples"] = 131072
@@ -190,7 +190,7 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
         root_tree.find("ddtr").append(dedispersion)
 
     # read the root tree for trial widths
-    widths_element = root_tree.find("sps/klotski/widths")
+    widths_element = root_tree.find("spdt/klotski/widths")
     if widths_element is not None and widths_element.text:
         trial_widths = [int(r) for r in widths_element.text.strip().split(",")]
     else:
@@ -215,7 +215,7 @@ def run_cheetah(context, config, pytestconfig, dedispersion_plan):
     context["dm_plan"] = dm_plan
 
     # Set SPS S/N threshold
-    config("sps/threshold", "6.0").write(context["config_path"])
+    config("spdt/threshold", "6.0").write(context["config_path"])
 
     # Launch cheetah with our configuration
     cheetah = Cheetah(
