@@ -214,7 +214,7 @@
       <number_of_threads>8</number_of_threads>
     </cpu>
   </fldo>
-  <sps>
+  <spdt>
     <pool-id>default</pool-id>
     <priority>0</priority>
     <threshold>20.0</threshold>
@@ -238,7 +238,7 @@
       <candidate_rate>1.0</candidate_rate>
       <active>false</active>
     </emulator>
-  </sps>
+  </spdt>
   <sps_clustering>
     <pool-id>default</pool-id>
     <priority>0</priority>
