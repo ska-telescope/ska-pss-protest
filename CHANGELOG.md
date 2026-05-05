@@ -1,4 +1,7 @@
 # Changelog
+## 6.1.1
+- Renaming SPS module in all the tests to SPDT
+
 ## 6.1.0
 - Reorgansing the product test suite into subset and superset for both FDAS and SPS
 - Changing the number of subints used by FDAS to 128
