@@ -1,4 +1,8 @@
 # Changelog
+## 6.1.0
+- Reorgansing the product test suite into subset and superset for both FDAS and SPS
+- Changing the number of subints used by FDAS to 128
+
 ## 6.0.4
 - Increasing the number of subints for FLDO module in FDAS tests and default template
 

@@ -1,6 +1,6 @@
 Feature: Tests of detection capability of a CPU-based SPS pipeline.
 
-    @product @cpu @sps @all @testvector @positive @mid @physhw @nasm
+    @product @cpu @sps @superset @all @testvector @positive @mid @physhw @nasm
     Scenario Outline: Detecting single pulses
         Given A 60 second duration <test_vector> containing single pulses
 	And A cheetah configuration to ingest the test vector
@@ -35,7 +35,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         | SPS-MID_747e95f_0.125_0.00125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil | generic           |
         | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   | generic           |
 
-    @product @cpu @subset @testvector @positive @mid @physhw @nasm
+    @product @cpu @sps @subset @testvector @positive @mid @physhw @nasm
     Scenario Outline: Detecting single pulses subset
         Given A 60 second duration <test_vector> containing single pulses
 	And A cheetah configuration to ingest the test vector
@@ -48,8 +48,9 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         Examples:
         | test_vector                                                                       | dedispersion_plan |
         | SPS-MID_747e95f_0.125_0.00125_500.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil  | generic           |
+        | SPS-MID_747e95f_0.125_0.125_100.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil    | generic           |
 
-    @product @cpu @sps @all @testvector @positive @mid @physhw @nasm @fof
+    @product @cpu @sps @all @superset @testvector @positive @mid @physhw @nasm @fof
     Scenario Outline: Detecting single pulses using filters using FoF clustering
         Given A 60 second duration <test_vector> containing single pulses
 	And A cheetah configuration to ingest the test vector
@@ -70,7 +71,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         | SPS-MID_747e95f_0.125_0.00125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil | generic           |
         | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   | generic           |
 
-    @product @cpu @sps @all @testvector @positive @mid @physhw @nasm @fofw
+    @product @cpu @sps @all @superset @testvector @positive @mid @physhw @nasm @fofw
     Scenario Outline: Detecting single pulses using filters using FoFW clustering
         Given A 60 second duration <test_vector> containing single pulses
         And A cheetah configuration to ingest the test vector
@@ -92,7 +93,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   | generic           |
 
 
-    @product @cpu @sps @all @testvector @positive @mid @physhw @nasm @hdbscan
+    @product @cpu @sps @all @superset @testvector @positive @mid @physhw @nasm @hdbscan
     Scenario Outline: Detecting single pulses using filters using HDBScan
 	Given A 60 second duration <test_vector> containing single pulses
 	And A cheetah configuration to ingest the test vector
@@ -114,7 +115,7 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
         | SPS-MID_747e95f_0.125_0.125_3000.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   | generic           |
 
 
-    @product @cpu @subset @testvector @positive @mid @physhw @nasm
+    @product @cpu @subset @testvector @positive @mid @physhw @nasm @fof
     Scenario Outline: Detecting single pulses using filters subset
         Given A 60 second duration <test_vector> containing single pulses
 	And A cheetah configuration to ingest the test vector
@@ -128,4 +129,5 @@ Feature: Tests of detection capability of a CPU-based SPS pipeline.
 
         Examples:
         | test_vector                                                                       | dedispersion_plan |
+        | SPS-MID_747e95f_0.125_0.00125_740.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil  | generic           |
         | SPS-MID_747e95f_0.125_0.125_1480.0_0.0_Gaussian_50.0_0000_0.0_0.0_123123123.fil   | generic           |

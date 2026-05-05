@@ -240,7 +240,7 @@ def set_fldo_parameters(config, context):
         "fldo/cpu/number_of_subbands",
         str(subband_calculator(context["vector_header"].nchans)),
     )
-    config("fldo/cpu/number_of_phase_bins", "64")
+    config("fldo/cpu/number_of_phase_bins", "128")
     config("fldo/cpu/number_of_threads", "8")
 
 
